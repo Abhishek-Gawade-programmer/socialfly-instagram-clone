@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 
-{% block head_title %}{% trans "Sign In" %}{% endblock %}
+{% block head_title %}Log in{% endblock %}
 
 {% block content %}
         <main id="login">
@@ -22,21 +22,23 @@
                         <input type="submit" value="Log in" />
                     </form>
                     <span class="login__divider">or</span>
-                    <a href="#" class="login__link">
-                        <i class="fa fa-money"></i>
-                        Log in with Facebook
+                    Log in with Other Social Providers
+
+                    <a href="#" class="login__link mt-3">
+                          <button type="button" class="btn btn-primary btn-lg btn-floating ml-2" >
+                                    <i class="fab fa-facebook fa-lg"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-lg btn-floating ml-2" style="background: purple;">
+                                    <i class="fab fa-instagram fa-lg"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-lg btn-floating ml-2">
+                                    <i class="fab fa-google fa-lg"></i>
+                            </button>
                     </a>
-                    <a href="#" class="login__link login__link--small">Forgot password</a>
+                    <a href="{% url 'password_reset' %}" class="login__link login__link--small">Forgot password</a>
                 </div>
                 <div class="login__box">
                     <span>Don't have an account?</span> <a href="#">Sign up</a>
-                </div>
-                <div class="login__box--transparent">
-                    <span>Get the app.</span>
-                    <div class="login__appstores">
-                        <img src="{% static 'images/ios.png' %}" class="login__appstore" alt="Apple appstore logo" title="Apple appstore logo" />
-                        <img src="{% static 'images/android.png' %}" class="login__appstore" alt="Android appstore logo" title="Android appstore logo" />
-                    </div>
                 </div>
             </div>
         </main>
