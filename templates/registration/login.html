@@ -1,8 +1,11 @@
-{% extends '_base.html' %}
+{% extends "_base.html" %}
 {% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
 
-{% block head_title %}Log in{% endblock %}
-{% block content  %}
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
         <main id="login">
             <div class="login__column">
                 <img src="{% static 'images/phoneImage.png' %}" class="login__phone" />
@@ -10,9 +13,12 @@
             <div class="login__column">
                 <div class="login__box">
                     <img src="{% static 'images/loginLogo.png' %}" class="login__logo" />
-                    <form action="feed.html" method="get" class="login__form">
-                        <input type="text" name="username" placeholder="Username" required />
-                        <input type="password" name="password" placeholder="Password" required />
+
+                        
+                    <form action="{% url 'login' %}" method="POST" class="login__form">
+                       {% csrf_token %}
+                       {{form|crispy}}
+      
                         <input type="submit" value="Log in" />
                     </form>
                     <span class="login__divider">or</span>
@@ -34,4 +40,5 @@
                 </div>
             </div>
         </main>
-{% endblock content %}
+
+{% endblock %}

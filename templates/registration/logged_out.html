@@ -1,0 +1,15 @@
+{% extends "_base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Log Out{% endblock title %}
+{% block content %}
+<div class="jumbotron ">
+  <div class="container">
+    <h1 class="display-4">Logout Sucessfully</h1>
+    <p class="lead">Thank You for Spending Your Quality of Time to our Website </p>
+      <p class="lead">
+      <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Login Again</a>
+  </p>
+  </div>
+</div>
+
+{% endblock %}

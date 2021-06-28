@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY','something')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
+DEBUG = os.environ.get('DEBUG',True)
 
 ALLOWED_HOSTS = []
 
@@ -38,8 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    #3rd party
+    'crispy_forms',
+
     #my apps
     'core',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -142,3 +146,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = 'core:explore'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+
