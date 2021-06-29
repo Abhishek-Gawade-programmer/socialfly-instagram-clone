@@ -18,8 +18,8 @@
             <div class="profile__title">
                 <h3 class="profile__username">serranoarevalo</h3>
 
-                <a href="edit-profile.html">Edit profile</a>
-                <a href="{% url 'logout' %}"   style="color:white;background: red;text-decoration:none;border: none;" >Log Out</a>
+                <a href="{% url 'users:profile_edit' %}">Edit profile</a>
+                <a href="{% url 'account_logout' %}"   style="color:white;background: red;text-decoration:none;border: none;" >Log Out</a>
                 <i class="fa fa-cog fa-lg"></i>
                 <!-- <i class="fas fa-sign-out-alt ml-4"></i> -->
 

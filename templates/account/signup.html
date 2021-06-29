@@ -14,7 +14,7 @@
             </div>
             <div class="login__column">
                 <div class="login__box" style="width: 100% !important;">
-                    <img src="{% static 'images/loginLogo.png' %}" class="login__logo" />
+                    <img src="{% static 'label.jpg' %}" class="login__logo" />
                           <br>
                           <br>
                           <div >
@@ -48,7 +48,7 @@
                     <a href="{% url 'account_reset_password' %}" class="login__link login__link--small">Forgot password</a>
                 </div>
                 <div class="login__box">
-                    <span>Already Have Account ??</span> <a href="{% url 'login' %}">Log in</a>
+                    <span>Already Have Account ??</span> <a href="{% url 'account_login' %}">Log in</a>
                 </div>
             </div>
         </main>

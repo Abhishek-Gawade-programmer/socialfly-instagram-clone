@@ -54,3 +54,22 @@ class UserSignUpForm(UserCreationForm):
         socialflyuser.phone_number=self.cleaned_data.get('phone_number')
         socialflyuser.save()
         return user
+
+
+class UserEditFrom(forms.ModelForm):
+    username = forms.CharField(label="",max_length=254,widget=forms.TextInput(attrs={"type": "text",'placeholder':'Username'}),required=True)
+
+    password1 = forms.CharField(label="",
+        widget=forms.PasswordInput(attrs={"type": "password",'placeholder':'Password'}))
+    class Meta:
+        model=SocialflyUser
+
+        exclude=('followers','following','user')
+
+        widgets = {
+               # 'exam_start_time': forms.DateTimeInput(attrs={"type":"datetime" },),
+
+               # 'exam_end_time': forms.DateTimeInput(attrs={"type":"datetime-" },)
+
+        }
+
