@@ -3,79 +3,92 @@
 {% load crispy_forms_tags %}
 {% block head_title %}Log in{% endblock %}
 {% block content  %}
+
     <main id="edit-profile">
 
         <div class="edit-profile__container">
-            <header class="edit-profile__header">
-                <div class="edit-profile__avatar-container">
-                    <img src="{% static 'images/avatar.jpg' %}" class="edit-profile__avatar" />
-                </div>
-               <div class="form-group">
-                <label for="exampleFormControlFile1">Profile Picture</label>
-                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            
+            <form action="" method="POST" class="edit-profile__form" enctype="multipart/form-data">
+            <header class="edit-profile__header ml-5">
+
+                    <img src="{{user_object.profile_photo.url}}" class="img-thumbnail" height="100" width="100">
+                    <br>
+               <div class="form-group ml-3">
+                {{user_from.profile_photo|as_crispy_field}} 
               </div>
+
             </header>
-            <form action="" class="edit-profile__form">
+                {% csrf_token %}
+
                   <div class="form__row">
                     <label for="user-name" class="form__label">Username:</label>
-                    <input id="user-name" type="text" class="form__input"  placeholder="Username">
+                    {{user_from.username|as_crispy_field}} 
                 </div>
 
                 <div class="form__row">
                     <label for="first-name" class="form__label">First Name:</label>
-                    <input id="first-name" type="text" class="form__input"  placeholder="First Name">
+                    {{user_from.first_name|as_crispy_field}} 
                 </div>
 
                   <div class="form__row">
                     <label for="last-name" class="form__label">Last Name :</label>
-                    <input id="last-name" type="text" class="form__input"  placeholder="Last Name">
+                    {{user_from.last_name|as_crispy_field}} 
                 </div>
 
                     <div class="form__row">
                     <label for="phone" class="form__label">Phone Number:</label>
-                    <input id="phone" type="number" class="form__input"  placeholder="Phone Number">
+                    
+                    {{user_from.phone_number|as_crispy_field}} 
                 </div>
 
                  <div class="form__row">
                     <label for="email" class="form__label">Email:</label>
-                    <input id="email" type="email" class="form__input"  placeholder="Email">
+                    {{user_from.email|as_crispy_field}} 
+
                 </div>
 
 
                 <div class="form__row">
                     <label for="bio" class="form__label">Bio:</label>
-                    <textarea id="bio" placeholder="Bio"></textarea>
+                    {{user_from.bio|as_crispy_field}} 
+                    
                 </div>
 
      
                 <div class="form__row">
                     <label for="gender" class="form__label">Gender:</label>
-                    <select id="gender">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="cant">Can't remember</option>
-                    </select>
+                    {{ user_from.gender|as_crispy_field }}
                 </div>   
 
                  <div class="form__row">
                     <label for="birthday" class="form__label">Birthday:</label>
-                    <input type="date" id="birthday" name="birthday" placeholder="Birthday">
+                    {{user_from.birth_date|as_crispy_field}} 
                 </div>
-
-
-
-
-
 
                 <input type="submit" value="Submit">
             </form>
+            
 
-            <form>
-                {% csrf_token %}
-                {{user_edit_from|crispy}}
-                {{user_from|crispy}}
-            </form>
+      
+                
         </div>
     </main>
+
+<script type="text/javascript">
+    document.getElementById("gender").value = "{{user_object.gender}}";
+    document.getElementById('user-name').value='{{request.user.username}}';
+    document.getElementById('first-name').value='{{request.user.first_name}}';
+    document.getElementById('last-name').value='{{request.user.last_name}}';
+    document.getElementById('email').value='{{request.user.email}}';
+    
+
+</script>
+
+
+
+
+
+
+
 
 {% endblock content %}

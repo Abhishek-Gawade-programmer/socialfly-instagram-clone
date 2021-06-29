@@ -19,8 +19,8 @@ class UserSignUpForm(UserCreationForm):
         widget=forms.PasswordInput(attrs={"type": "password",'placeholder':'Password'}))
 
 
-    first_name = forms.CharField(label="",max_length=30,widget=forms.TextInput(attrs={"type": "text",'placeholder':'First Name'}),required=True)
-    last_name = forms.CharField(label="",max_length=30,widget=forms.TextInput(attrs={"type": "text",'placeholder':'Last Name'}),required=True)
+    first_name = forms.CharField(label="",max_length=30,widget=forms.TextInput(attrs={"id":"first-name" ,"type":"text" ,"class":"form__input"  ,"placeholder":"First Name"}),required=True)
+    last_name = forms.CharField(label="",max_length=30,widget=forms.TextInput(attrs={"id":"last-name" ,"type":"text" ,"class":"form__input"  ,"placeholder":"Last Name"}),required=True)
     email = forms.EmailField(label="",widget=forms.TextInput(attrs={"type": "email",'placeholder':'Email'}))
 
 
@@ -55,17 +55,21 @@ class UserSignUpForm(UserCreationForm):
 
 
 class UserEditFrom(forms.ModelForm):
-    username = forms.CharField(label="",max_length=254,widget=forms.TextInput(attrs={"type": "text",'placeholder':'Username'}),required=True)
+    username = forms.CharField(label="",max_length=254,widget=forms.TextInput(attrs={'id':"user-name",'type':"text" ,'class':"form__input"  ,'placeholder':"Username"}),required=True)
+    first_name = forms.CharField(label="",max_length=30,widget=forms.TextInput(attrs={"id":"first-name" ,"type":"text" ,"class":"form__input"  ,"placeholder":"First Name"}),required=True)
+    last_name = forms.CharField(label="",max_length=30,widget=forms.TextInput(attrs={"id":"last-name" ,"type":"text" ,"class":"form__input"  ,"placeholder":"Last Name"}),required=True)
+    email = forms.EmailField(label="",widget=forms.TextInput(attrs= {"id":"email" ,"type":"email" ,"class":"form__input"  ,"placeholder":"Email"}))
+    phone_number = forms.CharField(label="",max_length=10,widget=forms.NumberInput(attrs={'placeholder':'Phone Number'}))
+    bio= forms.CharField(label="",max_length=4500,widget=forms.Textarea(attrs={'rows':"3"}))
+    birth_date=forms.DateField(label='',widget=forms.DateInput(attrs={'type': 'date'}))
+    gender = forms.CharField(label='',initial='R',max_length=20,widget=forms.Select(choices=GENDER_CHOICES,attrs={'id':"gender",'class':"form-control",'placeholder':"sdfs"}))
 
-    password1 = forms.CharField(label="",
-        widget=forms.PasswordInput(attrs={"type": "password",'placeholder':'Password'}))
     class Meta:
         model=SocialflyUser
 
         exclude=('followers','following','user')
 
         widgets = {
-               'birth_date': forms.widgets.DateInput(attrs={'type': 'date'}),
 
      
 
