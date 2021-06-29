@@ -14,8 +14,10 @@ class SocialflyUser(models.Model):
     following = models.ManyToManyField(User,related_name='following')
     phone_number=models.CharField(max_length=20)
     description=models.TextField(max_length=300)
-
-
+    birth_date=models.DateField(null=True,blank=True)
+    profile_photo=models.ImageField(null=True,blank=True)
+    created =models.DateTimeField(auto_now_add=True)
+    updated=models.DateTimeField(auto_now=True)
 
 
     def save(self, *args, **kwargs):

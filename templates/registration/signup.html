@@ -9,16 +9,20 @@
 
 
  <main id="login">
+  <div class="login__column">
+                <img src="{% static 'images/phoneImage.png' %}" class="login__phone" />
+            </div>
             <div class="login__column">
                 <div class="login__box" style="width: 100% !important;">
                     <img src="{% static 'images/loginLogo.png' %}" class="login__logo" />
                           <br>
                           <br>
-                          <div>
-                            Sign up to see photos and videos from your friends.
+                          <div >
+                            <h5 style="color: #8e8e8e;font-weight: 600">
+                            Sign up to see photos and videos from your friends.</h5>
                             </div>
                             <br>
-                    <form action="{% url 'login' %}" method="POST" class="login__form">
+                    <form action="" method="POST" class="login__form">
                        {% csrf_token %}
                        {{form|crispy}}
       
@@ -44,7 +48,7 @@
                     <a href="{% url 'password_reset' %}" class="login__link login__link--small">Forgot password</a>
                 </div>
                 <div class="login__box">
-                    <span>Already Have Account ??</span> <a href="#">Log in</a>
+                    <span>Already Have Account ??</span> <a href="{% url 'login' %}">Log in</a>
                 </div>
             </div>
         </main>

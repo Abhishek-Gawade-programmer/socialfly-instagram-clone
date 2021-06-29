@@ -1,8 +1,12 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView
+from django.shortcuts import redirect
+
 from .forms import *
 from .models import *
+#USER AUTHENTICATION 
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 
 class UserSignUpView(CreateView):
     model = User
@@ -16,7 +20,7 @@ class UserSignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect('login')
+        return redirect('core:explore')
 
 
 

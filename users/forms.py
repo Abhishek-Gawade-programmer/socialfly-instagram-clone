@@ -28,7 +28,15 @@ class UserSignUpForm(UserCreationForm):
 
     phone_number = forms.CharField(label="",max_length=10,
         widget=forms.NumberInput(attrs={'placeholder':'Phone Number'}))
-
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError(
+                self.error_messages['password_mismatch'],
+                code='password_mismatch',
+            )
+        return password2
 
     class Meta(UserCreationForm.Meta):
         model = User
@@ -36,6 +44,7 @@ class UserSignUpForm(UserCreationForm):
 
     @transaction.atomic
     def save(self):  
+        print(self.cleaned_data)
         user = super().save(commit=False)
         user.first_name=self.cleaned_data.get('first_name')
         user.last_name=self.cleaned_data.get('last_name')
