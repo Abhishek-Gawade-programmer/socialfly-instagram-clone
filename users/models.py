@@ -19,7 +19,6 @@ class SocialflyUser(models.Model):
 
 
     def save(self, *args, **kwargs):
-        self.class_teacher_roll = self.class_teacher_roll.upper()
         super().save(*args, **kwargs)
 
 

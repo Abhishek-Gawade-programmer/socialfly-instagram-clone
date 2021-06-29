@@ -1,13 +1,47 @@
-from django.contrib.auth.forms import AuthenticationForm
-
 from django import forms
 
+from .models import *
 
-class UserLoginForm(AuthenticationForm):
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.db import transaction
+
+
+
+class UserSignUpForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
-        super(UserLoginForm, self).__init__(*args, **kwargs)
+        super(UserSignUpForm, self).__init__(*args, **kwargs)
+        del self.fields['password2']
+        self.fields['password1'].help_text = None
+        self.fields['username'].help_text = None
 
-    username = forms.EmailField(widget=forms.TextInput(
-        attrs={'name':'username','placeholder':'Username'}))
-    password = forms.CharField(widget=forms.PasswordInput(
-        attrs={'name':'password','placeholder':'Password','class':'mt-3'}))
+    username = forms.CharField(label="",max_length=254,widget=forms.TextInput(attrs={"type": "text",'placeholder':'Username'}),required=True)
+
+    password1 = forms.CharField(label="",
+        widget=forms.PasswordInput(attrs={"type": "password",'placeholder':'Password'}))
+
+
+    first_name = forms.CharField(label="",max_length=30,widget=forms.TextInput(attrs={"type": "text",'placeholder':'First Name'}),required=True)
+    last_name = forms.CharField(label="",max_length=30,widget=forms.TextInput(attrs={"type": "text",'placeholder':'Last Name'}),required=True)
+    email = forms.EmailField(label="",widget=forms.TextInput(attrs={"type": "email",'placeholder':'Email'}))
+
+
+    phone_number = forms.CharField(label="",max_length=10,
+        widget=forms.NumberInput(attrs={'placeholder':'Phone Number'}))
+
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        exclude = ['password2',]
+
+    @transaction.atomic
+    def save(self):  
+        user = super().save(commit=False)
+        user.first_name=self.cleaned_data.get('first_name')
+        user.last_name=self.cleaned_data.get('last_name')
+        user.email=self.cleaned_data.get('email')
+        user.save()
+        socialflyuser = SocialflyUser.objects.create(user=user)
+        socialflyuser.phone_number=self.cleaned_data.get('phone_number')
+        socialflyuser.save()
+        return user
