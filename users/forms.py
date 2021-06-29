@@ -6,8 +6,6 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 
-
-
 class UserSignUpForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(UserSignUpForm, self).__init__(*args, **kwargs)
@@ -67,9 +65,9 @@ class UserEditFrom(forms.ModelForm):
         exclude=('followers','following','user')
 
         widgets = {
-               # 'exam_start_time': forms.DateTimeInput(attrs={"type":"datetime" },),
+               'birth_date': forms.widgets.DateInput(attrs={'type': 'date'}),
 
-               # 'exam_end_time': forms.DateTimeInput(attrs={"type":"datetime-" },)
+     
 
         }
 

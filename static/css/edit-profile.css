@@ -31,8 +31,8 @@
 }
 
 .edit-profile__avatar-container img {
-  width: 38px;
-  height: 38px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
 }
 .edit-profile__header h4 {

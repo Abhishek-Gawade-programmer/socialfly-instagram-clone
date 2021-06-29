@@ -29,8 +29,7 @@ def profile(request):
 def profile_edit(request):
     # return render(request,'edit-profile.html')
     user_object = get_object_or_404(SocialflyUser, user = request.user)
-    user_from = UserEditFrom(request.POST or None, 
-        instance = user_object)
+    user_from = UserEditFrom(request.POST or None, instance = user_object)
     if user_from.is_valid() and user_edit_from.is_valid():
         edit_user_from=user_from.save(commit=False)
         user_from.save()
