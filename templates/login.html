@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 {% load static %}
-{% load crispy_forms_tags %}
-{% block head_title %}Log in{% endblock %}
+
+
 {% block content  %}
         <main id="login">
             <div class="login__column">
@@ -9,7 +9,7 @@
             </div>
             <div class="login__column">
                 <div class="login__box">
-                    <img src="{% static 'label.jpg' %}" class="login__logo" />
+                    <img src="{% static 'images/loginLogo.png' %}" class="login__logo" />
                     <form action="feed.html" method="get" class="login__form">
                         <input type="text" name="username" placeholder="Username" required />
                         <input type="password" name="password" placeholder="Password" required />

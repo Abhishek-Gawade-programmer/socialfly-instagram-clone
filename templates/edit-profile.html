@@ -1,94 +1,112 @@
-{% extends '_base.html' %}
+<!DOCTYPE html>
+<html lang="en">
 {% load static %}
-{% load crispy_forms_tags %}
-{% block head_title %}Log in{% endblock %}
-{% block content  %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edit Profile | Vietgram</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
 
+<body>
+    <nav class="navigation">
+        <div class="navigation__column">
+            <a href="feed.html">
+                <img src="{% static 'images/logo.png' %}" />
+            </a>
+        </div>
+        <div class="navigation__column">
+            <i class="fa fa-search"></i>
+            <input type="text" placeholder="Search">
+        </div>
+        <div class="navigation__column">
+            <ul class="navigations__links">
+                <li class="navigation__list-item">
+                    <a href="explore.html" class="navigation__link">
+                        <i class="fa fa-compass fa-lg"></i>
+                    </a>
+                </li>
+                <li class="navigation__list-item">
+                    <a href="#" class="navigation__link">
+                        <i class="fa fa-heart-o fa-lg"></i>
+                    </a>
+                </li>
+                <li class="navigation__list-item">
+                    <a href="profile.html" class="navigation__link">
+                        <i class="fa fa-user-o fa-lg"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <main id="edit-profile">
-
         <div class="edit-profile__container">
-            
-            <form action="" method="POST" class="edit-profile__form" enctype="multipart/form-data">
-            <header class="edit-profile__header ml-5">
-
-                    <img src="{{user_object.profile_photo.url}}" class="img-thumbnail" height="100" width="100">
-                    <br>
-               <div class="form-group ml-3">
-                {{user_from.profile_photo|as_crispy_field}} 
-              </div>
-
+            <header class="edit-profile__header">
+                <div class="edit-profile__avatar-container">
+                    <img src="{% static 'images/avatar.jpg' %}" class="edit-profile__avatar" />
+                </div>
+                <h4 class="edit-profile__username">serranoarevalo</h4>
             </header>
-                {% csrf_token %}
-
-                  <div class="form__row">
-                    <label for="user-name" class="form__label">Username:</label>
-                    {{user_from.username|as_crispy_field}} 
-                </div>
-
+            <form action="" class="edit-profile__form">
                 <div class="form__row">
-                    <label for="first-name" class="form__label">First Name:</label>
-                    {{user_from.first_name|as_crispy_field}} 
+                    <label for="full-name" class="form__label">Name:</label>
+                    <input id="full-name" type="text" class="form__input" />
                 </div>
-
-                  <div class="form__row">
-                    <label for="last-name" class="form__label">Last Name :</label>
-                    {{user_from.last_name|as_crispy_field}} 
+                <div class="form__row">
+                    <label for="user-name" class="form__label">Username:</label>
+                    <input id="user-name" type="text" class="form__input" />
                 </div>
-
-                    <div class="form__row">
-                    <label for="phone" class="form__label">Phone Number:</label>
-                    
-                    {{user_from.phone_number|as_crispy_field}} 
+                <div class="form__row">
+                    <label for="website" class="form__label">Website:</label>
+                    <input id="website" type="url" class="form__input" />
                 </div>
-
-                 <div class="form__row">
-                    <label for="email" class="form__label">Email:</label>
-                    {{user_from.email|as_crispy_field}} 
-
-                </div>
-
-
                 <div class="form__row">
                     <label for="bio" class="form__label">Bio:</label>
-                    {{user_from.bio|as_crispy_field}} 
-                    
+                    <textarea id="bio"></textarea>
                 </div>
-
-     
+                <div class="form__row">
+                    <label for="email" class="form__label">Email:</label>
+                    <input id="email" type="email" class="form__input" />
+                </div>
+                <div class="form__row">
+                    <label for="phone" class="form__label">Phone Number:</label>
+                    <input id="phone" type="tel" class="form__input" />
+                </div>
                 <div class="form__row">
                     <label for="gender" class="form__label">Gender:</label>
-                    {{ user_from.gender|as_crispy_field }}
-                </div>   
-
-                 <div class="form__row">
-                    <label for="birthday" class="form__label">Birthday:</label>
-                    {{user_from.birth_date|as_crispy_field}} 
+                    <select id="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="cant">Can't remember</option>
+                    </select>
                 </div>
-
                 <input type="submit" value="Submit">
             </form>
-            
-
-      
-                
         </div>
     </main>
+    <footer class="footer">
+        <div class="footer__column">
+            <nav class="footer__nav">
+                <ul class="footer__list">
+                    <li class="footer__list-item"><a href="#" class="footer__link">About Us</a></li>
+                    <li class="footer__list-item"><a href="#" class="footer__link">Support</a></li>
+                    <li class="footer__list-item"><a href="#" class="footer__link">Blog</a></li>
+                    <li class="footer__list-item"><a href="#" class="footer__link">Press</a></li>
+                    <li class="footer__list-item"><a href="#" class="footer__link">Api</a></li>
+                    <li class="footer__list-item"><a href="#" class="footer__link">Jobs</a></li>
+                    <li class="footer__list-item"><a href="#" class="footer__link">Privacy</a></li>
+                    <li class="footer__list-item"><a href="#" class="footer__link">Terms</a></li>
+                    <li class="footer__list-item"><a href="#" class="footer__link">Directory</a></li>
+                    <li class="footer__list-item"><a href="#" class="footer__link">Language</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="footer__column">
+            <span class="footer__copyright">© 2017 Vietgram</span>
+        </div>
+    </footer>
+</body>
 
-<script type="text/javascript">
-    document.getElementById("gender").value = "{{user_object.gender}}";
-    document.getElementById('user-name').value='{{request.user.username}}';
-    document.getElementById('first-name').value='{{request.user.first_name}}';
-    document.getElementById('last-name').value='{{request.user.last_name}}';
-    document.getElementById('email').value='{{request.user.email}}';
-    
-
-</script>
-
-
-
-
-
-
-
-
-{% endblock content %}
+</html>
