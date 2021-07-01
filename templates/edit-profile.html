@@ -11,7 +11,8 @@
             <form action="" method="POST" class="edit-profile__form" enctype="multipart/form-data">
             <header class="edit-profile__header ml-5">
 
-                    <img src="{{user_object.profile_photo.url}}" class="img-thumbnail" height="100" width="100">
+             <img src="{{user_object.profile_photo.url}}" height="150" width="150" style="border-radius: 50%;border: 2px solid #555 !important;">
+                    <!-- <img src="{{user_object.profile_photo.url}}" class="img-thumbnail" height="100" width="100"> -->
                     <br>
                <div class="form-group ml-3">
                 {{user_from.profile_photo|as_crispy_field}} 

@@ -2,12 +2,42 @@ from django.shortcuts import render,get_object_or_404,redirect
 from django.views.generic import CreateView
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.dispatch import receiver
+import requests
+from django.core import files
+from io import BytesIO
 
 from .forms import *
 from .models import *
+
 #USER AUTHENTICATION 
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from allauth.account.signals import user_signed_up
+from allauth.socialaccount.models import SocialAccount
+
+
+
+
+
+
+@receiver(user_signed_up)
+def populate_profile(sociallogin, user, **kwargs):
+    extra_data=user.socialaccount_set.filter(provider='google')[0].extra_data
+    resp = requests.get(extra_data['picture'])
+    fp = BytesIO()
+    fp.write(resp.content)
+    file_name = extra_data['picture'].split("/")[-1]
+    socialflyuser = SocialflyUser.objects.create(user=user)
+    socialflyuser.profile_photo.save(user.username+'profile_photo.png', files.File(fp))
+
+    socialflyuser.save()
+    return redirect('user:profile_edit')
+
+
+
+
+
 
 
 class UserSignUpView(CreateView):
@@ -42,7 +72,7 @@ def profile_edit(request):
         user_object.user.last_name=user_from.cleaned_data.get('last_name')
         user_object.user.email=user_from.cleaned_data.get('email')
 
-        user_object.save()
+        user_object.user.save()
         edit_user_from.save()
         messages.info(request, f" has been Updated successfully !!")
         return redirect("users:profile")
