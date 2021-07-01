@@ -12,11 +12,11 @@
         
     <header class="profile__header">
         <div class="profile__column" >
-            <img src="{% static 'images/avatar.jpg' %}" />
+            <!-- <img src="{{user_object.profile_photo.url}}" height="150" width="150"> -->
         </div>
         <div class="profile__column">
             <div class="profile__title">
-                <h3 class="profile__username">serranoarevalo</h3>
+                <h3 class="profile__username">{{user_object.user.username}}</h3>
 
                 <a href="{% url 'users:profile_edit' %}">Edit profile</a>
                 <a href="{% url 'account_logout' %}"   style="color:white;background: red;text-decoration:none;border: none;" >Log Out</a>
@@ -34,14 +34,16 @@
                 </li>
                 <li class="profile__stat">
                     <span class="stat__number">36</span> following
+                </li> 
+                <li class="profile__stat">
+                <i class="fas fa-male fa-2x"></i>
                 </li>
             </ul>
             <p class="profile__bio">
                 <span class="profile__full-name">
-                    Nicolás Serrano Arévalo
-                </span> Doing whatever and eating Pho Lorem ipsum dolor sit amet consectetur, adipisicing
-                elit. Ducimus suscipit praesentium eveniet quibusdam ipsam omnis fugit. Tempore voluptates ratione recusandae
-                natus illo perspiciatis suscipit, odio consequuntur quasi obcaecati minus! Omnis.
+                    {{user_object.user.get_full_name}} Info :
+                </span> 
+                {{user_object.bio}}
                 <a href="#">serranoarevalo.com</a>
             </p>
         </div>

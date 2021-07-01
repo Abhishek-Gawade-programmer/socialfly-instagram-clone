@@ -1,5 +1,7 @@
 {% extends "_base.html" %}
 {% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
 {% load i18n %}
 {% load crispy_forms_tags %}
 
@@ -27,14 +29,14 @@
                     <div  class=" mt-3">
 
 
-                         <a href="#" class=""> 
+                         <a href="{% provider_login_url 'facebook' method='oauth2' %}" class=""> 
                             <button type="button" class="btn btn-primary btn-lg btn-floating ml-2" >
                                     <i class="fab fa-facebook fa-lg"></i></button>
                             </a>
                             <a href="#" class=""><button type="button" class="btn btn-secondary btn-lg btn-floating ml-2" style="background: purple;">
                                     <i class="fab fa-instagram fa-lg"></i>
                             </button></a>
-                            <a href="#" class=""><button type="button" class="btn btn-danger btn-lg btn-floating ml-2">
+                            <a href="{% provider_login_url 'google' %}" class=""><button type="button" class="btn btn-danger btn-lg btn-floating ml-2">
                                     <i class="fab fa-google fa-lg"></i>
                             </button></a>
                     </div>

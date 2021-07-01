@@ -23,7 +23,8 @@ class UserSignUpView(CreateView):
 
 @login_required
 def profile(request):
-    return render(request,'profile.html')
+    user_object = get_object_or_404(SocialflyUser, user = request.user)
+    return render(request,'profile.html',{'user_object':user_object})
 
 
 @login_required
