@@ -19,7 +19,7 @@ class UserSignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user,backend='allauth.account.auth_backends.AuthenticationBackend')
-        return redirect('core:explore')
+        return redirect('users:profile_edit')
 
 @login_required
 def profile(request):
