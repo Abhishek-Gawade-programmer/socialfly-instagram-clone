@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.urls import reverse
 
 GENDER_CHOICES = (
     ('M', 'Male'),
@@ -33,15 +34,22 @@ class SocialflyUser(models.Model):
 
     def get_no_of_following(self):
         return self.following.all().count()
+
+    def get_absolute_url(self):
+        return reverse('users:profile', kwargs={'socialflyuser': self.pk})
     
 
     def __str__(self):
-        return self.user.username
+        return self.user.username +'----' +str(self.profile_photo)
     
 
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+
+
+
+
 
 
 

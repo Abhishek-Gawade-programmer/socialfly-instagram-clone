@@ -7,7 +7,8 @@
 
 <br>
 <br>
-<br>
+<br><!-- Button trigger modal -->
+
 <main id="profile">
         
     <header class="profile__header">
@@ -17,11 +18,12 @@
         <div class="profile__column">
             <div class="profile__title">
                 <h3 class="profile__username">{{user_object.user.username}}</h3>
+                {% if user_object.user == user %}
 
                 <a href="{% url 'users:profile_edit' %}">Edit profile</a>
                 <a href="{% url 'account_logout' %}"   style="color:white;background: red;text-decoration:none;border: none;" >Log Out</a>
                 <i class="fa fa-cog fa-lg"></i>
-                <!-- <i class="fas fa-sign-out-alt ml-4"></i> -->
+                {% endif %}
 
             </div>
 

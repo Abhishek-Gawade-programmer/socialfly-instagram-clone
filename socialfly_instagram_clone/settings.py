@@ -55,7 +55,7 @@ INSTALLED_APPS = [
 
     #my apps
     'core',
-    'users'
+    'users.apps.UsersConfig',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -74,10 +74,12 @@ ACCOUNT_EMAIL_REQUIRED=True
 ACCOUNT_EMAIL_VERIFICATION="none"
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGOUT_ON_GET = True 
-LOGIN_REDIRECT_URL="core:explore"
-
-ACCOUNT_LOGOUT_REDIRECT_URL="account_login"
 ACCOUNT_SESSION_REMEMBER=True
+
+LOGIN_REDIRECT_URL="core:explore"
+ACCOUNT_SIGNUP_REDIRECT_URL="user:profile_edit"
+ACCOUNT_LOGOUT_REDIRECT_URL="account_login"
+
 # SOCIALACCOUNT_QUERY_EMAIL = True
 # ACCOUNT_LOGOUT_ON_GET= True
 # ACCOUNT_UNIQUE_EMAIL = True

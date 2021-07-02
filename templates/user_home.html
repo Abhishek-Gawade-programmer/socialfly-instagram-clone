@@ -1,0 +1,41 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block head_title %}My Friends{% endblock %}
+{% block content  %}
+
+
+      <br>
+      <br>
+      
+    <main id="explore" >
+        <ul class="explore__users">
+            <li class="explore__user">
+                <h6 class="mb-3 pl-5 h6" style="color: rgba(var(--i1d,38,38,38),1);font-weight: 600;">Suggestions For You</h6>
+       </li>
+            {% for friends in all_friends %}
+
+
+            <li class="explore__user">
+                
+                <div class="explore__user-column" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"> 
+                    <img src="{{friends.profile_photo.url}}" class="explore__avatar" height="50" width="50" style="border: 1px solid #555 !important;">
+                    <div class="explore__info">
+                        <a href="{{ friends.get_absolute_url }}" style="color:purple;display: block;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                        <span class="explore__username" style="">{{friends.user.username}}</span></a>
+                        <span class="explore__full-name" >{{friends.user.get_full_name}}</span>
+                    </div>
+                </div>
+                <div class=" explore__user-column float-right">
+                    <button>Follow</button>
+                </div>
+            </li>
+
+
+            {% endfor %}
+        </ul>
+
+         
+
+    </main>
+    {% endblock content %}
