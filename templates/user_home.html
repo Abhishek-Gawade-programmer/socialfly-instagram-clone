@@ -27,7 +27,8 @@
                     </div>
                 </div>
                 <div class=" explore__user-column float-right">
-                    <button>Follow</button>
+                    <a href="{% url 'users:wants_follow'  friends.pk %}">
+                    <button>Follow</button></a>
                 </div>
             </li>
 

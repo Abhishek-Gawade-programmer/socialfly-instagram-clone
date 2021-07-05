@@ -26,6 +26,7 @@ class SocialflyUser(models.Model):
     birth_date=models.DateField(null=True,blank=True)
     profile_photo=models.ImageField(default='photo.jpeg',upload_to='profile_photo')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,default='R')
+    is_private=models.BooleanField(default=False)
     created =models.DateTimeField(auto_now_add=True)
     updated=models.DateTimeField(auto_now=True)
 

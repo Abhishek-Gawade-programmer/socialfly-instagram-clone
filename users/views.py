@@ -14,13 +14,6 @@ from django.contrib.auth.decorators import login_required
 
 
 
-
-
-
-
-
-
-
 class UserSignUpView(CreateView):
     model = User
     form_class = UserSignUpForm
@@ -45,7 +38,7 @@ def profile(request,socialflyuser=None):
 @login_required
 def home_page(request):
 
-    all_friends=SocialflyUser.objects.exclude( user = request.user)
+    all_friends=SocialflyUser.objects.exclude( user = request.user,following__in=[request.user,])
     return render(request,'user_home.html',{'all_friends':all_friends})
 
 @login_required
@@ -72,4 +65,28 @@ def profile_edit(request):
     return render(request, "edit-profile.html", {
                 'user_from':user_from,
                 'user_object':user_object})
+
+
+
+
+@login_required
+def wants_follow(request,socialflyuser):
+    get_user = get_object_or_404(SocialflyUser, pk = socialflyuser)
+    who_wants_follow = get_object_or_404(SocialflyUser, user = request.user)
+
+    if get_user.is_private:
+        pass
+    else:
+        get_user.followers.add(who_wants_follow.user)
+        who_wants_follow.following.add(get_user.user)
+
+        who_wants_follow.save()
+        get_user.save()
+        return redirect('users:profile')
+        
+
+
+
+
+
 
