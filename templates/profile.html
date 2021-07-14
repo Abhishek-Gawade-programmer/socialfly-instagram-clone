@@ -1,6 +1,6 @@
 {% extends '_base.html' %}
 {% load static %}
-
+{% load user_actions %}
 {% block head_title %}Profile{% endblock %}
 {% block content  %}
 
@@ -10,7 +10,6 @@
 <br>
 
 <main id="profile">
-        
     <header class="profile__header">
         <div class="profile__column" >
              <img src="{{user_object.profile_photo.url}}" height="150" width="150" style="border: 2px solid #555 !important;">
@@ -37,7 +36,7 @@
 
                     <span class="stat__number">{{user_object.get_no_of_followers}}</span> followers
                 </li>
-                <li class="profile__stat">
+                <li class="profile__stat"  data-toggle="modal" data-target="#followingsmodel"  style="cursor:pointer;">
                     <span class="stat__number">{{user_object.get_no_of_following}}</span> following
                 </li> 
                 <li class="profile__stat">
@@ -118,42 +117,145 @@
 
 
 <div class="modal" id="followersmodel" tabindex="-1" role="dialog" aria-labelledby="followersmodelTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">
-         {% if user_object.user == user %}
-            My
-        {% else %}
-            {{user.username}}
-        {% endif %}
-        followers</h5>
+        <h5 class="modal-title " id="exampleModalLongTitle" style="font-size: 16px;font-weight: 600;align-items: center;">
+        Followers</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="alert alert-info alert-dismissible fade show" role="alert" style="display:none;" id='profile_update_alert_box'>
-              <span id='profile_update_massage'></span>
-            </div>
+        <ul class="explore__users">
+                    {% for user_follower in user_followers %}
+                         {% csrf_token %}
+                    <li class="explore__user">
+                        
+                        <div class="explore__user-column" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"> 
+                            <img src="{{user_follower.get_social_user.profile_photo.url}}" class="explore__avatar" height="45" width="30" style="border: 1px solid #555 !important;">
+                            <div class="explore__info" style="font-size: 80%">
+                                <a href="{{ user_follower.get_social_user.get_absolute_url }}" style="color:purple;display: block;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                                <span class="explore__username" style="">{{user_follower.username}} 
+                                    {% if user_follower.is_genuine %}
+                                        <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
+                                    {% endif %}
 
-            <div class="custom-control custom-switch">
-              <input type="checkbox" class="custom-control-input" id="customSwitch1">
-              <label class="custom-control-label" for="customSwitch1">Private Account</label>
-              <br>
-              {% csrf_token %}
-              <small id="passwordHelpInline" class="text-muted">
-               When your account is private, only people you approve can see your photos and videos on 
-               <span  style="color:#476cb2;font-weight: bold;">Socialfly</span>. 
-               <br>
-               Your existing followers won't be affected.
-                 </small>
-            </div>
+
+                              </span></a>
+
+                                <span class="explore__full-name" >{{user_follower.get_full_name}}</span>
+                            </div>
+                        </div>
+                        {% if user_follower != request.user %}
+                        <div class=" explore__user-column float-right">
+
+                         {% if user_follower.get_social_user.pk|check_follow_or_unfollow:request.user.get_social_user.pk  %}
+                                
+                            <button class='follow_unfollow_button' user_id='{{user_follower.get_social_user.pk}}' style="border: 2px solid;">Follow
+                            </button>   
+
+                        {% else %}                 
+                            <button class='follow_unfollow_button unfollow_button' user_id='{{user_follower.get_social_user.pk}}' style="border: 2px solid;">Unfollow
+                            </button>   
+
+                            {% endif %}
+
+                            
+                        </div>
+                        {% endif %}
+                    </li>
+           
+
+            {% endfor %}
+        </ul>
 
       </div>
     </div>
   </div>
 </div>
+
+
+
+<div class="modal" id="followingsmodel" tabindex="-1" role="dialog" aria-labelledby="followingsmodelTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title " id="exampleModalLongTitle" style="font-size: 16px;font-weight: 600;align-items: center;">
+        Following</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="explore__users">
+                    {% for user_following in user_followings %}
+ {% csrf_token %}
+            <li class="explore__user">
+                
+                <div class="explore__user-column" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"> 
+                    <img src="{{user_following.get_social_user.profile_photo.url}}" class="explore__avatar" height="45" width="30" style="border: 1px solid #555 !important;">
+                    <div class="explore__info" style="font-size: 80%">
+                        <a href="{{ user_following.get_social_user.get_absolute_url }}" style="color:purple;display: block;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                        <span class="explore__username" style="">{{user_following.username}} 
+                            {% if user_following.is_genuine %}
+                                <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
+                            {% endif %}
+
+
+                      </span></a>
+
+                        <span class="explore__full-name" >{{user_following.get_full_name}}</span>
+                    </div>
+                </div>
+                {% if user_following != request.user %}
+                    
+                
+                
+                
+                <div class=" explore__user-column float-right">
+
+                {% if user_following.get_social_user.pk|check_follow_or_unfollow:request.user.get_social_user.pk  %}
+                        
+                    <button class='follow_unfollow_button' user_id='{{user_following.get_social_user.pk}}' style="border: 2px solid;">Follow
+                    </button>   
+
+                {% else %}                 
+                    <button class='follow_unfollow_button unfollow_button' user_id='{{user_following.get_social_user.pk}}' style="border: 2px solid;">Unfollow
+                    </button>   
+
+                    {% endif %}
+
+                    
+                </div>
+                {% endif %}
+            </li>
+
+
+            {% endfor %}
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

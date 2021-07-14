@@ -14,8 +14,9 @@ GENDER_CHOICES = (
 
 class User(AbstractUser):
     is_genuine = models.BooleanField(default=False)
-    # def __str__(self):
-    #     return  str(self.get_full_name())
+
+    def get_social_user(self):
+        return  SocialflyUser.objects.get(user=self)
 
 
 class SocialflyUser(models.Model):
@@ -46,6 +47,8 @@ class SocialflyUser(models.Model):
         if get_user.user in self.followers.all():
             return False
         return True
+
+
 
 
     

@@ -31,7 +31,13 @@ def profile(request,socialflyuser=None):
 
     else:
         user_object = get_object_or_404(SocialflyUser, user = request.user)
-    return render(request,'profile.html',{'user_object':user_object})
+
+    user_followers=user_object.followers.all()
+    user_followings=user_object.following.all()
+    return render(request,'profile.html',{'user_object':user_object,
+                                    'user_followers':user_followers,
+                                    'user_followings':user_followings,
+                                    })
 
 
 @login_required
