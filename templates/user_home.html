@@ -21,10 +21,17 @@
             <li class="explore__user">
                 
                 <div class="explore__user-column" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"> 
-                    <img src="{{friends.profile_photo.url}}" class="explore__avatar" height="50" width="50" style="border: 1px solid #555 !important;">
-                    <div class="explore__info">
+                    <img src="{{friends.profile_photo.url}}" class="explore__avatar" height="45" width="30" style="border: 1px solid #555 !important;">
+                    <div class="explore__info" style="font-size: 80%">
                         <a href="{{ friends.get_absolute_url }}" style="color:purple;display: block;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
-                        <span class="explore__username" style="">{{friends.user.username}}</span></a>
+                        <span class="explore__username" style="">{{friends.user.username}} 
+                            {% if friends.user.is_genuine %}
+                                <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
+                            {% endif %}
+
+
+                      </span></a>
+
                         <span class="explore__full-name" >{{friends.user.get_full_name}}</span>
                     </div>
                 </div>

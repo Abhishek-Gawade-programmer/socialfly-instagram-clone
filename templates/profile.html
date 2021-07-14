@@ -7,7 +7,7 @@
 
 <br>
 <br>
-<br><!-- Button trigger modal -->
+<br>
 
 <main id="profile">
         
@@ -17,7 +17,9 @@
         </div>
         <div class="profile__column">
             <div class="profile__title">
-                <h3 class="profile__username">{{user_object.user.username}}</h3>
+                <h3 class="profile__username">{{user_object.user.username}}{% if user_object.user.is_genuine %}
+                                <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
+                            {% endif %}</h3>
                 {% if user_object.user == user %}
 
                 <a href="{% url 'users:profile_edit' %}">Edit profile</a>
@@ -31,7 +33,8 @@
                 <li class="profile__stat">
                     <span class="stat__number">543</span> posts
                 </li>
-                <li class="profile__stat">
+                <li class="profile__stat"  data-toggle="modal" data-target="#followersmodel" style="cursor:pointer;">
+
                     <span class="stat__number">{{user_object.get_no_of_followers}}</span> followers
                 </li>
                 <li class="profile__stat">
@@ -114,11 +117,51 @@
 
 
 
+<div class="modal" id="followersmodel" tabindex="-1" role="dialog" aria-labelledby="followersmodelTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">
+         {% if user_object.user == user %}
+            My
+        {% else %}
+            {{user.username}}
+        {% endif %}
+        followers</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info alert-dismissible fade show" role="alert" style="display:none;" id='profile_update_alert_box'>
+              <span id='profile_update_massage'></span>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="customSwitch1">
+              <label class="custom-control-label" for="customSwitch1">Private Account</label>
+              <br>
+              {% csrf_token %}
+              <small id="passwordHelpInline" class="text-muted">
+               When your account is private, only people you approve can see your photos and videos on 
+               <span  style="color:#476cb2;font-weight: bold;">Socialfly</span>. 
+               <br>
+               Your existing followers won't be affected.
+                 </small>
+            </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 {% if user_object.user == user %}
 
 
-<!-- Modal -->
+
+
 <div class="modal" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -130,7 +173,7 @@
       </div>
       <div class="modal-body">
         <div class="alert alert-info alert-dismissible fade show" role="alert" style="display:none;" id='profile_update_alert_box'>
-              <span id='profile_update_massage'>sjkadnjksdnfjksdhfjkukn</span>
+              <span id='profile_update_massage'></span>
             </div>
 
             <div class="custom-control custom-switch">
