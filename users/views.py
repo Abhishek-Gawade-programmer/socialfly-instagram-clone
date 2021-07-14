@@ -2,6 +2,7 @@ from django.shortcuts import render,get_object_or_404,redirect
 from django.views.generic import CreateView
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.http import JsonResponse, HttpResponse
 
 
 from .forms import *
@@ -10,8 +11,6 @@ from .models import *
 #USER AUTHENTICATION 
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-
-
 
 
 class UserSignUpView(CreateView):
@@ -38,7 +37,7 @@ def profile(request,socialflyuser=None):
 @login_required
 def home_page(request):
 
-    all_friends=SocialflyUser.objects.exclude( user = request.user,following__in=[request.user,])
+    all_friends=SocialflyUser.objects.exclude( user = request.user)
     return render(request,'user_home.html',{'all_friends':all_friends})
 
 @login_required
@@ -58,35 +57,38 @@ def profile_edit(request):
         edit_user_from.save()
         messages.info(request, f" has been Updated successfully !!")
         return redirect("users:profile")
-    else:
-        print('jshabfhb',user_from.errors)
 
  
     return render(request, "edit-profile.html", {
                 'user_from':user_from,
                 'user_object':user_object})
 
-
-
-
 @login_required
-def wants_follow(request,socialflyuser):
-    get_user = get_object_or_404(SocialflyUser, pk = socialflyuser)
-    who_wants_follow = get_object_or_404(SocialflyUser, user = request.user)
+def wants_follow_unfollow(request):
 
-    if get_user.is_private:
+    socialflyuser=request.POST.get('socialflyuser')
+    who_receive_action = get_object_or_404(SocialflyUser, pk = socialflyuser)
+    who_send_action = get_object_or_404(SocialflyUser, user = request.user)
+    what_to_do={'action':False,'success':'true'}
+    if who_receive_action.is_private:
         pass
     else:
-        get_user.followers.add(who_wants_follow.user)
-        who_wants_follow.following.add(get_user.user)
+        # follow the user
+        if who_receive_action.allow_to_follow(who_send_action.pk):
+            who_receive_action.followers.add(who_send_action.user)
+            who_send_action.following.add(who_receive_action.user)
+            what_to_do['action']='Unfollow'
+            
+        # unfollow the user
+        else:
 
-        who_wants_follow.save()
-        get_user.save()
-        return redirect('users:profile')
-        
+            who_receive_action.followers.remove(who_send_action.user)
+            who_send_action.following.remove(who_receive_action.user)
+            what_to_do['action']='Follow'
 
+        who_send_action.save()
+        who_receive_action.save()
 
-
-
+        return JsonResponse(what_to_do,safe=False)
 
 

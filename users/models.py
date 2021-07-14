@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
+from django.shortcuts import render,get_object_or_404,redirect
 
 GENDER_CHOICES = (
     ('M', 'Male'),
@@ -38,6 +39,15 @@ class SocialflyUser(models.Model):
 
     def get_absolute_url(self):
         return reverse('users:profile', kwargs={'socialflyuser': self.pk})
+
+
+    def allow_to_follow(self,socialflyuser):
+        get_user = get_object_or_404(SocialflyUser, pk = socialflyuser)
+        if get_user.user in self.followers.all():
+            return False
+        return True
+
+
     
 
     def __str__(self):

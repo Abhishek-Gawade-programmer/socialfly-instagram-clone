@@ -10,8 +10,10 @@
       
     <main id="explore" >
         <ul class="explore__users">
+            {% csrf_token %}
             <li class="explore__user">
                 <h6 class="mb-3 pl-5 h6" style="color: rgba(var(--i1d,38,38,38),1);font-weight: 600;">Suggestions For You</h6>
+            
        </li>
             {% for friends in all_friends %}
 
@@ -27,8 +29,8 @@
                     </div>
                 </div>
                 <div class=" explore__user-column float-right">
-                    <a href="{% url 'users:wants_follow'  friends.pk %}">
-                    <button>Follow</button></a>
+                    
+                    <button class='follow_unfollow_button' user_id='{{friends.pk}}' style="border: 2px solid;">Follow</button>
                 </div>
             </li>
 
@@ -39,4 +41,7 @@
          
 
     </main>
+
+<script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}">
+</script>
     {% endblock content %}
