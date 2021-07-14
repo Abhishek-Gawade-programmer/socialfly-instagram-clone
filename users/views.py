@@ -36,9 +36,9 @@ def profile(request,socialflyuser=None):
 
 @login_required
 def home_page(request):
-
+    user_object = get_object_or_404(SocialflyUser, user = request.user)
     all_friends=SocialflyUser.objects.exclude( user = request.user)
-    return render(request,'user_home.html',{'all_friends':all_friends})
+    return render(request,'user_home.html',{'all_friends':all_friends,'user_object':user_object})
 
 @login_required
 def profile_edit(request):

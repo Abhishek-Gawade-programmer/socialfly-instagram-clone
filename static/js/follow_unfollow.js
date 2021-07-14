@@ -7,7 +7,7 @@ $j(window).on("load", function() {
     follow_unfollow_buttons.forEach((button) =>
         button.addEventListener("click", (event) => {
             socialflyuser = button.getAttribute('user_id');
-
+             
             $j.ajax({
                 type: "POST",
 

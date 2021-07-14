@@ -1,6 +1,6 @@
 {% extends '_base.html' %}
 {% load static %}
-
+{% load user_actions %}
 {% block head_title %}My Friends{% endblock %}
 {% block content  %}
 
@@ -29,8 +29,19 @@
                     </div>
                 </div>
                 <div class=" explore__user-column float-right">
+
+                {% if friends.pk|check_follow_or_unfollow:user_object.pk  %}
+                        
+                    <button class='follow_unfollow_button' user_id='{{friends.pk}}' style="border: 2px solid;">Follow
+                    </button>   
+
+                {% else %}                 
+                    <button class='follow_unfollow_button unfollow_button' user_id='{{friends.pk}}' style="border: 2px solid;">Unfollow
+                    </button>   
+
+                    {% endif %}
+
                     
-                    <button class='follow_unfollow_button' user_id='{{friends.pk}}' style="border: 2px solid;">Follow</button>
                 </div>
             </li>
 
