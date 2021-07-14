@@ -92,3 +92,13 @@ def wants_follow_unfollow(request):
         return JsonResponse(what_to_do,safe=False)
 
 
+
+@login_required
+def change_private_status(request):
+    socialflyuser = get_object_or_404(SocialflyUser, user = request.user)
+    if socialflyuser.is_private:
+        socialflyuser.is_private=False
+    else:
+        socialflyuser.is_private=True
+    socialflyuser.save()
+    return JsonResponse({'success':'true'},safe=False)

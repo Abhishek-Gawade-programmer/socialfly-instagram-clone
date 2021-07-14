@@ -22,7 +22,7 @@
 
                 <a href="{% url 'users:profile_edit' %}">Edit profile</a>
                 <a href="{% url 'account_logout' %}"   style="color:white;background: red;text-decoration:none;border: none;" >Log Out</a>
-                <i class="fa fa-cog fa-lg"></i>
+                <i class="fa fa-cog fa-lg" data-toggle="modal" data-target="#exampleModalCenter"></i>
                 {% endif %}
 
             </div>
@@ -110,4 +110,58 @@
         </div>
     </section>
 </main>
+
+
+
+
+
+{% if user_object.user == user %}
+
+
+<!-- Modal -->
+<div class="modal" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">User Settings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info alert-dismissible fade show" role="alert" style="display:none;" id='profile_update_alert_box'>
+              <span id='profile_update_massage'>sjkadnjksdnfjksdhfjkukn</span>
+            </div>
+
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="customSwitch1">
+              <label class="custom-control-label" for="customSwitch1">Private Account</label>
+              <br>
+              {% csrf_token %}
+              <small id="passwordHelpInline" class="text-muted">
+               When your account is private, only people you approve can see your photos and videos on 
+               <span  style="color:#476cb2;font-weight: bold;">Socialfly</span>. 
+               <br>
+               Your existing followers won't be affected.
+                 </small>
+            </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    private_checkbox=document.getElementById('customSwitch1');
+    {% if user_object.is_private  %}
+        private_checkbox.checked=true
+    {% else %}
+        private_checkbox.checked=false
+    {% endif %}
+</script>
+{% endif %}
+
+<script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}">
+
+
+
 {% endblock content %}

@@ -10,4 +10,5 @@ urlpatterns = [
 
 		
 		path('wants-follow-unfollow/', wants_follow_unfollow, name='wants_follow'),
+		path('change-private-status/', change_private_status, name='change_private_status'),
 ]
