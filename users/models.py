@@ -2,13 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.shortcuts import render,get_object_or_404,redirect
+from simple_history.models import HistoricalRecords
 
 GENDER_CHOICES = (
     ('M', 'Male'),
     ('F', 'Female'),
     ('R', 'Rather Not To Say'),
 )
-
 
 
 
@@ -31,6 +31,7 @@ class SocialflyUser(models.Model):
     is_private=models.BooleanField(default=False)
     created =models.DateTimeField(auto_now_add=True)
     updated=models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     def get_no_of_followers(self):
         return self.followers.all().count()

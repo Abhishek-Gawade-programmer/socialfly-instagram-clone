@@ -12,7 +12,8 @@ from .models import *
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
-
+#HISTORY OF USERS
+from simple_history.utils import update_change_reason
 class UserSignUpView(CreateView):
     model = User
     form_class = UserSignUpForm
@@ -59,9 +60,10 @@ def profile_edit(request):
         user_object.user.last_name=user_from.cleaned_data.get('last_name')
         user_object.user.email=user_from.cleaned_data.get('email')
 
+        user_object._change_reason='change in profile'
         user_object.user.save()
         edit_user_from.save()
-        messages.info(request, f" has been Updated successfully !!")
+        messages.info(request, f"Your Profile has been Updated successfully !!")
         return redirect("users:profile")
 
  
@@ -76,21 +78,28 @@ def wants_follow_unfollow(request):
     who_receive_action = get_object_or_404(SocialflyUser, pk = socialflyuser)
     who_send_action = get_object_or_404(SocialflyUser, user = request.user)
     what_to_do={'action':False,'success':'true'}
+
     if who_receive_action.is_private:
         pass
     else:
         # follow the user
         if who_receive_action.allow_to_follow(who_send_action.pk):
             who_receive_action.followers.add(who_send_action.user)
+            #notications of user for following
+            who_receive_action._change_reason  ='started following you'
             who_send_action.following.add(who_receive_action.user)
+            who_send_action._change_reason  ='started following'
             what_to_do['action']='Unfollow'
             
         # unfollow the user
         else:
-
+             #notications of user for following
             who_receive_action.followers.remove(who_send_action.user)
+            who_receive_action._change_reason  ='unfollow you'
             who_send_action.following.remove(who_receive_action.user)
+            who_send_action._change_reason  ='unfollowed'
             what_to_do['action']='Follow'
+
 
         who_send_action.save()
         who_receive_action.save()
@@ -104,7 +113,9 @@ def change_private_status(request):
     socialflyuser = get_object_or_404(SocialflyUser, user = request.user)
     if socialflyuser.is_private:
         socialflyuser.is_private=False
+        socialflyuser._change_reason='private settings off'
     else:
         socialflyuser.is_private=True
+        socialflyuser._change_reason='private settings on'
     socialflyuser.save()
     return JsonResponse({'success':'true'},safe=False)

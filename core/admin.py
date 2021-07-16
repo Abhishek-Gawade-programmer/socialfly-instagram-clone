@@ -1,7 +1,12 @@
 from django.contrib import admin
 from users.models import *
+from simple_history.admin import SimpleHistoryAdmin
 
-admin.site.register(User)
-admin.site.register(SocialflyUser)
+
+
+
+
+admin.site.register(User,SimpleHistoryAdmin)
+admin.site.register(SocialflyUser,SimpleHistoryAdmin)
 
 # Register your models here.

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     #3rd party
+     'simple_history',
     
     # Providers
     'allauth.socialaccount.providers.facebook',
@@ -90,6 +91,7 @@ ACCOUNT_LOGOUT_REDIRECT_URL="account_login"
 
 
 MIDDLEWARE = [
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -97,6 +99,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'socialfly_instagram_clone.urls'
@@ -150,6 +153,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -189,4 +195,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#HISTORY SETINGS 
+
+SIMPLE_HISTORY_HISTORY_ID_USE_UUID = True
 
