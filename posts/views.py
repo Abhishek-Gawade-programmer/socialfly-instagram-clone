@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404,redirect
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import *
@@ -17,4 +17,16 @@ def post_image_upload(request):
 			post_image.save()
 		new_post.save()
 		return JsonResponse({'success':True,'post_pk':new_post.pk},safe=False)
+	return JsonResponse({'success':False})
+
+
+
+@login_required
+def delete_post(request):
+	# print(request.FILES,request.method)
+	if  request.method == 'POST':
+		post = get_object_or_404(Post, pk = request.POST.get('post_pk'))
+		post.delete()
+		return JsonResponse({'success':True},safe=False)
 	return JsonResponse({'post':False})
+

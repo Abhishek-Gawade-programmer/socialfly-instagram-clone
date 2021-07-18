@@ -10,12 +10,6 @@
 
 <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
 <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
-
-
-
-
-
-
     <main id="feed">
         <div class="photo">
             <header class="photo__header">
@@ -124,41 +118,7 @@
         <button type="button" id='uploadtheimage' class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload All Images</button>
       </div>
 </form>
-
-<script type="text/javascript">
-    Dropzone.autoDiscover=false;
-    removetheimage=document.getElementById('removetheimage');
-
-    const md= new Dropzone('#my-dropzone',{
-        url:"{% url 'posts:post_image_upload' %}",
-        parallelUploads: 5,
-        maxFiles:5,
-        clickable: true,
-        maxFilesize:3,
-        acceptedFiles:'.jpg,.png,.jpeg,.gif',
-        autoProcessQueue: false,
-        uploadMultiple:true,
-        success : function(file, response){
-            removetheimage.setAttribute('post_pk',response.post_pk)
-            removetheimage.innerHTML='<i class="fas fa-ban"></i> Delete the post'
-
- 
-        },
-    });
-    $j("#uploadtheimage").click(function (e) {
-        console.log('button is xclixkerf')
-    e.preventDefault();
-    md.processQueue();
-    });
-
-     $j("#removetheimage").click(function (e) {
-        console.log('button is removed')
-    e.preventDefault();
-    md.removeAllFiles();
-    });
-
- 
-
+<script type="text/javascript" src="{% static 'js/user_post.js' %}">
 </script>
       </div>
     </div>
