@@ -1,1 +1,14 @@
 .unfollow_button{background:white !important;color: black !important;}
+
+
+
+.add_button{fill: white !important;
+            right: 0 !important;
+            bottom: 0;position: fixed;
+            padding: 20px}
+
+@media screen and (max-width: 950px) {
+    .removeimage {
+        display: none !important;
+    }
+}

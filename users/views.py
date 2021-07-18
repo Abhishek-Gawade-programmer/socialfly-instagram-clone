@@ -13,7 +13,6 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
 #HISTORY OF USERS
-from simple_history.utils import update_change_reason
 class UserSignUpView(CreateView):
     model = User
     form_class = UserSignUpForm
@@ -43,13 +42,12 @@ def profile(request,socialflyuser=None):
 
 @login_required
 def home_page(request):
-    user_object = get_object_or_404(SocialflyUser, user = request.user)
     all_friends=SocialflyUser.objects.exclude( user = request.user)
-    return render(request,'user_home.html',{'all_friends':all_friends,'user_object':user_object})
+    return render(request,'user_home.html',{'all_friends':all_friends})
 
 @login_required
 def profile_edit(request):
-    user_object = get_object_or_404(SocialflyUser, user = request.user)
+    user_object = request.user.get_social_user
     user_from = UserEditFrom(request.POST or None,request.FILES or None, instance = user_object)
 
     if user_from.is_valid() :
@@ -69,14 +67,13 @@ def profile_edit(request):
  
     return render(request, "edit-profile.html", {
                 'user_from':user_from,
-                'user_object':user_object})
+                })
 
 @login_required
 def wants_follow_unfollow(request):
-
     socialflyuser=request.POST.get('socialflyuser')
     who_receive_action = get_object_or_404(SocialflyUser, pk = socialflyuser)
-    who_send_action = get_object_or_404(SocialflyUser, user = request.user)
+    who_send_action = request.user.get_social_user
     what_to_do={'action':False,'success':'true'}
 
     if who_receive_action.is_private:
@@ -110,7 +107,7 @@ def wants_follow_unfollow(request):
 
 @login_required
 def change_private_status(request):
-    socialflyuser = get_object_or_404(SocialflyUser, user = request.user)
+    socialflyuser =  request.user.get_social_user
     if socialflyuser.is_private:
         socialflyuser.is_private=False
         socialflyuser._change_reason='private settings off'

@@ -1,9 +1,10 @@
 {% load static %}
 <nav class="navigation">
         <div class="navigation__column">
-            <a href="feed.html">
+            <a href="{% url 'core:explore' %}">
                 <!-- Master branch comment -->
-                <img src="{% static 'main_logo.png' %}" />
+                <img src="{% static 'logo_.jpg' %}" />
+                <img src="{% static 'label_new.jpg' %}" class="removeimage">
             </a>
         </div>
         <div class="navigation__column">
@@ -12,6 +13,11 @@
         </div>
         <div class="navigation__column">
             <ul class="navigations__links">
+               <li class="navigation__list-item">
+                    <a href="{% url 'core:explore' %}" class="navigation__link">
+                        <i class="fas fa-plus-circle"></i>
+                    </a>
+                </li>
                 <li class="navigation__list-item">
                     <a href="{% url 'core:explore' %}" class="navigation__link">
                         <i class="fa fa-compass fa-lg"></i>

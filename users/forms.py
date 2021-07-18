@@ -64,6 +64,14 @@ class UserEditFrom(forms.ModelForm):
     birth_date=forms.DateField(label='',widget=forms.DateInput(attrs={'type': 'date'}))
     gender = forms.CharField(label='',initial='R',max_length=20,widget=forms.Select(choices=GENDER_CHOICES,attrs={'id':"gender",'class':"form-control",'placeholder':"sdfs"}))
 
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError('username is alraedy taken try another one')
+        return username
+
+
+
     class Meta:
         model=SocialflyUser
 

@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     #my apps
     'core',
     'users.apps.UsersConfig',
+    'posts',
 ]
 
 AUTH_USER_MODEL = 'users.User'
