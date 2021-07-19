@@ -11,6 +11,8 @@ class Post(models.Model):
     caption =models.CharField( max_length=100,blank=True)
     history = HistoricalRecords()
     video = models.FileField(upload_to='videos/',blank=True)
+    tagged_people=models.ManyToManyField(User,related_name='tagged_people',blank=True)
+    posted=models.BooleanField(default=False)
     created =models.DateTimeField(auto_now_add=True)
     updated=models.DateTimeField(auto_now=True)
 

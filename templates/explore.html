@@ -94,30 +94,79 @@
 
 
 
-        <div class="add_button" data-toggle="modal" data-target="#exampleModalCenter">
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="add_button" data-toggle="modal" data-target="#exampleModalLong">
             <i class="fas fa-plus-circle fa-3x"></i>  
         </div>
 
-<div class="modal" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
+
+<!-- Modal -->
+<div class="modal " id="postsucessmodel" tabindex="-1" role="dialog" aria-labelledby="postsucessmodelLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">New Post</h5>
+        <h5 class="modal-title" id="postsucessmodelLabel">Post Successfully Sent !!   </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        <form action="{% url 'posts:post_image_upload' %}" class="dropzone" method="POST" class="dropzone dz" id='my-dropzone' enctype="multipart/form-data">
-    {% csrf_token %}
-  <div class="fallback">
-    <input name="file" type="file" multiple >
+    </div>
   </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-danger" id='removetheimage' > <i class="fas fa-ban"></i> Remove all Images</button>
-        <button type="button" id='uploadtheimage' class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload All Images</button>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="modal" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle" >New Post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
       </div>
-</form>
+
+            <div class="modal-footer">
+                       <small id="postHelpInline" class="text-muted">
+           You can upload almost 5 image with each size max to 3MB  
+         </small>
+
+            <button type="button" class="btn btn-sm btn-danger" id='removetheimage' > <i class="fas fa-ban"></i> Remove  Images</button>
+            <button type="button" id='uploadtheimage' class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload  Images</button>
+      </div>
+      <div class="modal-body">
+        <div id='caption_for_image'>
+              <div class="form-group">
+                <label for="caption_text">Add Caption</label>
+                <textarea class="form-control" id="caption_text" rows="3"  placeholder="Add Caption To post"></textarea>
+              </div>
+        </div>
+        <form action="{% url 'posts:post_image_upload' %}"  method="POST" class="dropzone dz" id='my-dropzone' enctype="multipart/form-data">
+    {% csrf_token %}
+            <div class="fallback" id='form_area'>
+                <input name="file" type="file" multiple >
+            </div>
+        </form>
+
 <script type="text/javascript" src="{% static 'js/user_post.js' %}">
 </script>
       </div>

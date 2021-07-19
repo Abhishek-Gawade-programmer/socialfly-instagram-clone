@@ -30,3 +30,12 @@ def delete_post(request):
 		return JsonResponse({'success':True},safe=False)
 	return JsonResponse({'post':False})
 
+@login_required
+def submit_post(request):
+	if  request.method == 'POST':
+		form_data=request.POST
+		post = get_object_or_404(Post, pk = form_data.get('post_pk'))
+		post.caption=form_data.get('caption_text')
+		post.posted=True
+		post.save()
+		return JsonResponse({'post':False})
