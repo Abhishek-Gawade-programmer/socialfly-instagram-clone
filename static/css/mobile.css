@@ -13,9 +13,7 @@
     border: 0;
     margin-bottom: 20px;
   }
-  #feed .photo .photo__add-comment-container {
-    display: none;
-  }
+
   .footer {
     width: 80%;
   }

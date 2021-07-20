@@ -43,6 +43,9 @@ class SocialflyUser(models.Model):
     def get_absolute_url(self):
         return reverse('users:profile', kwargs={'socialflyuser': self.pk})
 
+    def get_user_post(self):
+        from posts.models import Post
+        return Post.objects.filter(user=self.user)
 
     def allow_to_follow(self,socialflyuser):
         get_user = get_object_or_404(SocialflyUser, pk = socialflyuser)
@@ -50,11 +53,9 @@ class SocialflyUser(models.Model):
             return False
         return True
 
-
     def __str__(self):
         return self.user.username +'----' +str(self.profile_photo)
     
-
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

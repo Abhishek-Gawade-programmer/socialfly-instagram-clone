@@ -32,6 +32,7 @@ def profile(request,socialflyuser=None):
     else:
         user_object = get_object_or_404(SocialflyUser, user = request.user)
 
+    print(user_object.user.get_social_user.get_user_post())
     user_followers=user_object.followers.all()
     user_followings=user_object.following.all()
     return render(request,'profile.html',{'user_object':user_object,

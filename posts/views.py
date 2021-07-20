@@ -34,8 +34,12 @@ def delete_post(request):
 def submit_post(request):
 	if  request.method == 'POST':
 		form_data=request.POST
+
 		post = get_object_or_404(Post, pk = form_data.get('post_pk'))
 		post.caption=form_data.get('caption_text')
+		usernames_list=form_data.get('tag_usernames_list').split(',')
+		for username in usernames_list:
+			post.tagged_people.add(User.objects.get(username=username))
 		post.posted=True
 		post.save()
 		return JsonResponse({'post':False})

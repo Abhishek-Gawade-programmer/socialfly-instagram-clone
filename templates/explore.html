@@ -3,11 +3,6 @@
 {% block head_title %}Explore{% endblock %}
 {% block content  %}
 
-
-
-
-
-
 <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
 <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'css/amsify.suggestags.css' %}">
@@ -63,6 +58,11 @@
                         <span class="photo__action">
                             <i class="fa fa-comment-o fa-lg"></i>
                         </span>
+                        {% if post.tagged_people.all %}
+                             <span class="photo__action ml-3">
+                                <i class="far fa-user fa-lg"></i>
+                            </span>
+                        {% endif %}
                     </div>
                     <span class="photo__likes">45 likes</span>
                     <ul class="photo__comments">
@@ -89,7 +89,6 @@
 
             {% endfor %}
         </main>
-
 
 
 
@@ -134,18 +133,17 @@
             <button type="button" id='uploadtheimage' class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload  Images</button>
       </div>
       <div class="modal-body">
-                      <div class="form-group">
-                <label for="tag_friends">Tag Your Friends</label>
-             <input type="text" class="form-control" id="tag_friends" name="following" value="" placeholder="Tag Your Friends">
-             </div>
-
-
 
         <div id='caption_for_image'>
+
               <div class="form-group">
                 <label for="caption_text">Add Caption</label>
                 <textarea class="form-control" id="caption_text" rows="3"  placeholder="Add Caption To post"></textarea>
               </div>
+                                 <div class="form-group">
+                <label for="tag_friends">Tag Your Friends</label>
+             <input type="text" class="form-control" id="tag_friends" name="following" value="" placeholder="Tag Your Friends">
+             </div>
         </div>
                     
         

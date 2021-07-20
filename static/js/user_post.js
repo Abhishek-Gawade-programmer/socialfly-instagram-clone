@@ -29,6 +29,7 @@ $j("#uploadtheimage").click(function (e) {
   post_pk = removetheimage.getAttribute("post_pk");
   if (post_pk) {
     caption_text = document.getElementById("caption_text").value;
+    tag_usernames=document.getElementById('tag_friends').value;
 
     $j.ajax({
       type: "POST",
@@ -39,10 +40,10 @@ $j("#uploadtheimage").click(function (e) {
         csrfmiddlewaretoken: csrftoken,
         post_pk: post_pk,
         caption_text: caption_text,
+        tag_usernames_list:tag_usernames
       },
 
       success: function (response) {
-        console.log('post submited >>>>>',response)
         md.removeAllFiles();
         removetheimage.removeAttribute("post_pk");
         removetheimage.innerHTML =
