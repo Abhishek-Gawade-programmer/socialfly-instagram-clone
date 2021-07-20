@@ -39,3 +39,10 @@ def submit_post(request):
 		post.posted=True
 		post.save()
 		return JsonResponse({'post':False})
+
+
+@login_required
+def explore(request):
+	recommend_posts=Post.objects.filter(posted=True)
+	context={'recommend_posts':recommend_posts}
+	return render(request,'explore.html',context)
