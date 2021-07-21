@@ -1,5 +1,6 @@
 {% extends '_base.html' %}
 {% load static %}
+{% load user_actions %}
 {% block head_title %}Explore{% endblock %}
 {% block content  %}
 
@@ -59,10 +60,70 @@
                             <i class="fa fa-comment-o fa-lg"></i>
                         </span>
                         {% if post.tagged_people.all %}
-                             <span class="photo__action ml-3">
+                             <span class="photo__action ml-3"  data-toggle="modal" data-target="#model{{post.id}}{{post.user.username}}taggedmodel">
                                 <i class="far fa-user fa-lg"></i>
                             </span>
-                        {% endif %}
+                    
+                    <div class="modal" id="model{{post.id}}{{post.user.username}}taggedmodel" tabindex="-1" role="dialog" aria-labelledby="model{{post.id}}{{post.user.username}}taggedTtile" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title " id="exampleModalLongTitle" style="font-size: 16px;font-weight: 600;align-items: center;">
+                            Tagged Users</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <ul class="explore__users">
+                                        {% for user_follower in post.tagged_people.all %}
+                                             {% csrf_token %}
+                                        <li class="explore__user">
+                                            
+                                            <div class="explore__user-column" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"> 
+                                                <img src="{{user_follower.get_social_user.profile_photo.url}}" class="explore__avatar" height="45" width="30" style="border: 1px solid #555 !important;">
+                                                <div class="explore__info" style="font-size: 80%">
+                                                    <a href="{{ user_follower.get_social_user.get_absolute_url }}" style="color:purple;display: block;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                                                    <span class="explore__username" style="">{{user_follower.username}} 
+                                                        {% if user_follower.is_genuine %}
+                                                            <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
+                                                        {% endif %}
+
+
+                                                  </span></a>
+
+                                                    <span class="explore__full-name" >{{user_follower.get_full_name}}</span>
+                                                </div>
+                                            </div>
+                                            {% if user_follower != request.user %}
+                                            <div class=" explore__user-column float-right">
+
+                                             {% if user_follower.get_social_user.pk|check_follow_or_unfollow:request.user.get_social_user.pk  %}
+                                                    
+                                                <button class='follow_unfollow_button' user_id='{{user_follower.get_social_user.pk}}' style="border: 2px solid;">Follow
+                                                </button>   
+
+                                            {% else %}                 
+                                                <button class='follow_unfollow_button unfollow_button' user_id='{{user_follower.get_social_user.pk}}' style="border: 2px solid;">Unfollow
+                                                </button>   
+
+                                                {% endif %}
+
+                                                
+                                            </div>
+                                            {% endif %}
+                                        </li>
+                               
+
+                                {% endfor %}
+                            </ul>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+
                     </div>
                     <span class="photo__likes">45 likes</span>
                     <ul class="photo__comments">
@@ -140,7 +201,7 @@
                 <label for="caption_text">Add Caption</label>
                 <textarea class="form-control" id="caption_text" rows="3"  placeholder="Add Caption To post"></textarea>
               </div>
-                                 <div class="form-group">
+            <div class="form-group">
                 <label for="tag_friends">Tag Your Friends</label>
              <input type="text" class="form-control" id="tag_friends" name="following" value="" placeholder="Tag Your Friends">
              </div>
@@ -161,9 +222,6 @@
 
 
 
-
-
-
 <script type="text/javascript" src="{% static 'js/user_post.js' %}">
 </script>
      <script type="text/javascript">
@@ -175,4 +233,5 @@
     });
 
 </script>
+<script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}">
 {% endblock content %}

@@ -45,6 +45,7 @@ def submit_post(request):
 		return JsonResponse({'post':False})
 
 
+
 @login_required
 def explore(request):
 	recommend_posts=Post.objects.filter(posted=True)
