@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.shortcuts import render,get_object_or_404,redirect
 from simple_history.models import HistoricalRecords
-
 GENDER_CHOICES = (
     ('M', 'Male'),
     ('F', 'Female'),
@@ -59,14 +58,3 @@ class SocialflyUser(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-
-
-
-
-
-
-
-
-
-
-

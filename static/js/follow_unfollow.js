@@ -33,10 +33,6 @@ $j(window).on("load", function() {
                     	$j(button).removeClass('unfollow_button')
                     }
                     button.textContent=response.action
-
-                    
-
-
                 },
 
 
@@ -62,26 +58,11 @@ $j(window).on("load", function() {
                         $j(profile_update_alert_box).show()
                     }
 
-
-                    
-
-
                 },
 
 
             });
 
         })
-
-
-
-
-
-
-
-
-
-
-
 
 });
