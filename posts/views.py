@@ -3,6 +3,15 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import *
 
+#PAGINATION
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+
+
+
+
+
+
 @login_required
 def post_image_upload(request):
 	# print(request.FILES,request.method)
@@ -49,5 +58,16 @@ def submit_post(request):
 @login_required
 def explore(request):
 	recommend_posts=Post.objects.filter(posted=True)
-	context={'recommend_posts':recommend_posts}
+    page = request.GET.get('page', 1)
+    paginator = Paginator(recommend_posts, 20)
+    try:
+        numbers = paginator.page(page)
+    except PageNotAnInteger:
+        numbers = paginator.page(1)
+    except EmptyPage:
+        numbers = paginator.page(paginator.num_pages)
+
+	context={'recommend_posts':recommend_posts,
+			  'numbers': numbers}
 	return render(request,'explore.html',context)
+
