@@ -61,29 +61,57 @@ def submit_post(request):
 
 @login_required
 def explore(request):
-	# recommend_posts=Post.objects.filter(posted=True)
-	# page = request.GET.get('page', 1)
-	# paginator = Paginator(recommend_posts, 2)
-	# try:
-	# 	numbers = paginator.page(page)
-	# except PageNotAnInteger:
-	# 	numbers = paginator.page(1)
-	# except EmptyPage:
-	# 	numbers = paginator.page(paginator.num_pages)
+	recommend_posts=Post.objects.filter(posted=True)
+	page = request.GET.get('page', 1)
+	paginator = Paginator(recommend_posts, 1)
+	try:
+		numbers = paginator.page(page)
+	except PageNotAnInteger:
+		numbers = paginator.page(1)
+	except EmptyPage:
+		if request.is_ajax():
+			# If the request is AJAX and the page is out of range
+			# return an empty page
+			return HttpResponse('')
+		# If page is out of range deliver last page of results
+		numbers = paginator.page(paginator.num_pages)
 
-	# context={'recommend_posts':recommend_posts,
-	# 		  'numbers': numbers}
-	return render(request,'explore.html')
+
+	context={'recommend_posts':recommend_posts,
+			  'numbers': numbers}
+	if request.is_ajax():
+		return render(request,'post_ajax.html',context)
+	return render(request,'explore.html',context)
+
+
+
+
+
+
+
+
 
 class PostListJsonView(View):
 	def get(self,*args,**kwargs):
 		upper=kwargs.get('num_posts')#3
-		lower=upper-3
-		recommend_posts=list(Post.objects.filter(posted=True).values()[lower:upper])
+		lower=upper-2
+		recommend_posts=list(Post.objects.filter(posted=True).values(
+			'user__username','user__first_name','user__last_name',
+			"user__socialflyuser__profile_photo",
+			"caption", "created", "id", "like_people", "posted",
+			  "updated", "user_id",
+			)[lower:upper])
 		for post in recommend_posts:
+			post["tagged_people"]=list(
+					get_object_or_404(
+						Post, id =post['id']).tagged_people.all().values(
+							'first_name','last_name','username'))
+			post_user=User.objects.get(id=post["user_id"]).get_social_user
+			post['profile_photo']=post_user.profile_photo.url
+			post['get_absolute_url']=post_user.get_absolute_url()
+	
 			post['post_images']=list(PostImage.objects.filter(post__id=post['id']).values())
 			for post_image in post['post_images']:
 				post_image['image']=settings.MEDIA_URL+post_image['image']
-				print('>>>',post_image)
 		return JsonResponse({'data':recommend_posts},safe=False)
 

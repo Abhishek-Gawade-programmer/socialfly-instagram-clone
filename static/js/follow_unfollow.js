@@ -3,7 +3,7 @@ $j(window).on("load", function() {
     let csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
     let follow_unfollow_buttons = document.querySelectorAll(".follow_unfollow_button");
 
-    let private_checkbox=document.getElementById('customSwitch1');
+    // let private_checkbox=document.getElementById('customSwitch1');
     let profile_update_alert_box=document.getElementById('profile_update_alert_box');
     let profile_update_massage=document.getElementById('profile_update_massage');
 
@@ -40,29 +40,29 @@ $j(window).on("load", function() {
 
         }));
 
-          private_checkbox.addEventListener("change", (event) => {
-            $j(profile_update_alert_box).hide()
+        //   private_checkbox.addEventListener("change", (event) => {
+        //     $j(profile_update_alert_box).hide()
              
-            $j.ajax({
-                type: "POST",
+        //     $j.ajax({
+        //         type: "POST",
 
-                url: window.location.origin + "/users/change-private-status/",
+        //         url: window.location.origin + "/users/change-private-status/",
 
-                data: {
-                    csrfmiddlewaretoken: csrftoken,
-                },
+        //         data: {
+        //             csrfmiddlewaretoken: csrftoken,
+        //         },
 
-                success: function(response) {
-                    if (response) {
-                        profile_update_massage.textContent='Your profile Updated successfully !!'
-                        $j(profile_update_alert_box).show()
-                    }
+        //         success: function(response) {
+        //             if (response) {
+        //                 profile_update_massage.textContent='Your profile Updated successfully !!'
+        //                 $j(profile_update_alert_box).show()
+        //             }
 
-                },
+        //         },
 
 
-            });
+        //     });
 
-        })
+        // })
 
 });

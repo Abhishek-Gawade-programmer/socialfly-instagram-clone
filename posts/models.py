@@ -5,7 +5,6 @@ from simple_history.models import HistoricalRecords
 class Post(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     caption =models.CharField( max_length=100,blank=True)
-    post =models.CharField( max_length=100,blank=True)
     history = HistoricalRecords()
     video = models.FileField(upload_to='videos/',blank=True)
     tagged_people=models.ManyToManyField(User,related_name='tagged_people',blank=True)
@@ -23,6 +22,8 @@ class Post(models.Model):
     def __str__(self):
         return self.user.username +'----' +str(self.caption)
 
+    class Meta:
+        ordering = ('-created',)
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
