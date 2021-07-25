@@ -1,7 +1,7 @@
 {% load static %}
 {% load user_actions %}
+{% load date_tag %}
         
-
         {% for post in numbers %}
             <div class="photo">
      
@@ -27,9 +27,9 @@
                         <span  data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></span>
                           <div class="dropdown-menu">
                             
-                            <a class="dropdown-item" href="#"><i class="fas fa-eye pr-3"></i>  View </a>
-                            <a class="dropdown-item" href="#"><i class="fas fa-flag pr-3"></i> Report  </a>
-                            <a class="dropdown-item" href="#"><i class="fas fa-trash pr-3"></i> Delete </a>
+                            <a class="dropdown-item" href="#" ><i class="fas fa-eye pr-3"></i>  View </a>
+                            <a class="dropdown-item" href="#" type="button" post-id='{{post.id}}'  id='report_post' onclick="function report_post(){report_post_function({{post.id}})};report_post()" data-toggle="modal" data-target="#reportpostmodel"><i class="fas fa-flag pr-3"></i> Report  </a>
+                            <a class="dropdown-item" href="#" type="button" post-id='{{post.id}}'  id='delete_post' onclick="" data-toggle="modal" data-target="#deletepostmodel"><i class="fas fa-trash pr-3"></i> Delete </a>
                           </div>
                     </div>
                     </div>
@@ -140,10 +140,16 @@
                         {% endif %}
 
                     </div>
+                    <span class="photo__time-ago mb-2">{{ post|date_str_output }}</span>
                     <span class="photo__likes">45 likes</span>
                     <ul class="photo__comments">
+                        <li class="photo__comment" style="display: inline-flex;">
+                            <span class="photo__comment-author" style="color:purple;">serranoarevalo : </span> love this!  {{ post|date_str_output }}
+                        </li>
                         <li class="photo__comment">
-                            <span class="photo__comment-author">serranoarevalo</span> love this!
+                             <a href="{{ post.user.get_social_user.get_absolute_url }}" style="color:purple;">
+                                <span class="photo__comment-author">serranoarevalo</span></a> :
+                                 love this!
                         </li>
                         <li class="photo__comment">
                             <span class="photo__comment-author">serranoarevalo</span> love this!
@@ -151,11 +157,9 @@
                         <li class="photo__comment">
                             <span class="photo__comment-author">serranoarevalo</span> love this!
                         </li>
-                        <li class="photo__comment">
-                            <span class="photo__comment-author">serranoarevalo</span> love this!
-                        </li>
+
                     </ul>
-                    <span class="photo__time-ago">2 hours ago</span>
+                    <a href="{{ post.user.get_social_user.get_absolute_url }}" style="color:purple;">View More</a> 
                     <div class="photo__add-comment-container">
                         <textarea name="comment" placeholder="Add a comment..."></textarea>
                              <i class="fas fa-location-arrow"></i>
@@ -164,3 +168,6 @@
             </div>
 
             {% endfor %}
+<script type="text/javascript">
+    
+</script>

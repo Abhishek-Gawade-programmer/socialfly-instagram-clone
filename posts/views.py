@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def post_image_upload(request):
-	# print(request.FILES,request.method)
+	print(request.FILES,request.method)
 	if  request.method == 'POST':
 		new_post=Post.objects.create(user=request.user)
 
@@ -52,7 +52,8 @@ def submit_post(request):
 		post.caption=form_data.get('caption_text')
 		usernames_list=form_data.get('tag_usernames_list').split(',')
 		for username in usernames_list:
-			post.tagged_people.add(User.objects.get(username=username))
+			if username:
+				post.tagged_people.add(User.objects.get(username=username))
 		post.posted=True
 		post.save()
 		return JsonResponse({'post':False})
@@ -87,31 +88,6 @@ def explore(request):
 
 
 
-
-
-
-
-class PostListJsonView(View):
-	def get(self,*args,**kwargs):
-		upper=kwargs.get('num_posts')#3
-		lower=upper-2
-		recommend_posts=list(Post.objects.filter(posted=True).values(
-			'user__username','user__first_name','user__last_name',
-			"user__socialflyuser__profile_photo",
-			"caption", "created", "id", "like_people", "posted",
-			  "updated", "user_id",
-			)[lower:upper])
-		for post in recommend_posts:
-			post["tagged_people"]=list(
-					get_object_or_404(
-						Post, id =post['id']).tagged_people.all().values(
-							'first_name','last_name','username'))
-			post_user=User.objects.get(id=post["user_id"]).get_social_user
-			post['profile_photo']=post_user.profile_photo.url
-			post['get_absolute_url']=post_user.get_absolute_url()
-	
-			post['post_images']=list(PostImage.objects.filter(post__id=post['id']).values())
-			for post_image in post['post_images']:
-				post_image['image']=settings.MEDIA_URL+post_image['image']
-		return JsonResponse({'data':recommend_posts},safe=False)
-
+@login_required
+def report_post(request):
+	pass

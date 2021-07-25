@@ -1,7 +1,7 @@
 
 @media screen and (min-width: 175px) and (max-width: 667px) {
   .navigation {
-    padding: 0 20px;
+    padding: 0 10px;
     margin-bottom: 0;
   }
   .navigation input,

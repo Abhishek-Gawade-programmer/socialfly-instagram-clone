@@ -17,10 +17,10 @@ class Post(models.Model):
         return PostImage.objects.filter(post=self)
 
     def get_absolute_url(self):
-        return self.post.user.username +'----' +str(self.post.caption)
+        return self.post.user.username +'::' +str(self.post.caption)
         
     def __str__(self):
-        return self.user.username +'----' +str(self.caption)
+        return self.user.username +'::' +str(self.caption)
 
     class Meta:
         ordering = ('-created',)
@@ -31,20 +31,25 @@ class Post(models.Model):
 class PostImage(models.Model):
     image=models.ImageField(upload_to='user_photoes/')
     created =models.DateTimeField(auto_now_add=True)
-    updated=models.DateTimeField(auto_now=True)
     post=models.ForeignKey(Post,on_delete=models.CASCADE)
     def __str__(self):
-    	return self.post.user.username +'----' +str(self.post.caption)
+    	return self.post.user.username +'::' +str(self.post.caption)
 
 
+class Comment(models.Model):
+    text =models.CharField( max_length=100,blank=True)
+    created =models.DateTimeField(auto_now_add=True)
+    post=models.ForeignKey(Post,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.post.user.username +'::' +str(self.text)
 
+class ReportPost(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    description =models.CharField( max_length=100,blank=True)
+    created =models.DateTimeField(auto_now_add=True)
+    post=models.ForeignKey(Post,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.post.user.username +'::' +str(self.description)
 
-
-#  {'file[0]': [<InMemoryUploadedFile: Screenshot (7).png (image/png)>], 
-#  'file[1]': [<InMemoryUploadedFile: Screenshot (6).png (image/png)>], 
-# 'file[2]': [<InMemoryUploadedFile: Screenshot (5).png (image/png)>],
-#  'file[3]': [<InMemoryUploadedFile: Screenshot (4).png (image/png)>],
-#  'file[4]': [<InMemoryUploadedFile: Screenshot (3).png (image/png)>
-# ]}
 
 

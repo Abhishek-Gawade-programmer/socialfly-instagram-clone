@@ -9,7 +9,7 @@ Dropzone.autoDiscover = false;
 
 const md = new Dropzone("#my-dropzone", {
   url: window.location.origin + "/posts/post-image-upload/",
-  parelUploads: 5,
+  parallelUploads: 5,
   maxFiles: 5,
   clickable: true,
   maxFilesize: 3,
@@ -52,7 +52,7 @@ $j("#uploadtheimage").click(function (e) {
           '<i class="fas fa-upload"></i> Upload All Images';
         $j(caption_for_image).hide();
         $('#exampleModalLong').modal('hide');
-
+        location.reload()
         $('#postsucessmodel').modal('show');
       },
     });

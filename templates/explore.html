@@ -24,6 +24,8 @@
         </div>
 
  
+
+ {# sucesss model #}
 <div class="modal " id="postsucessmodel" tabindex="-1" role="dialog" aria-labelledby="postsucessmodelLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -37,7 +39,7 @@
   </div>
 </div>
 
-
+{# POST MODEL UPLOAD #}
 
 <div class="modal" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
@@ -88,7 +90,74 @@
 
 
 
+
+
+<!-- Report  Modal -->
+<div class="modal " id="reportpostmodel" tabindex="-1" role="dialog" aria-labelledby="reportpostmodelTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+ 
+        <h5 class="modal-title" id="exampleModalLongTitle">Report Post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info" role="alert">
+        Leave if you do not want to give discription your report will be send
+      </div>
+        <input class="form-control form-control" type="text" placeholder="Description for Report" id='description_box' value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id='report_post_button'>Report Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- Delete  Modal -->
+<div class="modal " id="deletepostmodel" tabindex="-1" role="dialog" aria-labelledby="deletepostmodelTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+ 
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete Post ??</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" role="alert">
+        Deleting the post will delete all related 
+        <ol>
+          <li>Comments</li>
+          <li>Likes</li>
+          <li>History</li>
+          <li>Share link wouldn't work</li>
+        </ol>
+      </div>
+      </div>
+      <div class="modal-footer">
+          <div class="col">
+              <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+            </div>
+          <div class="col">
+            <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" id='report_question'>Delete  Post</button>
+          </div>
+          
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
 <script type="text/javascript" src="{% static 'js/user_post.js' %}">
+
 </script>
      <script type="text/javascript">
     $j('input[name="following"]').amsifySuggestags({
