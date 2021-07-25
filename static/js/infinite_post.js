@@ -2,14 +2,11 @@ var spiner_box = document.getElementById("spiner_box");
 var page = 1;
 var empty_page = false;
 var block_request = false;
-let csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
 function report_post_function(post_id) {
   let description_box = document.getElementById("description_box");
   let report_post_button = document.getElementById("report_post_button");
   report_post_button.addEventListener("click", (event) => {
-    
-
     $j.ajax({
       type: "POST",
 
@@ -20,9 +17,12 @@ function report_post_function(post_id) {
         post_id: post_id,
         description: description_box.value,
       },
-
       success: function (response) {
-          $("#postsucessmodel").modal("show");
+          console.log('post_id'+post_id);
+            $j('#post_id'+post_id).fadeOut(300, function() {
+              $j('#post_id'+post_id).remove();
+          });
+          // $j("#postsucessmodel").modal("show");
       },
       error :function (response) {
           console.log('sth happen bad')

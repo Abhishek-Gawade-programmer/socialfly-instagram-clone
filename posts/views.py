@@ -90,4 +90,10 @@ def explore(request):
 
 @login_required
 def report_post(request):
-	pass
+	description=request.POST.get('description')
+	post_id=request.POST.get('post_id')
+	post = get_object_or_404(Post, pk = post_id)
+	report_obj=ReportPost.objects.create(user=request.user,description=description,post=post)
+	report_obj.save()
+	return JsonResponse({'success':True})
+
