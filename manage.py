@@ -16,13 +16,12 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
-
+    
 
 
 if __name__ == '__main__':
     main()
 '''
-virtualenv env ; .\env\Scripts\activate  ; python manage.py runserver
 
 virtualenv env && source env/bin/activate && python manage.py runserver
 .\env\Scripts\activate

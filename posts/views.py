@@ -11,11 +11,6 @@ from .models import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
-
-
-
-
-
 @login_required
 def post_image_upload(request):
 	print(request.FILES,request.method)
@@ -30,15 +25,12 @@ def post_image_upload(request):
 			post_image.save()
 		new_post.save()
 		return JsonResponse({'success':True,'post_pk':new_post.pk},safe=False)
-	return JsonResponse({'success':False})
-
-
+	return JsonResponse
 
 @login_required
 def delete_post(request):
-	# print(request.FILES,request.method)
 	if  request.method == 'POST':
-		post = get_object_or_404(Post, pk = request.POST.get('post_pk'))
+		post = get_object_or_404(Post, pk = request.POST.get('post_id'),user=request.user)
 		post.delete()
 		return JsonResponse({'success':True},safe=False)
 	return JsonResponse({'post':False})
@@ -62,7 +54,10 @@ def submit_post(request):
 
 @login_required
 def explore(request):
-	recommend_posts=Post.objects.filter(posted=True)
+	l=[report_post.post.id for report_post in ReportPost.objects.filter(user=request.user)]
+	recommend_posts=Post.objects.filter(posted=True).exclude(id__in=l)
+	print(l)
+
 	page = request.GET.get('page', 1)
 	paginator = Paginator(recommend_posts, 1)
 	try:
@@ -85,15 +80,12 @@ def explore(request):
 	return render(request,'explore.html',context)
 
 
-
-
-
 @login_required
 def report_post(request):
 	description=request.POST.get('description')
 	post_id=request.POST.get('post_id')
 	post = get_object_or_404(Post, pk = post_id)
-	report_obj=ReportPost.objects.create(user=request.user,description=description,post=post)
-	report_obj.save()
+	report_obj=ReportPost.objects.update_or_create(user=request.user,description=description,post=post)
+	report_obj[0].save()
 	return JsonResponse({'success':True})
 

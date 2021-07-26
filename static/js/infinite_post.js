@@ -6,6 +6,7 @@ var block_request = false;
 function report_post_function(post_id) {
   let description_box = document.getElementById("description_box");
   let report_post_button = document.getElementById("report_post_button");
+  let postsucessmodelLabel = document.getElementById("postsucessmodelLabel");
   report_post_button.addEventListener("click", (event) => {
     $j.ajax({
       type: "POST",
@@ -19,24 +20,49 @@ function report_post_function(post_id) {
       },
       success: function (response) {
           console.log('post_id'+post_id);
+          postsucessmodelLabel.textContent='Thanks for feedback !!'
             $j('#post_id'+post_id).fadeOut(300, function() {
               $j('#post_id'+post_id).remove();
           });
-          // $j("#postsucessmodel").modal("show");
+          $("#postsucessmodel").modal("show");
       },
       error :function (response) {
           console.log('sth happen bad')
       },
     });
   });
-}
+};
 
-// report_post_buttons.forEach((report_button) =>
-//     report_button.addEventListener("click", (event) => {
-//         post_id = report_button.getAttribute('post-id');
-//         console.log(post_id)
 
-// }));
+
+function delete_post_function(post_id) {
+  let delete_post = document.getElementById("delete_post");
+  console.log(delete_post)
+  let postsucessmodelLabel = document.getElementById("postsucessmodelLabel");
+  delete_post.addEventListener("click", (event) => {
+    $j.ajax({
+      type: "POST",
+
+      url: window.location.origin + "/posts/delete-post/",
+
+      data: {
+        csrfmiddlewaretoken: csrftoken,
+        post_id: post_id,
+      },
+      success: function (response) {
+          console.log('post_id'+post_id);
+          postsucessmodelLabel.textContent='Your post is deleted !!'
+            $j('#post_id'+post_id).fadeOut(300, function() {
+              $j('#post_id'+post_id).remove();
+          });
+          $("#postsucessmodel").modal("show");
+      },
+      error :function (response) {
+          console.log('sth happen bad')
+      },
+    });
+  });
+};
 
 $j(window).scroll(function () {
   var margin = $j(document).height() - $j(window).height() - 200;

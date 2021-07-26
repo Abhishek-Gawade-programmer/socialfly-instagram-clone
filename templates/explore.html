@@ -119,7 +119,7 @@
 </div>
 
 
-<!-- Delete  Modal -->
+<!-- Delete Post Modal -->
 <div class="modal " id="deletepostmodel" tabindex="-1" role="dialog" aria-labelledby="deletepostmodelTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -133,12 +133,12 @@
       <div class="modal-body">
         <div class="alert alert-danger" role="alert">
         Deleting the post will delete all related 
-        <ol>
+        <ul style="list-style:initial;padding: 3px;">
           <li>Comments</li>
           <li>Likes</li>
           <li>History</li>
-          <li>Share link wouldn't work</li>
-        </ol>
+          <li>Shared link wouldn't work</li>
+        </ul>
       </div>
       </div>
       <div class="modal-footer">
@@ -146,7 +146,7 @@
               <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
             </div>
           <div class="col">
-            <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" id='report_question'>Delete  Post</button>
+            <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" id='delete_post'>Delete  Post</button>
           </div>
           
       </div>

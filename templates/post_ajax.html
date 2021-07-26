@@ -26,10 +26,18 @@
                    <div class="btn-group dropleft float-right pr-3" >
                         <span  data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></span>
                           <div class="dropdown-menu">
-                            
                             <a class="dropdown-item" href="#" ><i class="fas fa-eye pr-3"></i>  View </a>
-                            <a class="dropdown-item" href="#" type="button" post-id='{{post.id}}'  id='report_post' onclick="function report_post(){report_post_function({{post.id}})};report_post()" data-toggle="modal" data-target="#reportpostmodel"><i class="fas fa-flag pr-3"></i> Report  </a>
-                            <a class="dropdown-item" href="#" type="button" post-id='{{post.id}}'  id='delete_post' onclick="" data-toggle="modal" data-target="#deletepostmodel"><i class="fas fa-trash pr-3"></i> Delete </a>
+                                {% if post.user == request.user  %}
+                            <a class="dropdown-item" href="#" type="button" post-id='{{post.id}}'  
+                            onclick="function delete_post(){delete_post_function({{post.id}})};delete_post()" onclick="" data-toggle="modal" data-target="#deletepostmodel" ><i class="fas fa-trash pr-3"></i> Delete </a>
+                                {% else %}
+                            <a class="dropdown-item" href="#" type="button" post-id='{{post.id}}'  
+                            id='report_post' onclick="function report_post(){report_post_function({{post.id}})};report_post()" data-toggle="modal" data-target="#reportpostmodel"><i class="fas fa-flag pr-3"></i> Report  </a>
+
+                                
+                            
+                            {% endif %}
+
                           </div>
                     </div>
                     </div>

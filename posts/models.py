@@ -30,24 +30,24 @@ class Post(models.Model):
 
 class PostImage(models.Model):
     image=models.ImageField(upload_to='user_photoes/')
-    created =models.DateTimeField(auto_now_add=True)
     post=models.ForeignKey(Post,on_delete=models.CASCADE)
+    created =models.DateTimeField(auto_now_add=True)
     def __str__(self):
     	return self.post.user.username +'::' +str(self.post.caption)
 
 
 class Comment(models.Model):
     text =models.CharField( max_length=100,blank=True)
-    created =models.DateTimeField(auto_now_add=True)
     post=models.ForeignKey(Post,on_delete=models.CASCADE)
+    created =models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.post.user.username +'::' +str(self.text)
 
 class ReportPost(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     description =models.CharField( max_length=100,blank=True)
-    created =models.DateTimeField(auto_now_add=True)
     post=models.ForeignKey(Post,on_delete=models.CASCADE)
+    created =models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.post.user.username +'::' +str(self.description)
 
