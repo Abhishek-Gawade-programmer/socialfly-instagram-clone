@@ -87,6 +87,15 @@ def report_post(request):
 	report_obj[0].save()
 	return JsonResponse({'success':True})
 
+@login_required
+def comment_on_post(request):
+	comment_text=request.POST.get('comment_text')
+	post_id=request.POST.get('post_id')
+	post = get_object_or_404(Post, pk = post_id)
+	comment_obj=Comment.objects.create(text=comment_text,post=post,user=request.user)
+	comment_obj.save()
+	return render(request,'post_comment_ajax.html',
+		{'commentlist':post.get_post_comments()[:3]})
 
 @login_required
 def like_unlike_post(request):

@@ -5,6 +5,11 @@
 
         {% for post in numbers %}
             <div class="photo" id="post_id{{post.id}}" ondblclick="function like_post(){like_unlike_the_post({{post.id}})};like_post()">
+                    <span>
+                       <svg class="icon icon-heart like">
+                        <use xlink:href="#icon-heart"></use>
+                      </svg>
+                      </span>
 
      
             <div class="row">
@@ -43,14 +48,15 @@
                     </div>
                     </div>
                 </div>
-                    <center>
-                      <svg class="icon icon-heart like">
-                        <use xlink:href="#icon-heart"></use>
-                      </svg>
-                      </center>
+              
+                
 
                 <div id="{{post.user.username}}{{post.id}}postimage" class="carousel slide" data-ride="carousel">
-                  <div class="carousel-inner">
+
+
+
+                  <div class="carousel-inner" style="cursor: pointer;">
+
                  {% for post_image in post.get_post_images %}
                  {% if forloop.first %}
                     <div class="carousel-item active">
@@ -71,7 +77,10 @@
                   <a class="carousel-control-next" href="#{{post.user.username}}{{post.id}}postimage" role="button" data-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="sr-only">Next</span>
+
                   </a>
+
+                      
                 </div>
 
 
@@ -108,21 +117,6 @@
 
                               </script>
                         
-                       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                         <span class="photo__action pl-3">
                             <i class="far fa-comment fa-lg"></i>
                         </span>
@@ -191,32 +185,34 @@
                         {% endif %}
 
                     </div>
-                    <span class="photo__time-ago mb-2">{{ post|date_str_output }}</span>
+                    <span class="photo__time-ago mb-2">{{ post.created|timesince }}</span>
                     <span class="photo__likes">
                                 <span id='post_like{{post.id}}'>{{post.get_number_like}}</span>
-                                 likes</span>
-                    <ul class="photo__comments">
-                        <li class="photo__comment" style="display: inline-flex;">
-                            <span class="photo__comment-author" style="color:purple;">serranoarevalo : </span> love this!  {{ post|date_str_output }}
-                        </li>
-                        <li class="photo__comment">
-                             <a href="{{ post.user.get_social_user.get_absolute_url }}" style="color:purple;">
-                                <span class="photo__comment-author">serranoarevalo</span></a> :
-                                 love this!
-                        </li>
-                        <li class="photo__comment">
-                            <span class="photo__comment-author">serranoarevalo</span> love this!
-                        </li>
-                        <li class="photo__comment">
-                            <span class="photo__comment-author">serranoarevalo</span> love this!
-                        </li>
+                                 like{{ post.get_number_like|pluralize }}</span>
+                    <ul class="photo__comments" id="post_comment_box{{post.id}}">
+                        {% for post_comment in post.get_post_comments|slice:":3" %}
+                      
+                            <li class="photo__comment">
+                                 <a href="{{ post_comment.user.get_social_user.get_absolute_url }}" style="color:purple;">
+                                    <span class="photo__comment-author">{{post_comment.user.username}}</span></a> :
+                                    <span class="text-dark">{{post_comment.text}} </span>
+                                    <span class="text-muted">({{ post_comment.created|timesince }})</span>
+                            </li>
+                            <hr>
+                        {% endfor %}
+          
 
                     </ul>
-                    <a href="{{ post.user.get_social_user.get_absolute_url }}" style="color:purple;">View More</a> 
+                    <p><a href="{{ post.user.get_social_user.get_absolute_url }}" class="text-primary" style="font-size:80%;color:purple !important;">View More</a></p>
                     <div class="photo__add-comment-container">
-                        <textarea name="comment" placeholder="Add a comment..."></textarea>
-                             <i class="fas fa-location-arrow"></i>
+                        <textarea name="comment" id="post_comment_text{{post.id}}" placeholder="Add a comment..."></textarea>
+                            <span  onclick="function comment_post(){comment_on_post({{post.id}})};comment_post()">
+                                <i class="fas fa-location-arrow"></i>
+                             </span>
                     </div>
+
+
+
                 </div>
             </div>
 

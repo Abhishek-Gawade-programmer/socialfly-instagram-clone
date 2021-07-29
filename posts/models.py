@@ -6,7 +6,6 @@ class Post(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     caption =models.CharField( max_length=100,blank=True)
     history = HistoricalRecords()
-    video = models.FileField(upload_to='videos/',blank=True)
     tagged_people=models.ManyToManyField(User,related_name='tagged_people',blank=True)
     like_people=models.ManyToManyField(User,related_name='like_people',blank=True)
     posted=models.BooleanField(default=False)
@@ -15,6 +14,9 @@ class Post(models.Model):
 
     def get_post_images(self):
         return PostImage.objects.filter(post=self)
+
+    def get_post_comments(self):
+        return Comment.objects.filter(post=self)
 
     def get_absolute_url(self):
         return self.post.user.username +'::' +str(self.post.caption)
@@ -40,9 +42,13 @@ class PostImage(models.Model):
 
 
 class Comment(models.Model):
-    text =models.CharField( max_length=100,blank=True)
+    text =models.CharField( max_length=100)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     post=models.ForeignKey(Post,on_delete=models.CASCADE)
     created =models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('-created',)
     def __str__(self):
         return self.post.user.username +'::' +str(self.text)
 

@@ -94,6 +94,49 @@ function like_unlike_the_post (post_id) {
 };
 
 
+function comment_on_post(post_id) {
+  var post_comment=document.getElementById('post_comment_text'+post_id);
+  var post_comment_box=document.getElementById('post_comment_box'+post_id);
+  var comment_text=post_comment.value.trim()
+  console.log(post_id,'----',)
+  if (comment_text) {
+      console.log('correct text',comment_text)
+        $j.ajax({
+        type: "POST",
+
+        url: window.location.origin + "/posts/comment-post/",
+
+        data: {
+          csrfmiddlewaretoken: csrftoken,
+          post_id: post_id,
+          comment_text: comment_text,
+        },
+        success: function (response) {
+          post_comment_box.innerHTML=response
+
+        },
+        error :function (response) {
+            console.log('sth happen bad')
+        },
+      });
+
+  }
+  post_comment.value=''
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function delete_post_function(post_id) {

@@ -1,0 +1,9 @@
+{% for post_comment in commentlist %}
+       <li class="photo__comment">
+            <a href="{{ post.user.get_social_user.get_absolute_url }}" style="color:purple;">
+               <span class="photo__comment-author">{{post_comment.user.username}}</span></a> :
+               <span class="text-dark">{{post_comment.text}} </span>
+               <span class="text-muted">({{ post_comment.created|timesince }})</span>
+       </li>
+       <hr>
+{% endfor %}
