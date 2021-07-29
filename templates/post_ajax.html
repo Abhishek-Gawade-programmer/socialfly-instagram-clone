@@ -3,15 +3,6 @@
 {% load date_tag %}
         
 
-
-
-
-
-
-
-
-
-
         {% for post in numbers %}
             <div class="photo" id="post_id{{post.id}}" ondblclick="function like_post(){like_unlike_the_post({{post.id}})};like_post()">
 
@@ -52,10 +43,11 @@
                     </div>
                     </div>
                 </div>
-        
+                    <center>
                       <svg class="icon icon-heart like">
                         <use xlink:href="#icon-heart"></use>
                       </svg>
+                      </center>
 
                 <div id="{{post.user.username}}{{post.id}}postimage" class="carousel slide" data-ride="carousel">
                   <div class="carousel-inner">
