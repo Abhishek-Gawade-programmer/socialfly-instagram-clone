@@ -25,6 +25,9 @@ if __name__ == '__main__':
 
 virtualenv env && source env/bin/activate && python manage.py runserver
 .\env\Scripts\activate
+python manage.py makenmigrations
+python manage.py migrate
+python manage.py runserver
 python manage.py shell
 
 

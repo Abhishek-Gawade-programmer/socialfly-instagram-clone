@@ -18,6 +18,9 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return self.post.user.username +'::' +str(self.post.caption)
+
+    def get_number_like(self):
+        return self.post.user.username +'::' +str(self.post.caption)
         
     def __str__(self):
         return self.user.username +'::' +str(self.caption)

@@ -13,7 +13,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required
 def post_image_upload(request):
-	print(request.FILES,request.method)
 	if  request.method == 'POST':
 		new_post=Post.objects.create(user=request.user)
 
@@ -23,7 +22,7 @@ def post_image_upload(request):
 				post=new_post
 				)
 			post_image.save()
-		new_post.save()
+		new_post.save()	
 		return JsonResponse({'success':True,'post_pk':new_post.pk},safe=False)
 	return JsonResponse
 
@@ -56,7 +55,6 @@ def submit_post(request):
 def explore(request):
 	l=[report_post.post.id for report_post in ReportPost.objects.filter(user=request.user)]
 	recommend_posts=Post.objects.filter(posted=True).exclude(id__in=l)
-	print(l)
 
 	page = request.GET.get('page', 1)
 	paginator = Paginator(recommend_posts, 1)
@@ -89,3 +87,15 @@ def report_post(request):
 	report_obj[0].save()
 	return JsonResponse({'success':True})
 
+
+@login_required
+def like_unlike_post(request):
+	post_id=request.POST.get('post_id')
+	post = get_object_or_404(Post, pk = post_id)
+	if request.user in  post.like_people.all():
+		post.like_people.remove(request.user)
+		action='unlike'
+	else:
+		post.like_people.add(request.user)
+		action='like'
+	return JsonResponse({'success':True,"action":action},safe=False)

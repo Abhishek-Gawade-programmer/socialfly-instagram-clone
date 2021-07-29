@@ -12,3 +12,52 @@
         display: none !important;
     }
 }
+    
+
+.post_js {
+  margin: auto;
+  display: inline-flex;
+  flex-direction: column;
+
+}
+
+ .icon {
+    text-align:center;
+  align-items: flex-start;
+  justify-content: right !important;
+  z-index: 1000;
+  position: absolute;
+  width: 128px;
+  opacity: 0;
+  fill: red;
+}
+.post_js .icon.like {
+  animation: 2s like-heart-animation ease-in-out forwards;
+}
+.post_js p {
+  align-self: baseline;
+  margin-top: 10px;
+}
+@keyframes like-heart-animation {
+  0%,
+  to {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  }
+  15% {
+    opacity: 0.9;
+    -webkit-transform: scale(1.2);
+    transform: scale(1.2);
+  }
+  30% {
+    -webkit-transform: scale(0.95);
+    transform: scale(0.95);
+  }
+  45%,
+  80% {
+    opacity: 0.9;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
