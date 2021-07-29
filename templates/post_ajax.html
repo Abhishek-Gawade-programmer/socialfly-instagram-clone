@@ -200,7 +200,9 @@
 
                     </div>
                     <span class="photo__time-ago mb-2">{{ post|date_str_output }}</span>
-                    <span class="photo__likes">45 likes</span>
+                    <span class="photo__likes">
+                                <span id='post_like{{post.id}}'>{{post.get_number_like}}</span>
+                                 likes</span>
                     <ul class="photo__comments">
                         <li class="photo__comment" style="display: inline-flex;">
                             <span class="photo__comment-author" style="color:purple;">serranoarevalo : </span> love this!  {{ post|date_str_output }}

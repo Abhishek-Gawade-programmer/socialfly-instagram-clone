@@ -20,7 +20,7 @@ class Post(models.Model):
         return self.post.user.username +'::' +str(self.post.caption)
 
     def get_number_like(self):
-        return self.post.user.username +'::' +str(self.post.caption)
+        return self.like_people.all().count()
         
     def __str__(self):
         return self.user.username +'::' +str(self.caption)

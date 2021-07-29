@@ -37,9 +37,10 @@ function report_post_function(post_id) {
 
 
 function like_unlike_the_post (post_id) {
-  let post=document.getElementById('post_id'+post_id);
+  var post=document.getElementById('post_id'+post_id);
+  var post_like_counter=document.getElementById('post_like'+post_id);
   var like_unlike_frame=document.getElementById('postlike_unlike'+post_id)
-  let icon = document.querySelector(".icon");
+  var icon = document.querySelector(".icon");
 
 
 
@@ -79,7 +80,8 @@ function like_unlike_the_post (post_id) {
                     </path>
                  </svg>`
         
-        }
+        };  
+        post_like_counter.innerHTML=response.num_likes;
 
          
       },

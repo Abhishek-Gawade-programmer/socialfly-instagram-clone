@@ -98,4 +98,4 @@ def like_unlike_post(request):
 	else:
 		post.like_people.add(request.user)
 		action='like'
-	return JsonResponse({'success':True,"action":action},safe=False)
+	return JsonResponse({'success':True,"action":action,'num_likes':post.get_number_like()},safe=False)
