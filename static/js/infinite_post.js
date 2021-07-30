@@ -1,7 +1,4 @@
-var spiner_box = document.getElementById("spiner_box");
-var page = 1;
-var empty_page = false;
-var block_request = false;
+
 
 function report_post_function(post_id) {
   let description_box = document.getElementById("description_box");
@@ -27,7 +24,7 @@ function report_post_function(post_id) {
           $("#postsucessmodel").modal("show");
       },
       error :function (response) {
-          console.log('sth happen bad')
+          console.error('sth happen bad')
       },
     });
   });
@@ -86,7 +83,7 @@ function like_unlike_the_post (post_id) {
          
       },
       error :function (response) {
-          console.log('sth happen bad')
+          console.error('sth happen bad')
       },
     });
  
@@ -98,7 +95,6 @@ function comment_on_post(post_id) {
   var post_comment=document.getElementById('post_comment_text'+post_id);
   var post_comment_box=document.getElementById('post_comment_box'+post_id);
   var comment_text=post_comment.value.trim()
-  console.log(post_id,'----',)
   if (comment_text) {
       console.log('correct text',comment_text)
         $j.ajax({
@@ -116,7 +112,7 @@ function comment_on_post(post_id) {
 
         },
         error :function (response) {
-            console.log('sth happen bad')
+            console.error('sth happen bad')
         },
       });
 
@@ -124,20 +120,6 @@ function comment_on_post(post_id) {
   post_comment.value=''
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function delete_post_function(post_id) {
   let delete_post = document.getElementById("delete_post");
@@ -162,31 +144,10 @@ function delete_post_function(post_id) {
           $("#postsucessmodel").modal("show");
       },
       error :function (response) {
-          console.log('sth happen bad')
+          console.error('sth happen bad')
       },
     });
   });
 };
 
-$j(window).scroll(function () {
-  var margin = $j(document).height() - $j(window).height() - 200;
-  if (
-    $j(window).scrollTop() > margin &&
-    empty_page == false &&
-    block_request == false
-  ) {
-    spiner_box.style.removeProperty("display");
-    block_request = true;
-    page += 1;
-    $j.get("?page=" + page, function (data) {
-      if (data == "") {
-        empty_page = true;
-      } else {
-        block_request = false;
-        $j("#feed").append(data);
 
-        spiner_box.style.display = "none";
-      }
-    });
-  }
-});

@@ -10,5 +10,7 @@ urlpatterns = [
 	path('like-unlike-post/', like_unlike_post, name='like_unlike_post'),
 	path('report-post/', report_post, name='report_post'),
 	path('comment-post/', comment_on_post, name='comment_on_post'),
+	path('post-detail/<slug>/<int:post_id>/',post_detail_view,name ='post_detail_view'),
+
 
 ]

@@ -1,16 +1,19 @@
 from users.models import User
 from django.db import models
 from simple_history.models import HistoricalRecords
-
+from django.utils.text import slugify
+from  django.shortcuts import reverse
 class Post(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
-    caption =models.CharField( max_length=100,blank=True)
+    caption =models.TextField( max_length=250,blank=True)
     history = HistoricalRecords()
     tagged_people=models.ManyToManyField(User,related_name='tagged_people',blank=True)
     like_people=models.ManyToManyField(User,related_name='like_people',blank=True)
     posted=models.BooleanField(default=False)
     created =models.DateTimeField(auto_now_add=True)
     updated=models.DateTimeField(auto_now=True)
+    slug=models.SlugField(max_length=100)
+
 
     def get_post_images(self):
         return PostImage.objects.filter(post=self)
@@ -19,17 +22,18 @@ class Post(models.Model):
         return Comment.objects.filter(post=self)
 
     def get_absolute_url(self):
-        return self.post.user.username +'::' +str(self.post.caption)
+        return reverse('posts:post_detail_view', kwargs={'slug': self.slug,'post_id':self.pk})
 
     def get_number_like(self):
         return self.like_people.all().count()
         
     def __str__(self):
-        return self.user.username +'::' +str(self.caption)
+        return self.user.username +'::' +str(self.caption)+'--'+self.slug
 
     class Meta:
         ordering = ('-created',)
     def save(self, *args, **kwargs):
+        self.slug = slugify(self.caption[:100])
         super().save(*args, **kwargs)
 
 

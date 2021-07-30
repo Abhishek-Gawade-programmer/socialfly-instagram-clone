@@ -28,34 +28,36 @@ $j("#uploadtheimage").click(function (e) {
   e.preventDefault();
   post_pk = removetheimage.getAttribute("post_pk");
   if (post_pk) {
-    caption_text = document.getElementById("caption_text").value;
+    caption_text = document.getElementById("caption_text").value.trim();
     tag_usernames=document.getElementById('tag_friends').value;
 
-    $j.ajax({
-      type: "POST",
+    if (caption_text) {
+        $j.ajax({
+          type: "POST",
 
-      url: window.location.origin + "/posts/post-submit/",
+          url: window.location.origin + "/posts/post-submit/",
 
-      data: {
-        csrfmiddlewaretoken: csrftoken,
-        post_pk: post_pk,
-        caption_text: caption_text,
-        tag_usernames_list:tag_usernames
-      },
+          data: {
+            csrfmiddlewaretoken: csrftoken,
+            post_pk: post_pk,
+            caption_text: caption_text,
+            tag_usernames_list:tag_usernames
+          },
 
-      success: function (response) {
-        md.removeAllFiles();
-        removetheimage.removeAttribute("post_pk");
-        removetheimage.innerHTML =
-          '<i class="fas fa-ban"></i> Remove all Images';
-        uploadtheimage.innerHTML =
-          '<i class="fas fa-upload"></i> Upload All Images';
-        $j(caption_for_image).hide();
-        $('#exampleModalLong').modal('hide');
-        location.reload()
-        $('#postsucessmodel').modal('show');
-      },
-    });
+          success: function (response) {
+            md.removeAllFiles();
+            removetheimage.removeAttribute("post_pk");
+            removetheimage.innerHTML =
+              '<i class="fas fa-ban"></i> Remove all Images';
+            uploadtheimage.innerHTML =
+              '<i class="fas fa-upload"></i> Upload All Images';
+            $j(caption_for_image).hide();
+            $('#exampleModalLong').modal('hide');
+            location.reload()
+            $('#postsucessmodel').modal('show');
+          },
+        });
+  };
   
 
   } 

@@ -4,7 +4,7 @@
         
 
         {% for post in numbers %}
-            <div class="photo" id="post_id{{post.id}}" ondblclick="function like_post(){like_unlike_the_post({{post.id}})};like_post()">
+            <div class="photo mb-0" id="post_id{{post.id}}" ondblclick="function like_post(){like_unlike_the_post({{post.id}})};like_post()">
                     <span>
                        <svg class="icon icon-heart like">
                         <use xlink:href="#icon-heart"></use>
@@ -32,7 +32,7 @@
                    <div class="btn-group dropleft float-right pr-3" >
                         <span  data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></span>
                           <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#" ><i class="fas fa-eye pr-3"></i>  View </a>
+                            <a class="dropdown-item" href="{{ post.get_absolute_url }}" ><i class="fas fa-eye pr-3"></i>  View </a>
                                 {% if post.user == request.user  %}
                             <a class="dropdown-item" href="#" type="button" post-id='{{post.id}}'  
                             onclick="function delete_post(){delete_post_function({{post.id}})};delete_post()" onclick="" data-toggle="modal" data-target="#deletepostmodel" ><i class="fas fa-trash pr-3"></i> Delete </a>
@@ -117,9 +117,7 @@
 
                               </script>
                         
-                        <span class="photo__action pl-3">
-                            <i class="far fa-comment fa-lg"></i>
-                        </span>
+        
                         {% if post.tagged_people.all %}
                              <span class="photo__action pl-3"  data-toggle="modal" data-target="#model{{post.id}}{{post.user.username}}taggedmodel">
                                 <i class="far fa-user fa-lg"></i>
@@ -203,7 +201,7 @@
           
 
                     </ul>
-                    <p><a href="{{ post.user.get_social_user.get_absolute_url }}" class="text-primary" style="font-size:80%;color:purple !important;">View More</a></p>
+                    <p><a href="{{ post.get_absolute_url }}" class="text-primary" style="font-size:80%;color:purple !important;">View More</a></p>
                     <div class="photo__add-comment-container">
                         <textarea name="comment" id="post_comment_text{{post.id}}" placeholder="Add a comment..."></textarea>
                             <span  onclick="function comment_post(){comment_on_post({{post.id}})};comment_post()">
@@ -217,6 +215,3 @@
             </div>
 
             {% endfor %}
-<script type="text/javascript">
-    
-</script>

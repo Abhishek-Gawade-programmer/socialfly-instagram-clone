@@ -108,3 +108,9 @@ def like_unlike_post(request):
 		post.like_people.add(request.user)
 		action='like'
 	return JsonResponse({'success':True,"action":action,'num_likes':post.get_number_like()},safe=False)
+
+
+@login_required
+def post_detail_view(request,slug,post_id):
+    post = get_object_or_404(Post, pk = post_id,slug=slug)
+    return render(request,'post_detail.html',{'post':post})
