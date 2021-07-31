@@ -1,5 +1,6 @@
 {% extends '_base.html' %}
 {% load static %}
+{% load thumbnail %}
 {% load user_actions %}
 {% block head_title %}My Friends{% endblock %}
 {% block content  %}
@@ -20,7 +21,7 @@
             <li class="explore__user">
                 
                 <div class="explore__user-column" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"> 
-                    <img src="{{friends.profile_photo.url}}" class="explore__avatar" style="width: 50px;height: 50px;">
+                    <img src="{% thumbnail friends.profile_photo 50x50 crop %}" class="explore__avatar" alt="profile image" >
                     <div class="explore__info" style="font-size: 80%">
                         <a href="{{ friends.get_absolute_url }}" style="color:purple;display: block;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
                         <span class="explore__username" style="">{{friends.user.username}} 

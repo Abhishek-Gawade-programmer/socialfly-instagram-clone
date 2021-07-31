@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
 
     'crispy_forms',
+    'easy_thumbnails',
 
     #ALLAUTH APPS
     'allauth',

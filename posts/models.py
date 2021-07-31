@@ -26,6 +26,9 @@ class Post(models.Model):
 
     def get_number_like(self):
         return self.like_people.all().count()
+
+    def get_number_comments(self):
+        return self.get_post_comments().count()
         
     def __str__(self):
         return self.user.username +'::' +str(self.caption)+'--'+self.slug

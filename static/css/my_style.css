@@ -59,3 +59,13 @@
     transform: scale(1);
   }
 }
+.explore__avatar{
+  /*border: 4px solid #71affa;*/
+  border-radius: 50%;
+   padding: 5px;
+    background: #833ab4;
+    background:-webkit-linear-gradient(top, #d0e4f7 0%,#73b1e7 24%,#0a77d5 50%,#539fe1 79%,#87bcea);
+    background: linear-gradient(to bottom, #d0e4f7 0%,#73b1e7 24%,#0a77d5 50%,#539fe1 79%, #87bcea);
+
+
+  }
