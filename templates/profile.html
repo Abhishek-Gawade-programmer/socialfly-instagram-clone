@@ -75,7 +75,7 @@
              {% for post in user_object.get_user_post %}
              <a href="{{ post.get_absolute_url}}">
                 <div class="gallery-item" tabindex="0">
-                    <img src="{% thumbnail post.get_post_images.0.image 400x400  %}" alt="user post" class="gallery-image" >
+                    <img src="{% thumbnail post.get_post_images.0.image 400x400  crop %}" alt="user post" class="gallery-image" >
 
                      {% if post.get_post_images|length != 1 %}
                          <div class="gallery-item-type">
@@ -97,15 +97,10 @@
 
 
 
-
-
         </div>
-        <!-- End of gallery -->
 
-        <div class="loader"></div>
 
     </div>
-    <!-- End of container -->
 
 </main>
 

@@ -46,6 +46,7 @@ def submit_post(request):
 			if username:
 				post.tagged_people.add(User.objects.get(username=username))
 		post.posted=True
+		post._change_reason='created new post'
 		post.save()
 		return JsonResponse({'post':False})
 
@@ -83,6 +84,8 @@ def report_post(request):
 	description=request.POST.get('description')
 	post_id=request.POST.get('post_id')
 	post = get_object_or_404(Post, pk = post_id)
+	post._change_reason='post report'
+	post.save()
 	report_obj=ReportPost.objects.update_or_create(user=request.user,description=description,post=post)
 	report_obj[0].save()
 	return JsonResponse({'success':True})
@@ -94,6 +97,8 @@ def comment_on_post(request):
 	post = get_object_or_404(Post, pk = post_id)
 	comment_obj=Comment.objects.create(text=comment_text,post=post,user=request.user)
 	comment_obj.save()
+	post._change_reason='comment added'
+	post.save()
 	return render(request,'post_comment_ajax.html',
 		{'commentlist':post.get_post_comments()[:3]})
 
@@ -104,9 +109,13 @@ def like_unlike_post(request):
 	if request.user in  post.like_people.all():
 		post.like_people.remove(request.user)
 		action='unlike'
+		post._change_reason='unlike post'
+
 	else:
 		post.like_people.add(request.user)
 		action='like'
+		post._change_reason='like post'
+	post.save()
 	return JsonResponse({'success':True,"action":action,'num_likes':post.get_number_like()},safe=False)
 
 

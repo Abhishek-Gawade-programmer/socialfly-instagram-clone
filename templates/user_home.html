@@ -56,7 +56,14 @@
             {% endfor %}
         </ul>
 
-         <div class="row">
+
+
+    </main>
+
+<script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}">
+</script>
+    {% endblock content %}
+ <div class="row">
     <div class="col-md-3">
         <div class="custom-control custom-checkbox image-checkbox">
             <input type="checkbox" class="custom-control-input" id="ck1a">
@@ -90,9 +97,3 @@
         </div>
     </div>
 </div>
-
-    </main>
-
-<script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}">
-</script>
-    {% endblock content %}
