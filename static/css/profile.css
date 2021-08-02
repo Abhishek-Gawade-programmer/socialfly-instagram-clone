@@ -11,7 +11,7 @@ Flexbox and floats are used as a fallback so that browsers which don't support g
 /* Base Styles */
 
 :root {
-    font-size: 10px;
+    font-size: 15px;
 }
 
 *,

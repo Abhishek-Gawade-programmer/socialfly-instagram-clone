@@ -1,12 +1,13 @@
 from django.urls import path
 from .views import *
-app_name='user'
+app_name='users'
 urlpatterns = [
 		path('home-page/', home_page, name='home_page'),
 
 		path('profile/', profile, name='profile'),
 		path('profile/<int:socialflyuser>/', profile, name='profile'),
 		path('profile-edit/', profile_edit, name='profile_edit'),
+		path('search-results/', search_results, name='search_results'),
 
 		
 		path('wants-follow-unfollow/', wants_follow_unfollow, name='wants_follow'),

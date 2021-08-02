@@ -69,3 +69,26 @@
 
 
   }
+
+.search:focus{
+  background-color: white;
+}
+
+.not-visable{
+  display: none;
+}
+.results-card{
+  width: 80%;
+  /*z-index: 2;*/
+  /*position: absolute;*/
+  /*max-height: 200px;*/
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.25);
+  transition: 0.5s;
+  border-radius: 7px;
+  padding: 15px 15px;
+  margin: auto;
+}
+
+.item {
+  text-decoration:none ;
+}

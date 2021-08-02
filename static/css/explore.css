@@ -42,7 +42,7 @@
 }
 
 .explore__info .explore__username {
-  display: block;
+  display: inline-flex;
   font-weight: 600;
   margin-bottom: 5px;
 }

@@ -4,6 +4,9 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 
+from django.db.models import Q
+from django.db.models import Value as V
+from django.db.models.functions import Concat 
 
 from .forms import *
 from .models import *
@@ -116,3 +119,32 @@ def change_private_status(request):
         socialflyuser._change_reason='private settings on'
     socialflyuser.save()
     return JsonResponse({'success':'true'},safe=False)
+
+
+
+def search_results(request):
+    if request.is_ajax():
+        string_to_search=request.POST.get('string_to_search')
+        qs=User.objects.exclude(username=request.user.username).annotate(
+            full_name=Concat('first_name', V(' '), 'last_name')
+                ).filter(   
+                    Q(username__icontains=string_to_search)|
+                    Q(full_name__icontains=string_to_search) | 
+                    Q(first_name__icontains=string_to_search) | 
+                    Q(last_name__icontains=string_to_search)
+                )
+        data=[]
+        for i in qs:
+            item={
+            'full_name':i.first_name+' '+i.last_name,
+            'username':i.username,
+            'profile_image':i.get_social_user.profile_photo.url,
+            'is_genuine':i.is_genuine,
+            'url':i.get_social_user.get_absolute_url()
+
+            }
+            data.append(item)
+
+        data_of_search={'data':data}
+        return JsonResponse(data_of_search,safe=False)
+
