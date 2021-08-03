@@ -17,4 +17,5 @@ urlpatterns = [
     path('', include('core.urls',namespace='core')),
     path('users/', include('users.urls',namespace='users')),
     path('posts/', include('posts.urls',namespace='posts')),
+    path('chats/', include('chats.urls',namespace='chats')),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
