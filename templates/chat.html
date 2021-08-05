@@ -25,46 +25,43 @@
             </div>
           </div>
           <div class="inbox_chat">
-            <div class="chat_list active_chat">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-          <div class="chat_list ">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Abhsihjknjknjk <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
+            {% for room in user_groups %}
+              {% if room.is_group %}
+              {% else %} 
+                {% for user_in_room in room.user_eligible.all %}
+                      {% if user_in_room != request.user %}
+                        <div class="chat_list" room_id="{{room.str_id}}" id='person_chat'>
+                          <div class="chat_people">
+                            <div class="chat_img">
+
+                             <img src="{% thumbnail user_in_room.get_social_user.profile_photo 200x200 crop %}" class="explore__avatar" alt="profile image"> 
+                           </div>
+                            <div class="chat_ib">
+                              <h5>{{user_in_room.get_full_name}}
+                                 <span class="chat_date" id='{{room.str_id}}chat_date'>{{room.last_message.timestamp}}</span>
+                               </h5>
+                                  
+                              <p id='{{room.str_id}}last_message'>{{room.last_message.content}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      {% endif %}
+                {% endfor %}
+              {% endif %}
+
+
+
+
+            {% empty %}
+                
+            {% endfor %}
+      
+            
 
           </div>
         </div>
         <div class="mesgs">
           <div class="msg_history" id="chat-log">
-            <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>Test which is a new approach to have all
-                    solutions</p>
-                  <span class="time_date"> 11:01 AM    |    June 9</span></div>
-              </div>
-            </div>
-            <div class="outgoing_msg">
-              <div class="sent_msg">
-                <p>Test which is a new approach to have all
-                  solutions</p>
-                <span class="time_date"> 11:01 AM    |    June 9</span> </div>
-            </div>
 
           </div>
           <div class="type_msg">
@@ -86,41 +83,131 @@
    <script type="text/javascript" src="{% static 'js/reconnecting-websocket.js' %}">
         </script>
     <script>
-        var roomName = {{ room_name_json }};
-        var username = {{ username }};
 
-        const chatSocket = new ReconnectingWebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/chats/'
-            + roomName
-            + '/'
-        );
+      function clear_active_class () {
+        document.querySelectorAll('#person_chat').forEach((item) =>
+           item.classList.remove('active_chat')
+             );
+      };
 
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
-        };
+       document.querySelectorAll('#person_chat').forEach((item) =>
+                  item.addEventListener("click", (event) => {
+                    clear_active_class()
+                    item.classList.add('active_chat');
+                  join_room(item.getAttribute('room_id'));
 
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
 
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
+                  })
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message,
-                'command':'new_message'
-            }));
-            messageInputDom.value = '';
+
+              );
+
+
+
+
+       function join_room(room_id) {
+
+          var roomName = room_id;
+
+          var username = '{{ username }}';
+        
+
+          var chatSocket = new ReconnectingWebSocket(
+              'ws://'
+              + window.location.host
+              + '/ws/chats/'
+              + roomName
+              + '/'
+          );
+          chatSocket.onopen=function (e){
+            fech_messages();
+          };
+
+          chatSocket.onmessage = function(e) {
+              var data = JSON.parse(e.data);
+            if (data['command'] === 'messages') {
+              document.querySelector('#chat-log').innerHTML=''
+
+                for (let i=0; i<data['messages'].length; i++) {
+                  createMessage(data['messages'][i]);
+                }
+
+             } else if (data['command'] === 'new_message'){
+                      console.log('somebody sends new message')
+                      createMessage(data['message']);
+
+
+                };
+
+          };
+
+
+           function createMessage(data) {
+                console.log('each_message',data)
+              var message = data.content;
+                var author = data.author;
+                var profile_photo = data.profile_photo;
+                var timestamp = data.timestamp;
+      
+
+                if (username === author) {
+                  var msg_text=  ` 
+                  <div class="outgoing_msg">
+                    <div class="sent_msg">
+                      <p>${message}</p>
+                      <span class="time_date">${timestamp}</span> </div>
+                  </div>`;
+
+                }else{
+                  var msg_text=` 
+                  <div class="incoming_msg">
+                  <div class="incoming_msg_img"> <img src='${profile_photo}' alt="${username}photo"> </div>
+                  <div class="received_msg">
+                    <div class="received_withd_msg">
+                      <p>${message}</p>
+                      <span class="time_date">${timestamp}</span> </div>
+                  </div>
+                </div>` 
+
+                }
+                document.getElementById(roomName+'chat_date').innerHTML=timestamp;
+                document.getElementById(roomName+'last_message').innerHTML=message;
+
+
+                document.querySelector('#chat-log').innerHTML += msg_text;
+                msg_history=document.querySelector('.msg_history');
+                msg_history.scrollTop=msg_history.scrollHeight;
+           };
+
+
+
+          chatSocket.onclose = function(e) {
+              console.error('Chat socket closed unexpectedly');
+          };
+
+          document.querySelector('#chat-message-input').focus();
+          document.querySelector('#chat-message-input').onkeyup = function(e) {
+              if (e.keyCode === 13) {  // enter, return
+                  document.querySelector('#chat-message-submit').click();
+              }
+          };
+
+          document.querySelector('#chat-message-submit').onclick = function(e) {
+              var messageInputDom = document.querySelector('#chat-message-input');
+              var message = messageInputDom.value;
+              if (message.trim()) {
+                chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'command':'new_message',
+                    'from':username,
+                }));
+                messageInputDom.value = '';
+               }
+          };
+
+          function fech_messages(){
+            chatSocket.send(JSON.stringify({'command':'fetch_messages'}))
+          };
         };
     </script>
 
