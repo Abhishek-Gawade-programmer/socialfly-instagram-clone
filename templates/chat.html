@@ -83,6 +83,7 @@
    <script type="text/javascript" src="{% static 'js/reconnecting-websocket.js' %}">
         </script>
     <script>
+      
 
       function clear_active_class () {
         document.querySelectorAll('#person_chat').forEach((item) =>
@@ -116,10 +117,11 @@
               'ws://'
               + window.location.host
               + '/ws/chats/'
-              + roomName
+              + 'stream'
               + '/'
           );
           chatSocket.onopen=function (e){
+            console.log("Connected to chat socket");
             fech_messages();
           };
 
