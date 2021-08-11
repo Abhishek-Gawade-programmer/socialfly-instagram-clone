@@ -21,7 +21,6 @@ class Room(models.Model):
 		self.str_id=self.id.hex
 		super().save(*args, **kwargs)
 
-
 class Message(models.Model):
 	user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='user')
 	content=models.TextField(max_length=300,)
@@ -35,4 +34,15 @@ class Message(models.Model):
   		return self.user.username +'----' +str(self.content)[:10]
 
 
-  		
+class UserRoomInfo(models.Model):
+	room = models.ForeignKey(Room,on_delete=models.CASCADE)
+	user = models.ForeignKey(User,on_delete=models.CASCADE)
+	last_seen =models.DateTimeField(null=True,blank=True)
+
+	def get_unseen_message(self):
+		return Message.objects.filter(
+				room=self.room,
+				timestamp__gt=self.last_seen).count()
+
+	def __str__(self):
+  		return self.room.str_id +'----' +str(self.user.username)

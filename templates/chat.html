@@ -33,7 +33,6 @@
                         <div class="chat_list" room_id="{{room.str_id}}" id='person_chat'>
                           <div class="chat_people">
                             <div class="chat_img">
-
                              <img src="{% thumbnail user_in_room.get_social_user.profile_photo 200x200 crop %}" class="explore__avatar" alt="profile image"> 
                            </div>
                             <div class="chat_ib">
@@ -41,17 +40,21 @@
                                  <span class="chat_date" id='{{room.str_id}}chat_date'>{{room.last_message.timestamp}}</span>
                                </h5>
                                   
-                              <p id='{{room.str_id}}last_message'>{{room.last_message.content}}</p>
+                              <p>
+                                <span id='{{room.str_id}}last_message'>
+                                  {{room.last_message.content}}
+                                </span>
+                                
+                                  <span class="badge bg-info float-right" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
+                                    {{user.id|unread_counter:room.str_id}}
+                                  </span>
+                                </p>
                             </div>
                           </div>
                         </div>
                       {% endif %}
                 {% endfor %}
               {% endif %}
-
-
-
-
             {% empty %}
                 
             {% endfor %}
@@ -73,9 +76,6 @@
         </div>
 
       </div>
-      
-      
-      
     </div></div>
 
 
@@ -83,69 +83,94 @@
    <script type="text/javascript" src="{% static 'js/reconnecting-websocket.js' %}">
         </script>
     <script>
-      
 
       function clear_active_class () {
         document.querySelectorAll('#person_chat').forEach((item) =>
            item.classList.remove('active_chat')
              );
       };
+      var username = '{{ username }}';
 
-       document.querySelectorAll('#person_chat').forEach((item) =>
-                  item.addEventListener("click", (event) => {
-                    clear_active_class()
-                    item.classList.add('active_chat');
-                  join_room(item.getAttribute('room_id'));
-
-
-                  })
-
-
-              );
-
-
-
-
-       function join_room(room_id) {
-
-          var roomName = room_id;
-
-          var username = '{{ username }}';
-        
-
-          var chatSocket = new ReconnectingWebSocket(
+        var chatSocket = new ReconnectingWebSocket(
               'ws://'
               + window.location.host
               + '/ws/chats/'
               + 'stream'
               + '/'
           );
-          chatSocket.onopen=function (e){
-            console.log("Connected to chat socket");
-            fech_messages();
+         // Helpful debugging
+          chatSocket.onopen = function () {
+              console.log("Connected to chat socket");
+              document.querySelectorAll('#person_chat').forEach((item) =>
+                  item.addEventListener("click", (event) => {
+                    clear_active_class()
+                    console.log('room_id',item.getAttribute('room_id'))
+                    console.log('previous_room',window.current_room)
+                    item.classList.add('active_chat');
+
+                      chatSocket.send(JSON.stringify({
+                        'room_id': item.getAttribute('room_id'),
+                        'command':'messages_of_that_room',
+                        'previous_room':window.current_room
+                       
+                    }));
+                  // join_room();
+                  })
+              );
           };
 
-          chatSocket.onmessage = function(e) {
+         chatSocket.onmessage = function(e) {
               var data = JSON.parse(e.data);
-            if (data['command'] === 'messages') {
+              
+              if (data.command === "room_message") {
+               window.current_room=data.room_id
               document.querySelector('#chat-log').innerHTML=''
-
                 for (let i=0; i<data['messages'].length; i++) {
                   createMessage(data['messages'][i]);
                 }
+             
+             
+            // if (data['command'] === 'messages') {
+              //   document.querySelector('#chat-log').innerHTML=''
 
-             } else if (data['command'] === 'new_message'){
-                      console.log('somebody sends new message')
-                      createMessage(data['message']);
+              //     for (let i=0; i<data['messages'].length; i++) {
+              //       createMessage(data['messages'][i]);
+              //     }
+
+              //  } else if (data['command'] === 'new_message'){
+              //           console.log('somebody sends new message')
+              //           createMessage(data['message']);
 
 
-                };
+              //     };
 
+          }else if (data.command === 'new_message_save_db') {
+            if (data.room_id === window.current_room) {
+              createMessage(data.message)
+            }else{
+              console.warn('new massage from Other  room',data)
+              document.getElementById(data.room_id+'last_message').innerHTML=data.message.content
+              document.getElementById(data.room_id+'message_counter').innerHTML=data.message_counter
+            }
+            
+            
+          }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+              var messageInputDom = document.querySelector('#chat-message-input');
+              var message = messageInputDom.value;
+              if (message.trim()) {
+                chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'command':'new_message',
+                    'room_id':window.current_room,
+                }));
+                messageInputDom.value = '';
+               }
           };
 
-
-           function createMessage(data) {
-                console.log('each_message',data)
+        function createMessage(data) {
               var message = data.content;
                 var author = data.author;
                 var profile_photo = data.profile_photo;
@@ -172,8 +197,8 @@
                 </div>` 
 
                 }
-                document.getElementById(roomName+'chat_date').innerHTML=timestamp;
-                document.getElementById(roomName+'last_message').innerHTML=message;
+                document.getElementById(window.current_room+'chat_date').innerHTML=timestamp;
+                document.getElementById(window.current_room+'last_message').innerHTML=message;
 
 
                 document.querySelector('#chat-log').innerHTML += msg_text;
@@ -182,35 +207,89 @@
            };
 
 
+       // function join_room(room_id) {
 
-          chatSocket.onclose = function(e) {
-              console.error('Chat socket closed unexpectedly');
-          };
+       //    var roomName = room_id;
 
-          document.querySelector('#chat-message-input').focus();
-          document.querySelector('#chat-message-input').onkeyup = function(e) {
-              if (e.keyCode === 13) {  // enter, return
-                  document.querySelector('#chat-message-submit').click();
-              }
-          };
+       //    var username = ';
+        
 
-          document.querySelector('#chat-message-submit').onclick = function(e) {
-              var messageInputDom = document.querySelector('#chat-message-input');
-              var message = messageInputDom.value;
-              if (message.trim()) {
-                chatSocket.send(JSON.stringify({
-                    'message': message,
-                    'command':'new_message',
-                    'from':username,
-                }));
-                messageInputDom.value = '';
-               }
-          };
+  
+       //    chatSocket.onopen=function (e){
+       //      console.log("Connected to chat socket");
+       //      fech_messages();
+       //    };
 
-          function fech_messages(){
-            chatSocket.send(JSON.stringify({'command':'fetch_messages'}))
-          };
-        };
+
+
+
+       //     // function createMessage(data) {
+       //     //      console.log('each_message',data)
+       //     //    var message = data.content;
+       //     //      var author = data.author;
+       //     //      var profile_photo = data.profile_photo;
+       //     //      var timestamp = data.timestamp;
+      
+
+       //     //      if (username === author) {
+       //     //        var msg_text=  ` 
+       //     //        <div class="outgoing_msg">
+       //     //          <div class="sent_msg">
+       //     //            <p>${message}</p>
+       //     //            <span class="time_date">${timestamp}</span> </div>
+       //     //        </div>`;
+
+       //     //      }else{
+       //     //        var msg_text=` 
+       //     //        <div class="incoming_msg">
+       //     //        <div class="incoming_msg_img"> <img src='${profile_photo}' alt="${username}photo"> </div>
+       //     //        <div class="received_msg">
+       //     //          <div class="received_withd_msg">
+       //     //            <p>${message}</p>
+       //     //            <span class="time_date">${timestamp}</span> </div>
+       //     //        </div>
+       //     //      </div>` 
+
+       //     //      }
+       //     //      document.getElementById(roomName+'chat_date').innerHTML=timestamp;
+       //     //      document.getElementById(roomName+'last_message').innerHTML=message;
+
+
+       //     //      document.querySelector('#chat-log').innerHTML += msg_text;
+       //     //      msg_history=document.querySelector('.msg_history');
+       //     //      msg_history.scrollTop=msg_history.scrollHeight;
+       //     // };
+
+
+
+       //    chatSocket.onclose = function(e) {
+       //        console.error('Chat socket closed unexpectedly');
+       //    };
+
+       //    document.querySelector('#chat-message-input').focus();
+       //    document.querySelector('#chat-message-input').onkeyup = function(e) {
+       //        if (e.keyCode === 13) {  // enter, return
+       //            document.querySelector('#chat-message-submit').click();
+       //        }
+       //    };
+
+       //    // document.querySelector('#chat-message-submit').onclick = function(e) {
+       //    //     var messageInputDom = document.querySelector('#chat-message-input');
+       //    //     var message = messageInputDom.value;
+       //    //     if (message.trim()) {
+       //    //       chatSocket.send(JSON.stringify({
+       //    //           'message': message,
+       //    //           'command':'new_message',
+       //    //           'from':username,
+       //    //       }));
+       //    //       messageInputDom.value = '';
+       //    //      }
+       //    // };
+
+       //    function fech_messages(){
+       //      chatSocket.send(JSON.stringify({'command':'fetch_messages'}))
+       //    };
+       //  };
     </script>
 
 {% endblock content %}
