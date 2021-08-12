@@ -111,21 +111,8 @@ class ChatConsumer(WebsocketConsumer):
         if data['command']=='messages_of_that_room':
             self.room_group_name=data['room_id']
             if data.get('previous_room'):
-                get_room=get_object_or_404(Room,str_id=data['previous_room'])
-                curent_user = get_object_or_404(User,
-                            username=self.scope["user"].username)
-
-                try:
-                    user_room_info_obj=UserRoomInfo.objects.get(room=get_room, 
-                        user=curent_user)
-                except ObjectDoesNotExist:
-                    user_room_info_obj=UserRoomInfo.objects.create(room=get_room, 
-                        user=curent_user)
-                user_room_info_obj.last_seen=timezone.now()
-                user_room_info_obj.save()
-
-            
-            #   join the room
+                self.update_last_seen(data.get('previous_room'))
+            self.update_last_seen(data['room_id'])
             async_to_sync(self.channel_layer.group_add)(
                 self.room_group_name,
                 self.channel_name,
@@ -162,3 +149,17 @@ class ChatConsumer(WebsocketConsumer):
         print('WELCOM TO CHART MESSAGE',event)
         message = event['message']
         self.send(text_data=json.dumps(message))
+
+    def update_last_seen(self,room_str_id):
+        get_room=get_object_or_404(Room,str_id=room_str_id)
+        curent_user = get_object_or_404(User,
+                username=self.scope["user"].username)
+
+        try:
+            user_room_info_obj=UserRoomInfo.objects.get(room=get_room, 
+                user=curent_user)
+        except ObjectDoesNotExist:
+            user_room_info_obj=UserRoomInfo.objects.create(room=get_room, 
+                user=curent_user)
+        user_room_info_obj.last_seen=timezone.now()
+        user_room_info_obj.save()
