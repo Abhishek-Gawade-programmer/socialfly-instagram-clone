@@ -7,17 +7,35 @@ from .models import Message,Room,UserRoomInfo
 from users.models import User
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 class ChatConsumer(WebsocketConsumer):
 
-    def fetch_messages_of_room(self, room_id):
-    
-        messages = Message.last_10_messages(room_id)
-        content = {
-            'command': 'room_message',
-            'room_id':room_id,
-            'messages': self.messages_to_json(messages)
-        }
+    def fetch_messages_of_room(self, room_id,page_no=None):
+        if not page_no:
+            messages = Message.last_10_messages(room_id)
+            content = {
+                'command': 'room_message',
+                'room_id':room_id,
+                'messages': self.messages_to_json(messages)
+            }
+        else:
+            messages_all = Message.objects.filter(room__str_id=room_id)
+            paginator = Paginator(messages_all, 10)
+            try:
+                print('OKAY')
+                messages = paginator.page(page_no)
+                content = {
+                    'command': 'room_message_add',
+                    'room_id':room_id,
+                    'messages': self.messages_to_json(messages)
+                }
+            except (PageNotAnInteger,PageNotAnInteger,EmptyPage):
+                print('ERROR')
+                content = {
+                    'command': 'room_message_na',
+                    'room_id':room_id,
+                }
         self.send_message(content)
 
     def new_message(self, data):
@@ -58,18 +76,11 @@ class ChatConsumer(WebsocketConsumer):
             'profile_photo':message.user.get_social_user.profile_photo.url
         }
 
-    commands = {
-        'fetch_messages': fetch_messages_of_room,
-        'new_message': new_message
-    }
-
     def connect(self):
         if self.scope["user"].is_anonymous:
             # Reject the connection
             self.close()
         else:
-            # Accept the connection
-            print('authtrivated user')
             self.accept()
             curent_user = get_object_or_404(User,
                 username=self.scope["user"].username)
@@ -84,14 +95,6 @@ class ChatConsumer(WebsocketConsumer):
         #user chat session start
         self.send(text_data=json.dumps({'START session':'we are connected'}))
 
-
-    # join_room
-
-    def join_that_chat(self):
-         async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
-        )
 
     def disconnect(self, close_code):
         curent_user = get_object_or_404(User,
@@ -117,18 +120,15 @@ class ChatConsumer(WebsocketConsumer):
                 self.room_group_name,
                 self.channel_name,
             )
-            # self.send_message({
-            #     "join": data['room_id'],
-            #     "title": 'pdofgk,pdomgfom',
-            # })#user is now join that room
             self.fetch_messages_of_room(data['room_id'])
+        elif data['command']=='messages_of_that_room_scroll':
+            self.fetch_messages_of_room(data['room_id'],data['page_no'])
+            print('DATA is',data)
+        
         elif data['command'] == 'new_message':
             print('new message from user ',data,self.scope["user"])
             self.new_message(data)
 
-
-
-        # self.commands[data['command']](self, data)
         
 
     def send_chat_message(self, message):   
@@ -163,3 +163,5 @@ class ChatConsumer(WebsocketConsumer):
                 user=curent_user)
         user_room_info_obj.last_seen=timezone.now()
         user_room_info_obj.save()
+
+

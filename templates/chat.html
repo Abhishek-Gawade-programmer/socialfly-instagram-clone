@@ -42,7 +42,7 @@
                                   
                               <p>
                                 <span id='{{room.str_id}}last_message'>
-                                  {{room.last_message.content}}
+                                  {{room.last_message.content|truncatechars:10}}
                                 </span>
                                   
                                  {% if user.id|unread_counter:room.str_id %}
@@ -94,6 +94,7 @@
              );
       };
       var username = '{{ username }}';
+      window.page_number=1;
 
         var chatSocket = new ReconnectingWebSocket(
               'ws://'
@@ -120,22 +121,50 @@
                   })
               );
           };
+          var msg_history=document.querySelector('.msg_history')
+          msg_history.addEventListener('scroll',(event)=>{
+            if (msg_history.scrollTop ===0) {
+              
+              chatSocket.send(JSON.stringify({
+                'room_id': window.current_room,
+                'command':'messages_of_that_room_scroll',
+                'page_no':window.page_number
+               }));
+            }
+          });
 
          chatSocket.onmessage = function(e) {
               var data = JSON.parse(e.data);
               
               if (data.command === "room_message") {
                window.current_room=data.room_id
-
+               window.page_number=1;
               document.querySelector('#chat-log').innerHTML=''
                 for (let i=0; i<data['messages'].length; i++) {
                   createMessage(data['messages'][i]);
                 }
               document.querySelector('#chat-message-input').focus();
                 clear_unseen_badge(data.room_id)
-             
+                window.page_number =2;
+          }else if (data.command === 'room_message_add') {
+                for (let i=0; i<data['messages'].length; i++) {
+                  createMessage(data['messages'][i],true);
+                }
+              window.page_number +=1;
+            
+          }else if (data.command === 'room_message_na') {
+   
+            
+          }
 
-          }else if (data.command === 'new_message_save_db') {
+
+
+
+          
+
+
+
+          else if (data.command === 'new_message_save_db') {
             if (data.room_id === window.current_room) {
               createMessage(data.message)
             }else{
@@ -145,8 +174,6 @@
                 set_unseen_badge(data.room_id,data.message_counter)
               }
             }
-            
-            
           }
         };
 
@@ -163,12 +190,12 @@
                }
           };
 
-        function createMessage(data) {
+
+        function createMessage(data,add=false) {
               var message = data.content;
                 var author = data.author;
                 var profile_photo = data.profile_photo;
                 var timestamp = data.timestamp;
-      
 
                 if (username === author) {
                   var msg_text=  ` 
@@ -190,13 +217,17 @@
                 </div>` 
 
                 }
+                var chat_log=document.querySelector('#chat-log');
+                var msg_history=document.querySelector('.msg_history');
+                if (add) {
+                    chat_log.innerHTML = msg_text+chat_log.innerHTML;
+                    msg_history.scrollTop=30;
+                }else{
                 document.getElementById(window.current_room+'chat_date').innerHTML=timestamp;
-                document.getElementById(window.current_room+'last_message').innerHTML=message;
-
-
-                document.querySelector('#chat-log').innerHTML += msg_text;
-                msg_history=document.querySelector('.msg_history');
+                document.getElementById(window.current_room+'last_message').innerHTML=message.slice(0, 10);
+                chat_log.innerHTML += msg_text;
                 msg_history.scrollTop=msg_history.scrollHeight;
+              }
            };
 
         function clear_unseen_badge (room_id) {
