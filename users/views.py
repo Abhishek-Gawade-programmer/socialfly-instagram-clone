@@ -10,6 +10,7 @@ from django.db.models.functions import Concat
 
 from .forms import *
 from .models import *
+from chats.models import Room
 
 #USER AUTHENTICATION 
 from django.contrib.auth import login
@@ -85,22 +86,28 @@ def wants_follow_unfollow(request):
         # follow the user
         if who_receive_action.allow_to_follow(who_send_action.pk):
             who_receive_action.followers.add(who_send_action.user)
-            #notications of user for following
+            #notification of user for following
             who_receive_action._change_reason  ='started following you'
             who_send_action.following.add(who_receive_action.user)
             who_send_action._change_reason  ='started following'
             what_to_do['action']='Unfollow'
+            add_remove_people_chat(
+                user1=who_receive_action.user,
+                user2=who_send_action.user,
+                )
             
         # unfollow the user
         else:
-             #notications of user for following
+             #notification of user for following
             who_receive_action.followers.remove(who_send_action.user)
             who_receive_action._change_reason  ='unfollow you'
             who_send_action.following.remove(who_receive_action.user)
             who_send_action._change_reason  ='unfollowed'
             what_to_do['action']='Follow'
-
-
+            add_remove_people_chat(
+                user1=who_receive_action.user,
+                user2=who_send_action.user,
+                remove=True)
         who_send_action.save()
         who_receive_action.save()
 
@@ -147,4 +154,21 @@ def search_results(request):
 
         data_of_search={'data':data}
         return JsonResponse(data_of_search,safe=False)
+
+
+def add_remove_people_chat(user1,user2,remove=False):
+    if remove:
+        for room in Room.objects.all():
+            if room.get_user_set()=={user1,user2}:
+                room.delete()
+                print('Room is deleted')
+                return 
+    else:
+        obj=Room.objects.create()
+        obj.user_eligible.add(*[user1,user2])
+        obj.save()
+        print('Room is created')
+        return 
+
+
 

@@ -66,11 +66,12 @@ class UserEditFrom(forms.ModelForm):
 
     def clean_username(self,*args, **kwargs):
         username = self.cleaned_data.get("username")
-        if User.objects.filter(username=username).exclude(username=username).exists():
-            raise forms.ValidationError('username is alraedy taken try another one')
+        qs=User.objects.filter(username=username)
+        if self.instance:
+            qs=qs.exclude(pk=self.instance.pk)
+        if qs.exists() :
+            raise forms.ValidationError(f'({username}) username is alraedy taken try another one')
         return username
-
-
 
     class Meta:
         model=SocialflyUser

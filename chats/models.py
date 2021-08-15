@@ -16,6 +16,8 @@ class Room(models.Model):
 			return Message.objects.filter(room=self).order_by('-timestamp')[0]
 		else:
 			return 'Start Chating'
+	def get_user_set(self):
+		return set(self.user_eligible.all())
 
 	def save(self, *args, **kwargs):
 		self.str_id=self.id.hex
