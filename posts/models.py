@@ -68,8 +68,16 @@ class ReportPost(models.Model):
         return self.post.user.username +'::' +str(self.description)
 
 
-
-
+class PostActivity(models.Model):
+    reason=models.CharField(max_length=100)
+    post=models.ForeignKey(Post,on_delete=models.CASCADE)
+    changed_by = models.ForeignKey(User,on_delete=models.CASCADE,
+        blank=True,null=True)
+    created =models.DateTimeField(auto_now_add=True)
+    updated=models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.post.caption +'::' +str(self.reason)+'::-->'+str(self.changed_by.username)
+    
 
 
 

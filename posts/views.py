@@ -2,9 +2,11 @@ from django.shortcuts import render,get_object_or_404,redirect
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View
-
+from django.db.models import Q
 from django.conf import settings
 from .models import *
+
+from django.core.exceptions import ObjectDoesNotExist
 
 
 #PAGINATION
@@ -43,11 +45,25 @@ def submit_post(request):
 		post.caption=form_data.get('caption_text')
 		usernames_list=form_data.get('tag_usernames_list').split(',')
 		for username in usernames_list:
+			user_from_username=User.objects.get(username=username)
 			if username:
-				post.tagged_people.add(User.objects.get(username=username))
+				post.tagged_people.add()
+				pa_obj=PostActivity.objects.create(
+						reason="tagged user",
+						changed_by=user_from_username,
+						post=post)
+				pa_obj.save()
+
 		post.posted=True
+
 		post._change_reason='created new post'
 		post.save()
+		pa_obj=PostActivity.objects.create(
+			changed_by=request.user,
+			reason="created new post",
+			post=post)
+ 	
+		pa_obj.save()
 		return JsonResponse({'post':False})
 
 
@@ -85,7 +101,13 @@ def report_post(request):
 	post_id=request.POST.get('post_id')
 	post = get_object_or_404(Post, pk = post_id)
 	post._change_reason='post report'
+	pa_obj=PostActivity.objects.create(
+		reason="post report",
+		changed_by=request.user,
+		post=post)
+
 	post.save()
+	pa_obj.save()
 	report_obj=ReportPost.objects.update_or_create(user=request.user,description=description,post=post)
 	report_obj[0].save()
 	return JsonResponse({'success':True})
@@ -99,6 +121,11 @@ def comment_on_post(request):
 	comment_obj.save()
 	post._change_reason='comment added'
 	post.save()
+	pa_obj=PostActivity.objects.create(
+		reason="comment added",
+		changed_by=request.user,
+		post=post)
+	pa_obj.save()
 	return render(request,'post_comment_ajax.html',
 		{'commentlist':post.get_post_comments()[:3]})
 
@@ -109,12 +136,42 @@ def like_unlike_post(request):
 	if request.user in  post.like_people.all():
 		post.like_people.remove(request.user)
 		action='unlike'
+		try:
+			pa_obj=PostActivity.objects.get(
+				Q(reason__contains="unlike post")|
+                Q(reason__contains="like post"),
+				changed_by=request.user,
+				post=post)
+			pa_obj.reason='unlike post'
+		except ObjectDoesNotExist:
+			pa_obj=PostActivity.objects.create(
+			reason="unlike post",
+			changed_by=request.user,
+			post=post)
+		
+		pa_obj.save()
 		post._change_reason='unlike post'
 
 	else:
 		post.like_people.add(request.user)
 		action='like'
+
+		try:
+			pa_obj=PostActivity.objects.get(
+				Q(reason__contains="unlike post")|
+                Q(reason__contains="like post"),
+				changed_by=request.user,
+				post=post)
+			pa_obj.reason='like post'
+		except ObjectDoesNotExist:
+			pa_obj=PostActivity.objects.create(
+			reason="like post",
+			changed_by=request.user,
+			post=post)
+		
+		pa_obj.save()
 		post._change_reason='like post'
+
 	post.save()
 	return JsonResponse({'success':True,"action":action,'num_likes':post.get_number_like()},safe=False)
 

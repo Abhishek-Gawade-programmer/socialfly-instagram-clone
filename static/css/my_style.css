@@ -92,3 +92,7 @@
 .item {
   text-decoration:none ;
 }
+
+.purple_links{
+  color: purple !important;
+}

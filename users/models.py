@@ -9,8 +9,6 @@ GENDER_CHOICES = (
     ('R', 'Rather Not To Say'),
 )
 
-
-
 class User(AbstractUser):
     is_genuine = models.BooleanField(default=False)
 
@@ -58,3 +56,17 @@ class SocialflyUser(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+
+class UserActivity(models.Model):
+    reason=models.CharField(max_length=100)
+    user_target=models.ForeignKey(User,on_delete=models.CASCADE,
+        related_name='user_target')
+
+    changed_by = models.ForeignKey(User,on_delete=models.CASCADE,
+        related_name='changed_by',blank=True,null=True)
+
+    created =models.DateTimeField(auto_now_add=True)
+    updated=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user_target.username +'-' +str(self.reason)+'-->'

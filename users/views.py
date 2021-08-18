@@ -4,13 +4,20 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 
+
+from queryset_sequence import QuerySetSequence
 from django.db.models import Q
 from django.db.models import Value as V
 from django.db.models.functions import Concat 
 
+
+
+from django.core.exceptions import ObjectDoesNotExist
 from .forms import *
 from .models import *
+from posts.models import Post,PostActivity
 from chats.models import Room
+from itertools import chain
 
 #USER AUTHENTICATION 
 from django.contrib.auth import login
@@ -65,6 +72,11 @@ def profile_edit(request):
         user_object._change_reason='change in profile'
         user_object.user.save()
         edit_user_from.save()
+        ua_obj=UserActivity.objects.create(
+            reason="change in profile",
+            user_target=request.user,
+            )
+        ua_obj.save()
         messages.info(request, f"Your Profile has been Updated successfully !!")
         return redirect("users:profile")
 
@@ -90,6 +102,20 @@ def wants_follow_unfollow(request):
             who_receive_action._change_reason  ='started following you'
             who_send_action.following.add(who_receive_action.user)
             who_send_action._change_reason  ='started following'
+            try:
+                ua_obj=UserActivity.objects.get(
+                    Q(reason__contains="started following you")|
+                    Q(reason__contains="unfollow you"),
+                    changed_by=who_send_action.user,
+                    user_target=who_receive_action.user,)
+                ua_obj.reason='started following you'
+            except ObjectDoesNotExist:
+                ua_obj=UserActivity.objects.create(
+                    reason="started following you",
+                    user_target=who_receive_action.user,
+                    changed_by=who_send_action.user )
+            ua_obj.save()
+
             what_to_do['action']='Unfollow'
             add_remove_people_chat(
                 user1=who_receive_action.user,
@@ -104,6 +130,23 @@ def wants_follow_unfollow(request):
             who_send_action.following.remove(who_receive_action.user)
             who_send_action._change_reason  ='unfollowed'
             what_to_do['action']='Follow'
+
+            try:
+                ua_obj=UserActivity.objects.get(
+                    Q(reason__contains="started following you")|
+                    Q(reason__contains="unfollow you"),
+                    changed_by=who_send_action.user,
+                    user_target=who_receive_action.user,)
+                ua_obj.reason='unfollow you'
+            except ObjectDoesNotExist:
+                ua_obj=UserActivity.objects.create(
+                    reason="unfollow you",
+                    user_target=who_receive_action.user,
+                    changed_by=who_send_action.user )
+            ua_obj.save()
+
+    
+
             add_remove_people_chat(
                 user1=who_receive_action.user,
                 user2=who_send_action.user,
@@ -155,6 +198,32 @@ def search_results(request):
         data_of_search={'data':data}
         return JsonResponse(data_of_search,safe=False)
 
+# def get_salary(action):
+#     return action.
+
+@login_required
+def user_actions(request):
+    notifiy_on_post=PostActivity.objects.filter(
+        Q(post__user=request.user)| Q(changed_by=request.user)&Q(reason='tagged user')
+        )
+  
+
+    notifiy_on_user=UserActivity.objects.filter(user_target=request.user)
+    print(request.user.get_social_user.following.all())
+    following_post=Post.objects.filter(user__in=request.user.get_social_user.following.all())
+    print(following_post)
+    all_notifiactions=list(notifiy_on_post)+list(notifiy_on_user)+list(following_post)
+    all_notifiactions.sort(
+        key=lambda item: item.updated,
+        reverse=True)
+    return render(request,'user_activity.html',{
+        'notifiy_on_post':notifiy_on_post,
+        'notifiy_on_user':notifiy_on_user,
+       'all_notifiactions':all_notifiactions
+        })
+
+
+
 
 def add_remove_people_chat(user1,user2,remove=False):
     if remove:
@@ -169,6 +238,4 @@ def add_remove_people_chat(user1,user2,remove=False):
         obj.save()
         print('Room is created')
         return 
-
-
 
