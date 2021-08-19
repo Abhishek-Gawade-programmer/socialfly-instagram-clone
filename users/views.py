@@ -23,7 +23,7 @@ from itertools import chain
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
-#HISTORY OF USERS
+
 class UserSignUpView(CreateView):
     model = User
     form_class = UserSignUpForm
@@ -72,11 +72,8 @@ def profile_edit(request):
         user_object._change_reason='change in profile'
         user_object.user.save()
         edit_user_from.save()
-        ua_obj=UserActivity.objects.create(
-            reason="change in profile",
-            user_target=request.user,
-            )
-        ua_obj.save()
+        user_activity_fuc("change in profile",request.user,None)
+  
         messages.info(request, f"Your Profile has been Updated successfully !!")
         return redirect("users:profile")
 
@@ -109,12 +106,12 @@ def wants_follow_unfollow(request):
                     changed_by=who_send_action.user,
                     user_target=who_receive_action.user,)
                 ua_obj.reason='started following you'
+                ua_obj.save()
             except ObjectDoesNotExist:
-                ua_obj=UserActivity.objects.create(
-                    reason="started following you",
-                    user_target=who_receive_action.user,
-                    changed_by=who_send_action.user )
-            ua_obj.save()
+                user_activity_fuc("started following you",
+                    who_receive_action.user,
+                    who_send_action.user)
+            
 
             what_to_do['action']='Unfollow'
             add_remove_people_chat(
@@ -138,15 +135,11 @@ def wants_follow_unfollow(request):
                     changed_by=who_send_action.user,
                     user_target=who_receive_action.user,)
                 ua_obj.reason='unfollow you'
+                ua_obj.save()
             except ObjectDoesNotExist:
-                ua_obj=UserActivity.objects.create(
-                    reason="unfollow you",
-                    user_target=who_receive_action.user,
-                    changed_by=who_send_action.user )
-            ua_obj.save()
-
-    
-
+                user_activity_fuc("unfollow you",
+                    who_receive_action.user,
+                    who_send_action.user)
             add_remove_people_chat(
                 user1=who_receive_action.user,
                 user2=who_send_action.user,
@@ -204,14 +197,12 @@ def search_results(request):
 @login_required
 def user_actions(request):
     notifiy_on_post=PostActivity.objects.filter(
-        Q(post__user=request.user)| Q(changed_by=request.user)&Q(reason='tagged user')
+        Q(post__user=request.user)& ~Q(changed_by=request.user)
+        | Q(changed_by=request.user)&Q(reason='tagged user')
         )
-  
 
     notifiy_on_user=UserActivity.objects.filter(user_target=request.user)
-    print(request.user.get_social_user.following.all())
     following_post=Post.objects.filter(user__in=request.user.get_social_user.following.all())
-    print(following_post)
     all_notifiactions=list(notifiy_on_post)+list(notifiy_on_user)+list(following_post)
     all_notifiactions.sort(
         key=lambda item: item.updated,
@@ -230,12 +221,17 @@ def add_remove_people_chat(user1,user2,remove=False):
         for room in Room.objects.all():
             if room.get_user_set()=={user1,user2}:
                 room.delete()
-                print('Room is deleted')
                 return 
     else:
         obj=Room.objects.create()
         obj.user_eligible.add(*[user1,user2])
         obj.save()
-        print('Room is created')
         return 
 
+def user_activity_fuc(reason,user_target,changed_by):
+    ua_obj=UserActivity.objects.create(
+        reason=reason,
+        user_target=user_target,
+        changed_by=changed_by)
+    ua_obj.save()
+    return 

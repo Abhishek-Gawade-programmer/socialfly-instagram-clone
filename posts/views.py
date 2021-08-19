@@ -48,20 +48,18 @@ def submit_post(request):
 			user_from_username=User.objects.get(username=username)
 			if username:
 				post.tagged_people.add()
-				pa_obj=PostActivity.objects.create(
-						reason="tagged user",
-						changed_by=user_from_username,
-						post=post)
-				pa_obj.save()
+				post_activity_fuc(reason="tagged user",
+				changed_by=user_from_username,post=post)
+		
 
 		post.posted=True
 
 		post._change_reason='created new post'
 		post.save()
-		pa_obj=PostActivity.objects.create(
-			changed_by=request.user,
-			reason="created new post",
-			post=post)
+		post_activity_fuc(reason="created new post",
+				changed_by=request.user,post=post)
+
+
  	
 		pa_obj.save()
 		return JsonResponse({'post':False})
@@ -101,13 +99,9 @@ def report_post(request):
 	post_id=request.POST.get('post_id')
 	post = get_object_or_404(Post, pk = post_id)
 	post._change_reason='post report'
-	pa_obj=PostActivity.objects.create(
-		reason="post report",
-		changed_by=request.user,
-		post=post)
-
+	post_activity_fuc(reason="post report",
+				changed_by=request.user,post=post)
 	post.save()
-	pa_obj.save()
 	report_obj=ReportPost.objects.update_or_create(user=request.user,description=description,post=post)
 	report_obj[0].save()
 	return JsonResponse({'success':True})
@@ -121,11 +115,9 @@ def comment_on_post(request):
 	comment_obj.save()
 	post._change_reason='comment added'
 	post.save()
-	pa_obj=PostActivity.objects.create(
-		reason="comment added",
-		changed_by=request.user,
-		post=post)
-	pa_obj.save()
+	post_activity_fuc(reason="comment added",
+				changed_by=request.user,post=post)
+
 	return render(request,'post_comment_ajax.html',
 		{'commentlist':post.get_post_comments()[:3]})
 
@@ -143,13 +135,10 @@ def like_unlike_post(request):
 				changed_by=request.user,
 				post=post)
 			pa_obj.reason='unlike post'
+			pa_obj.save()
 		except ObjectDoesNotExist:
-			pa_obj=PostActivity.objects.create(
-			reason="unlike post",
-			changed_by=request.user,
-			post=post)
-		
-		pa_obj.save()
+			post_activity_fuc(reason="unlike post",
+				changed_by=request.user,post=post)
 		post._change_reason='unlike post'
 
 	else:
@@ -163,13 +152,12 @@ def like_unlike_post(request):
 				changed_by=request.user,
 				post=post)
 			pa_obj.reason='like post'
+			pa_obj.save()
 		except ObjectDoesNotExist:
-			pa_obj=PostActivity.objects.create(
-			reason="like post",
-			changed_by=request.user,
-			post=post)
+			post_activity_fuc(reason="like post",
+				changed_by=request.user,post=post,)
 		
-		pa_obj.save()
+		
 		post._change_reason='like post'
 
 	post.save()
@@ -180,3 +168,11 @@ def like_unlike_post(request):
 def post_detail_view(request,slug,post_id):
     post = get_object_or_404(Post, pk = post_id,slug=slug)
     return render(request,'post_detail.html',{'post':post})
+
+def post_activity_fuc(reason,changed_by,post):
+	pa_obj=PostActivity.objects.create(
+			reason=reason,
+			changed_by=changed_by,
+			post=post)
+	pa_obj.save()
+	return 

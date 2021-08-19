@@ -13,17 +13,14 @@
 
      
             <div class="row">
-                <header class="col-10 photo__header">
+                <header class="col-10 photo__header ">
                         <img src="{{post.user.get_social_user.profile_photo.url}}" class="photo__avatar" style="width: 50px;height: 50px;">
+                     <a href="{{ post.user.get_social_user.get_absolute_url }}" style="color:purple;">
                         <div class="photo__user-info">
-                            <a href="{{ post.user.get_social_user.get_absolute_url }}" style="color:purple;">
                                     <span class="photo__author">{{post.user.username}}</span>
-                             </a>
-        
-
-
                             <span class="photo__location">{{post.user.get_full_name}}</span>
                         </div>
+                    </a>
         
             
                 </header>
