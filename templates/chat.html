@@ -1,0 +1,235 @@
+{% extends "_base.html" %}
+{% load static %}
+{% load thumbnail %}
+{% load user_actions %}
+{% block head_title %}Your DMs{% endblock %}
+{% block content  %}
+
+<link rel="stylesheet" href="{% static 'css/chat.css' %}"> 
+
+<div class="container">
+<h3 class=" text-center">Messaging</h3>
+<div class="messaging">
+      <div class="inbox_msg">
+        <div class="inbox_people">
+          <div class="headind_srch">
+            <div class="recent_heading">
+              <h4>Recent</h4>
+            </div>
+            <div class="srch_bar">
+              <div class="stylish-input-group">
+                <input type="text" class="search-bar"  placeholder="Search" >
+                <span class="input-group-addon">
+                <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                </span> </div>
+            </div>
+          </div>
+          <div class="inbox_chat">
+            {% for room in user_groups %}
+              {% if room.is_group %}
+              {% else %} 
+                {% for user_in_room in room.user_eligible.all %}
+                      {% if user_in_room != request.user %}
+                        <div class="chat_list" room_id="{{room.str_id}}" id='person_chat'>
+                          <div class="chat_people">
+                            <div class="chat_img">
+                             <img src="{% thumbnail user_in_room.get_social_user.profile_photo 200x200 crop %}" class="explore__avatar" alt="profile image"> 
+                           </div>
+                            <div class="chat_ib">
+                              <h5>{{user_in_room.get_full_name}}
+                                 <span class="chat_date" id='{{room.str_id}}chat_date'>{{room.last_message.timestamp}}</span>
+                               </h5>
+                                  
+                              <p>
+                                <span id='{{room.str_id}}last_message'>
+                                  {{room.last_message.content|truncatechars:10}}
+                                </span>
+                                  
+                                 {% if user.id|unread_counter:room.str_id %}
+                                  <span class="badge bg-info float-right" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
+                                    {{user.id|unread_counter:room.str_id}}
+                                  {% else %}
+                                    <span class="badge bg-info float-right not-visable" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
+                                  {% endif %}
+                                  </span>
+                                </p>
+                            </div>
+                          </div>
+                        </div>
+                      {% endif %}
+                {% endfor %}
+              {% endif %}
+            {% empty %}
+                
+            {% endfor %}
+          </div>
+        </div>
+        <div class="mesgs">
+          <div class="msg_history" id="chat-log">
+
+          </div>
+          <div class="type_msg">
+            <div class="input_msg_write">
+              <input type="text" class="write_msg" placeholder="Type a message"  id="chat-message-input">
+              <button class="msg_send_btn" type="button" id="chat-message-submit"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div></div>
+   <script type="text/javascript" src="{% static 'js/reconnecting-websocket.js' %}">
+        </script>
+    <script>
+
+      function clear_active_class () {
+        document.querySelectorAll('#person_chat').forEach((item) =>
+           item.classList.remove('active_chat')
+             );
+      };
+      var username = '{{ username }}';
+      window.page_number=1;
+
+        var chatSocket = new ReconnectingWebSocket(
+              'ws://'
+              + window.location.host
+              + '/ws/chats/'
+              + 'stream'
+              + '/'
+          );
+          chatSocket.onopen = function () {
+              console.log("Connected to chat socket");
+              document.querySelectorAll('#person_chat').forEach((item) =>
+                  item.addEventListener("click", (event) => {
+                    clear_active_class()
+                    console.log('room_id',item.getAttribute('room_id'))
+                    console.log('previous_room',window.current_room)
+                    item.classList.add('active_chat');
+
+                      chatSocket.send(JSON.stringify({
+                        'room_id': item.getAttribute('room_id'),
+                        'command':'messages_of_that_room',
+                        'previous_room':window.current_room
+                       
+                    }));
+                  })
+              );
+          };
+          var msg_history=document.querySelector('.msg_history')
+          msg_history.addEventListener('scroll',(event)=>{
+            if (msg_history.scrollTop ===0) {
+              
+              chatSocket.send(JSON.stringify({
+                'room_id': window.current_room,
+                'command':'messages_of_that_room_scroll',
+                'page_no':window.page_number
+               }));
+            }
+          });
+
+         chatSocket.onmessage = function(e) {
+              var data = JSON.parse(e.data);
+              
+              if (data.command === "room_message") {
+               window.current_room=data.room_id
+               window.page_number=1;
+              document.querySelector('#chat-log').innerHTML=''
+                for (let i=0; i<data['messages'].length; i++) {
+                  createMessage(data['messages'][i]);
+                }
+              document.querySelector('#chat-message-input').focus();
+                clear_unseen_badge(data.room_id)
+                window.page_number =2;
+          }else if (data.command === 'room_message_add') {
+                for (let i=0; i<data['messages'].length; i++) {
+                  createMessage(data['messages'][i],true);
+                }
+              window.page_number +=1;
+            
+          }else if (data.command === 'room_message_na') {
+            
+          }
+          else if (data.command === 'new_message_save_db') {
+            if (data.room_id === window.current_room) {
+              createMessage(data.message)
+            }else{
+              console.warn('new massage from Other  room',data)
+              document.getElementById(data.room_id+'last_message').innerHTML=data.message.content
+              if (data.message_counter >0) {
+                set_unseen_badge(data.room_id,data.message_counter)
+              }
+            }
+          }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+              var messageInputDom = document.querySelector('#chat-message-input');
+              var message = messageInputDom.value;
+              if (message.trim()) {
+                chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'command':'new_message',
+                    'room_id':window.current_room,
+                }));
+                messageInputDom.value = '';
+               }
+          };
+
+
+        function createMessage(data,add=false) {
+              var message = data.content;
+                var author = data.author;
+                var profile_photo = data.profile_photo;
+                var timestamp = data.timestamp;
+
+                if (username === author) {
+                  var msg_text=  ` 
+                  <div class="outgoing_msg">
+                    <div class="sent_msg">
+                      <p>${message}</p>
+                      <span class="time_date">${timestamp}</span> </div>
+                  </div>`;
+
+                }else{
+                  var msg_text=` 
+                  <div class="incoming_msg">
+                  <div class="incoming_msg_img"> <img src='${profile_photo}' alt="${username}photo"> </div>
+                  <div class="received_msg">
+                    <div class="received_withd_msg">
+                      <p>${message}</p>
+                      <span class="time_date">${timestamp}</span> </div>
+                  </div>
+                </div>` 
+
+                }
+                var chat_log=document.querySelector('#chat-log');
+                var msg_history=document.querySelector('.msg_history');
+                if (add) {
+                    chat_log.innerHTML = msg_text+chat_log.innerHTML;
+                    msg_history.scrollTop=30;
+                }else{
+                document.getElementById(window.current_room+'chat_date').innerHTML=timestamp;
+                document.getElementById(window.current_room+'last_message').innerHTML=message.slice(0, 10);
+                chat_log.innerHTML += msg_text;
+                msg_history.scrollTop=msg_history.scrollHeight;
+              }
+           };
+
+        function clear_unseen_badge (room_id) {
+          var badge=document.getElementById(room_id+'message_counter');
+          badge.classList.add('not-visable');
+          
+        }
+        function set_unseen_badge (room_id,num) {
+          var badge=document.getElementById(room_id+'message_counter');
+          badge.classList.remove('not-visable');
+          badge.innerHTML=num
+
+        }
+         chatSocket.onclose = function(e) {
+              console.error('Chat socket closed unexpectedly');
+          };
+
+    </script>
+
+{% endblock content %}

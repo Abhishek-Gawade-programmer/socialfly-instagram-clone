@@ -1,0 +1,50 @@
+{% extends "_base.html" %}
+{% load static %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Log in{% endblock %}
+
+{% block content %}
+        <main id="login">
+            <div class="login__column">
+                <img src="{% static 'images/phoneImage.png' %}" class="login__phone" />
+            </div>
+            <div class="login__column">
+                <div class="login__box">
+                    <img src="{% static 'label.jpg' %}" class="login__logo mb-3" />
+
+                        
+                    <form action="{% url 'login' %}" method="POST" class="login__form">
+                       {% csrf_token %}
+                       {{form|crispy}}
+      
+                        <input type="submit" value="Log in" />
+                    </form>
+                    <span class="login__divider">or</span>
+                    Log in with Other Social Providers
+
+                    <div  class=" mt-3">
+
+
+                         <a href="#" class=""> 
+                            <button type="button" class="btn btn-primary btn-lg btn-floating ml-2" >
+                                    <i class="fab fa-facebook fa-lg"></i></button>
+                            </a>
+                            <a href="#" class=""><button type="button" class="btn btn-secondary btn-lg btn-floating ml-2" style="background: purple;">
+                                    <i class="fab fa-instagram fa-lg"></i>
+                            </button></a>
+                            <a href="#" class=""><button type="button" class="btn btn-danger btn-lg btn-floating ml-2">
+                                    <i class="fab fa-google fa-lg"></i>
+                            </button></a>
+                    </div>
+                    <a href="{% url 'password_reset' %}" class="login__link login__link--small">Forgot password</a>
+                </div>
+                <div class="login__box">
+                    <span>Don't have an account?</span> <a href="{% url 'signup' %}">Sign up</a>
+                </div>
+            </div>
+        </main>
+
+
+{% endblock %}

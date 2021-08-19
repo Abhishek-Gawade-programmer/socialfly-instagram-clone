@@ -1,0 +1,54 @@
+{% extends '_base.html' %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% block head_title %}Sign in{% endblock %}
+{% block content %}
+
+
+
+
+ <main id="login">
+  <div class="login__column">
+                <img src="{% static 'images/phoneImage.png' %}" class="login__phone" />
+            </div>
+            <div class="login__column">
+                <div class="login__box" style="width: 100% !important;">
+                          <div >
+                            <h5 style="color: #8e8e8e;font-weight: 600">
+                            Sign up to see photos and videos from your friends.</h5>
+                            </div>
+                            <br>
+                    <form action="" method="POST" class="login__form">
+                       {% csrf_token %}
+                       {{form|crispy}}
+      
+                        <input type="submit" value="Create Account" />
+                    </form>
+                    <span class="login__divider">or</span>
+                    Sign up with Other Social Providers
+
+                    <div  class=" mt-3">
+
+
+                         <a href="#" class=""> 
+                            <button type="button" class="btn btn-primary btn-lg btn-floating ml-2" >
+                                    <i class="fab fa-facebook fa-lg"></i></button>
+                            </a>
+                            <a href="#" class=""><button type="button" class="btn btn-secondary btn-lg btn-floating ml-2" style="background: purple;">
+                                    <i class="fab fa-instagram fa-lg"></i>
+                            </button></a>
+                            <a href="#" class=""><button type="button" class="btn btn-danger btn-lg btn-floating ml-2">
+                                    <i class="fab fa-google fa-lg"></i>
+                            </button></a>
+                    </div>
+                    <a href="{% url 'account_reset_password' %}" class="login__link login__link--small">Forgot password</a>
+                </div>
+                <div class="login__box">
+                    <span>Already Have Account ??</span> <a href="{% url 'login' %}">Log in</a>
+                </div>
+            </div>
+        </main>
+
+
+{% endblock %}

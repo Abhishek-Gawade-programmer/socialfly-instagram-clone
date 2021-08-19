@@ -1,49 +1,213 @@
 {% extends '_base.html' %}
 {% load static %}
+{% load user_actions %}
+{% block head_title %}Explore{% endblock %}
 
 {% block content  %}
-      
-    <main id="explore">
-        <ul class="explore__users">
-            <li class="explore__user">
-                
-                <div class="explore__user-column">
-                    <img src="images/avatar.jpg" class="explore__avatar"/>
-                    <div class="explore__info">
-                        <span class="explore__username">inthetiger</span>
-                        <span class="explore__full-name">Lynn Park</span>
-                    </div>
-                </div>
-                <div class="explore__user-column">
-                    <button>Follow</button>
-                </div>
-            </li>
-            <li class="explore__user">
+
+<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
+<script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/amsify.suggestags.css' %}">
+<script type="text/javascript" src="{% static 'js/jquery.amsify.suggestags.js' %}"></script>
+
+
+
+    <main id="feed">
+                  <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+          <defs>
+            <symbol id="icon-heart" viewBox="0 0 32 32">
+              <path d="M23.6 2c-3.363 0-6.258 2.736-7.599 5.594-1.342-2.858-4.237-5.594-7.601-5.594-4.637 0-8.4 3.764-8.4 8.401 0 9.433 9.516 11.906 16.001 21.232 6.13-9.268 15.999-12.1 15.999-21.232 0-4.637-3.763-8.401-8.4-8.401z"></path>
+            </symbol>
+          </defs>
+        </svg>
+
+        {% include "post_ajax.html" %}
+        <div id='spiner_box' style="display:none;">
+            <div class="spinner-border text-primary" role="status" >
+        </div>
+        <script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}"></script>
+        </main>
+
+
+
+        <div class="add_button" data-toggle="modal" data-target="#exampleModalLong">
+            <i class="fas fa-plus-circle fa-3x"></i>  
+        </div>
+
+ 
+
+ {# sucesss model #}
+<div class="modal " id="postsucessmodel" tabindex="-1" role="dialog" aria-labelledby="postsucessmodelLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postsucessmodelLabel">Post Successfully Sent !!   </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# POST MODEL UPLOAD #}
+
+<div class="modal" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle" >New Post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+      </div>
+
+            <div class="modal-footer">
+                       <small id="postHelpInline" class="text-muted">
+           You can upload almost 5 image with each size max to 3MB  
+           
+            </small>
+
+            <button type="button" class="btn btn-sm btn-danger" id='removetheimage' > <i class="fas fa-ban"></i> Remove  Images</button>
+            <button type="button" id='uploadtheimage' class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload  Images</button>
+      </div>
+      <div class="modal-body">
+
+        <div id='caption_for_image'>
+
+              <div class="form-group">
+                <label for="caption_text">Add Caption</label>
+                <textarea class="form-control" id="caption_text" rows="3"  placeholder="Add Caption To post"></textarea>
+              </div>
+            <div class="form-group">
+                <label for="tag_friends">Tag Your Friends</label>
+             <input type="text" class="form-control" id="tag_friends" name="following" value="" placeholder="Tag Your Friends">
+             </div>
+        </div>
                     
-                    <div class="explore__user-column">
-                        <img src="images/avatar.jpg" class="explore__avatar"/>
-                        <div class="explore__info">
-                            <span class="explore__username">inthetiger</span>
-                            <span class="explore__full-name">Lynn Park</span>
-                        </div>
-                    </div>
-                    <div class="explore__user-column">
-                        <button>Follow</button>
-                    </div>
-                </li>
-                <li class="explore__user">
-                        
-                        <div class="explore__user-column">
-                            <img src="images/avatar.jpg" class="explore__avatar"/>
-                            <div class="explore__info">
-                                <span class="explore__username">inthetiger</span>
-                                <span class="explore__full-name">Lynn Park</span>
-                            </div>
-                        </div>
-                        <div class="explore__user-column">
-                            <button>Follow</button>
-                        </div>
-                    </li>
+        
+
+        <form action="{% url 'posts:post_image_upload' %}"  method="POST" class="dropzone dz" id='my-dropzone' enctype="multipart/form-data">
+        {% csrf_token %}
+            <div class="fallback" id='form_area'>
+                <input name="file" type="file" multiple >
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Report  Modal -->
+<div class="modal " id="reportpostmodel" tabindex="-1" role="dialog" aria-labelledby="reportpostmodelTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+ 
+        <h5 class="modal-title" id="exampleModalLongTitle">Report Post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info" role="alert">
+        Leave if you do not want to give discription your report will be send
+      </div>
+        <input class="form-control form-control" type="text" placeholder="Description for Report" id='description_box' value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id='report_post_button'>Report Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- Delete Post Modal -->
+<div class="modal " id="deletepostmodel" tabindex="-1" role="dialog" aria-labelledby="deletepostmodelTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+ 
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete Post ??</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" role="alert">
+        Deleting the post will delete all related 
+        <ul style="list-style:initial;padding: 3px;">
+          <li>Comments</li>
+          <li>Likes</li>
+          <li>History</li>
+          <li>Shared link wouldn't work</li>
         </ul>
-    </main>
-    {% endblock content %}
+      </div>
+      </div>
+      <div class="modal-footer">
+          <div class="col">
+              <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+            </div>
+          <div class="col">
+            <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" id='delete_post'>Delete  Post</button>
+          </div>
+          
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<script type="text/javascript" src="{% static 'js/user_post.js' %}">
+
+</script>
+     <script type="text/javascript">
+    $j('input[name="following"]').amsifySuggestags({
+        suggestions:[{% for following in request.user.get_social_user.following.all %}'{{following.username}}',{% endfor %}],
+        whiteList: true
+    });
+
+</script>
+
+<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'js/infinite_post.js' %}"></script> 
+<script type="text/javascript">
+  var spiner_box = document.getElementById("spiner_box");
+var page = 1;
+var empty_page = false;
+var block_request = false;
+$j(window).scroll(function () {
+  var margin = $j(document).height() - $j(window).height() - 200;
+  if (
+    $j(window).scrollTop() > margin &&
+    empty_page == false &&
+    block_request == false
+  ) {
+    spiner_box.style.removeProperty("display");
+    block_request = true;
+    page += 1;
+    $j.get("?page=" + page, function (data) {
+      if (data == "") {
+        empty_page = true;
+      } else {
+        block_request = false;
+        $j("#feed").append(data);
+
+        spiner_box.style.display = "none";
+      }
+    });
+  }
+});
+</script>
+{% endblock content %}
+
+
