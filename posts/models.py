@@ -1,12 +1,10 @@
 from users.models import User
 from django.db import models
-from simple_history.models import HistoricalRecords
 from django.utils.text import slugify
 from  django.shortcuts import reverse
 class Post(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     caption =models.TextField( max_length=250,blank=True)
-    history = HistoricalRecords()
     tagged_people=models.ManyToManyField(User,related_name='tagged_people',blank=True)
     like_people=models.ManyToManyField(User,related_name='like_people',blank=True)
     posted=models.BooleanField(default=False)
