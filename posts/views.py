@@ -54,7 +54,6 @@ def submit_post(request):
 
 		post.posted=True
 
-		post._change_reason='created new post'
 		post.save()
 		post_activity_fuc(reason="created new post",
 				changed_by=request.user,post=post)
@@ -98,7 +97,6 @@ def report_post(request):
 	description=request.POST.get('description')
 	post_id=request.POST.get('post_id')
 	post = get_object_or_404(Post, pk = post_id)
-	post._change_reason='post report'
 	post_activity_fuc(reason="post report",
 				changed_by=request.user,post=post)
 	post.save()
@@ -113,7 +111,6 @@ def comment_on_post(request):
 	post = get_object_or_404(Post, pk = post_id)
 	comment_obj=Comment.objects.create(text=comment_text,post=post,user=request.user)
 	comment_obj.save()
-	post._change_reason='comment added'
 	post.save()
 	post_activity_fuc(reason="comment added",
 				changed_by=request.user,post=post)
@@ -139,7 +136,6 @@ def like_unlike_post(request):
 		except ObjectDoesNotExist:
 			post_activity_fuc(reason="unlike post",
 				changed_by=request.user,post=post)
-		post._change_reason='unlike post'
 
 	else:
 		post.like_people.add(request.user)
@@ -156,10 +152,6 @@ def like_unlike_post(request):
 		except ObjectDoesNotExist:
 			post_activity_fuc(reason="like post",
 				changed_by=request.user,post=post,)
-		
-		
-		post._change_reason='like post'
-
 	post.save()
 	return JsonResponse({'success':True,"action":action,'num_likes':post.get_number_like()},safe=False)
 
