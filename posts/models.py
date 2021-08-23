@@ -2,16 +2,17 @@ from users.models import User
 from django.db import models
 from django.utils.text import slugify
 from  django.shortcuts import reverse
+
 class Post(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     caption =models.TextField( max_length=250,blank=True)
     tagged_people=models.ManyToManyField(User,related_name='tagged_people',blank=True)
     like_people=models.ManyToManyField(User,related_name='like_people',blank=True)
+    bookmark_user=models.ManyToManyField(User,related_name='bookmark_user',blank=True)
     posted=models.BooleanField(default=False)
     created =models.DateTimeField(auto_now_add=True)
     updated=models.DateTimeField(auto_now=True)
     slug=models.SlugField(max_length=100)
-
 
     def get_post_images(self):
         return PostImage.objects.filter(post=self)

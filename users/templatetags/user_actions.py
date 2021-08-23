@@ -22,6 +22,15 @@ def check_like_post(user_id,post_id):
     return False
 
 @register.filter
+def check_bookmark_post(user_id,post_id):
+    post = get_object_or_404(Post, pk = post_id)
+    user = get_object_or_404(User, pk = user_id)
+    if user in post.bookmark_user.all():
+        return True
+    return False
+
+
+@register.filter
 def unread_counter(user_id,room_str):
     room = get_object_or_404(Room, str_id = room_str)
     user = get_object_or_404(User, pk = user_id)

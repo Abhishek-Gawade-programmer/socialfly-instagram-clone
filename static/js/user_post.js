@@ -29,7 +29,8 @@ $j("#uploadtheimage").click(function (e) {
   post_pk = removetheimage.getAttribute("post_pk");
   if (post_pk) {
     caption_text = document.getElementById("caption_text").value.trim();
-    tag_usernames=document.getElementById('tag_friends').value;
+    tag_usernames=document.getElementById('tag_friends').value+',';
+    console.warn(tag_usernames);
 
     if (caption_text) {
         $j.ajax({

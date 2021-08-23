@@ -87,9 +87,43 @@ function like_unlike_the_post (post_id) {
       },
     });
  
-  
+
 };
 
+
+
+
+
+
+
+function bookmark_the_post (post_id) {
+  var book_mark_post=document.getElementById('book_mark_post'+post_id);
+
+    $j.ajax({
+      type: "POST",
+
+      url: window.location.origin + "/posts/bookmark-post/",
+
+      data: {
+        csrfmiddlewaretoken: csrftoken,
+        post_id: post_id,
+      },
+      success: function (response) {
+        if (response.action) {
+          book_mark_post.innerHTML='<i class="far fa-bookmark fa-lg"></i>'
+        }
+        else{
+          book_mark_post.innerHTML='<i class="fas fa-bookmark fa-lg"></i>'
+
+        }
+      },
+      error :function (response) {
+         
+      },
+    });
+ 
+  
+};
 
 function comment_on_post(post_id) {
   var post_comment=document.getElementById('post_comment_text'+post_id);

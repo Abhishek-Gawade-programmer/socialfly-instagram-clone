@@ -45,8 +45,8 @@ def submit_post(request):
 		post.caption=form_data.get('caption_text')
 		usernames_list=form_data.get('tag_usernames_list').split(',')
 		for username in usernames_list:
-			user_from_username=User.objects.get(username=username)
 			if username:
+				user_from_username=User.objects.get(username=username)
 				post.tagged_people.add()
 				post_activity_fuc(reason="tagged user",
 				changed_by=user_from_username,post=post)
@@ -60,7 +60,6 @@ def submit_post(request):
 
 
  	
-		pa_obj.save()
 		return JsonResponse({'post':False})
 
 
@@ -68,7 +67,11 @@ def submit_post(request):
 @login_required
 def explore(request):
 	l=[report_post.post.id for report_post in ReportPost.objects.filter(user=request.user)]
-	recommend_posts=Post.objects.filter(posted=True).exclude(id__in=l)
+	recommend_posts=Post.objects.filter(
+		Q(posted=True),
+		Q(user__in=request.user.get_social_user.following.all())|
+		Q(user=request.user)
+		).exclude(id__in=l)
 
 	page = request.GET.get('page', 1)
 	paginator = Paginator(recommend_posts, 1)
@@ -154,6 +157,20 @@ def like_unlike_post(request):
 				changed_by=request.user,post=post,)
 	post.save()
 	return JsonResponse({'success':True,"action":action,'num_likes':post.get_number_like()},safe=False)
+
+
+@login_required
+def bookmark_post(request):
+	post_id=request.POST.get('post_id')
+	post = get_object_or_404(Post, pk = post_id)
+	if request.user in  post.bookmark_user.all():
+		post.bookmark_user.remove(request.user)
+		action=True
+	else:
+		post.bookmark_user.add(request.user)
+		action=False
+	post.save()
+	return JsonResponse({'success':True,"action":action},safe=False)
 
 
 @login_required

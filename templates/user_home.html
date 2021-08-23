@@ -49,7 +49,7 @@
                 </div>
                 <div class=" explore__user-column float-right" >
 
-                {% if friends.pk|check_follow_or_unfollow:user_object.pk  %}
+                {% if friends.pk|check_follow_or_unfollow:user.get_social_user.pk  %}
                         
                     <button class='follow_unfollow_button' user_id='{{friends.pk}}' style="border: 2px solid;">Follow
                     </button>   
@@ -146,8 +146,6 @@
 
 
     })
-
-
 
 
 </script>

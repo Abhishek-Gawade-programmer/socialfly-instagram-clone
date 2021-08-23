@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 
 
-from queryset_sequence import QuerySetSequence
 from django.db.models import Q
 from django.db.models import Value as V
 from django.db.models.functions import Concat 
@@ -19,7 +18,7 @@ from posts.models import Post,PostActivity
 from chats.models import Room
 from itertools import chain
 
-#USER AUTHENTICATION 
+#USER AUTHENTICATION  
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
@@ -33,7 +32,7 @@ class UserSignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user,backend='allauth.account.auth_backends.AuthenticationBackend')
-        return redirect('core:explore')
+        return redirect('posts:explore')
 
 @login_required
 def profile(request,socialflyuser=None):
@@ -45,9 +44,11 @@ def profile(request,socialflyuser=None):
 
     user_followers=user_object.followers.all()
     user_followings=user_object.following.all()
+
     return render(request,'profile.html',{'user_object':user_object,
                                     'user_followers':user_followers,
                                     'user_followings':user_followings,
+
                                     })
 
 
@@ -69,7 +70,6 @@ def profile_edit(request):
         user_object.user.last_name=user_from.cleaned_data.get('last_name')
         user_object.user.email=user_from.cleaned_data.get('email')
 
-        user_object._change_reason='change in profile'
         user_object.user.save()
         edit_user_from.save()
         user_activity_fuc("change in profile",request.user,None)
@@ -221,12 +221,19 @@ def add_remove_people_chat(user1,user2,remove=False):
         for room in Room.objects.all():
             if room.get_user_set()=={user1,user2}:
                 room.delete()
-                return 
+                print('room is deleted')
     else:
+        for room in Room.objects.all():
+            if room.get_user_set()=={user1,user2}:
+                print('no need to create a room')
+                return
+
+          
         obj=Room.objects.create()
         obj.user_eligible.add(*[user1,user2])
         obj.save()
-        return 
+        print('room is created')
+         
 
 def user_activity_fuc(reason,user_target,changed_by):
     ua_obj=UserActivity.objects.create(

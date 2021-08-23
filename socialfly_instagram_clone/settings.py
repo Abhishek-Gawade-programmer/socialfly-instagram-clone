@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     #3rd party
-     'simple_history',
      'channels',
     
     # Providers
@@ -78,8 +77,6 @@ ACCOUNT_LOGOUT_REDIRECT_URL="account_login"
 # ACCOUNT_LOGOUT_ON_GET= True
 # ACCOUNT_UNIQUE_EMAIL = True
 # ACCOUNT_EMAIL_REQUIRED = True
-
-
 #CHAT SETTINGS
 ASGI_APPLICATION = 'socialfly_instagram_clone.asgi.application'
 
@@ -93,7 +90,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-     'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'socialfly_instagram_clone.urls'
@@ -191,8 +187,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #HISTORY SETINGS 
-SIMPLE_HISTORY_REVERT_DISABLED=True
-SIMPLE_HISTORY_HISTORY_ID_USE_UUID = True
+# SIMPLE_HISTORY_REVERT_DISABLED=True
+# SIMPLE_HISTORY_HISTORY_ID_USE_UUID = True
 
 #REDIS
 CHANNEL_LAYERS = {

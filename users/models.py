@@ -40,7 +40,11 @@ class SocialflyUser(models.Model):
 
     def get_user_post(self):
         from posts.models import Post
-        return Post.objects.filter(user=self.user)
+        return Post.objects.filter(user=self.user,posted=True)
+
+    def get_user_bookmark(self):
+        from posts.models import Post
+        return Post.objects.filter(bookmark_user__in=[self.user])
 
     def allow_to_follow(self,socialflyuser):
         get_user = get_object_or_404(SocialflyUser, pk = socialflyuser)
