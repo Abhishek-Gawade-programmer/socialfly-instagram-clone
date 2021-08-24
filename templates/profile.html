@@ -57,7 +57,7 @@
             {% for post in user_object.get_user_post %}
             <a href="{{ post.get_absolute_url}}">
                <div class="gallery-item" tabindex="0">
-                  <img src="{% thumbnail post.get_post_images.0.image 400x400  crop %}" alt="user post" class="gallery-image" height="400" width="400">
+                  <img src="{% thumbnail post.get_post_images.0.image 400x400  crop %}" alt="user post" class="gallery-image">
                   {% if post.get_post_images|length != 1 %}
                   <div class="gallery-item-type">
                      <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
@@ -76,23 +76,33 @@
 
       <div class="gallery not-visable" id="user_bookmark">
             {% for post in user_object.get_user_bookmark %}
-            <a href="{{ post.get_absolute_url}}">
-               <div class="gallery-item" tabindex="0">
-                  <img src="{% thumbnail post.get_post_images.0.image 400x400  crop %}" alt="user post" class="gallery-image" height="400" width="400">
-                  {% if post.get_post_images|length != 1 %}
-                  <div class="gallery-item-type">
-                     <span class="visually-hidden">Gallery</span>
-                     <i class="fas fa-bookmark"></i>
+               <a href="{{ post.get_absolute_url}}">
+                  <div class="gallery-item" tabindex="0">
+                     <img src="{% thumbnail post.get_post_images.0.image 400x400  crop %}" alt="user post" class="gallery-image" height="400" width="400">
+                     {% if post.get_post_images|length != 1 %}
+                     <div class="gallery-item-type">
+                        <span class="visually-hidden">Gallery</span>
+                        <i class="fas fa-bookmark"></i>
+                     </div>
+                     {% endif %}
+                     <div class="gallery-item-info">
+                        <ul>
+                           <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> {{post.get_number_like}}</li>
+                           <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> {{post.get_number_comments}}</li>
+                        </ul>
+                     </div>
                   </div>
-                  {% endif %}
-                  <div class="gallery-item-info">
-                     <ul>
-                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> {{post.get_number_like}}</li>
-                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> {{post.get_number_comments}}</li>
-                     </ul>
-                  </div>
-               </div>
-            </a>
+               </a>
+            {% empty %}
+                  <div class="card ml-3 text-center">
+                      <div class="card-body">
+                        <h4 class="card-title">No Bookmarks Added </h4>
+                        <p class="card-text">
+                           Hit the bookmark icon on the post to bookmark the post
+                         </p>
+               
+                      </div>
+                    </div>
             {% endfor %}
       </div>
    </div>
@@ -236,7 +246,6 @@ bookmark_button.addEventListener('click',(event) => {
    user_post.classList.add('not-visable')
 }) 
 
-   
 </script>
 
 

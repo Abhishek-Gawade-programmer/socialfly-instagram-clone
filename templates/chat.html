@@ -5,23 +5,19 @@
 {% block head_title %}Your DMs{% endblock %}
 {% block content  %}
 
-<link rel="stylesheet" href="{% static 'css/chat.css' %}"> 
 
+{% if request.user.get_social_user.following.all%}
+    
+
+<link rel="stylesheet" href="{% static 'css/chat.css' %}"> 
 <div class="container">
-<h3 class=" text-center">Messaging</h3>
+<h3 class=" text-center">Your DMs</h3>
 <div class="messaging">
       <div class="inbox_msg">
         <div class="inbox_people">
           <div class="headind_srch">
             <div class="recent_heading">
-              <h4>Recent</h4>
-            </div>
-            <div class="srch_bar">
-              <div class="stylish-input-group">
-                <input type="text" class="search-bar"  placeholder="Search" >
-                <span class="input-group-addon">
-                <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
-                </span> </div>
+              <h4>Chats</h4>
             </div>
           </div>
           <div class="inbox_chat">
@@ -81,6 +77,7 @@
    <script type="text/javascript" src="{% static 'js/reconnecting-websocket.js' %}">
         </script>
     <script>
+      
 
       function clear_active_class () {
         document.querySelectorAll('#person_chat').forEach((item) =>
@@ -99,6 +96,7 @@
           );
           chatSocket.onopen = function () {
               console.log("Connected to chat socket");
+
               document.querySelectorAll('#person_chat').forEach((item) =>
                   item.addEventListener("click", (event) => {
                     clear_active_class()
@@ -114,6 +112,7 @@
                     }));
                   })
               );
+              document.querySelector('#person_chat').click();
           };
           var msg_history=document.querySelector('.msg_history')
           msg_history.addEventListener('scroll',(event)=>{
@@ -231,5 +230,29 @@
           };
 
     </script>
+
+{% else %}
+
+    
+
+<div class="card ml-3 text-center">
+                      <img src="https://global-uploads.webflow.com/5c049f1efc73fb9007f7d7b6/5c1995fc6edb84bc2ecf4ed7_article-image-01.png" class="card-img-top mb-3" alt="...">
+                      <div class="card-body">
+                        <h5 class="card-title">Start Chatting with Your friends privately</h5>
+                        <p class="card-text">
+                          Follow your friends To Chat with them so you message then
+                      </p>
+                      <p class="text-center">
+                             <a href="{% url 'users:home_page' %}">
+                          <button type="button" class="btn btn-primary">
+                            <i class="fa fa-compass fa-lg"></i>
+                          Start Following</button>
+                          </a>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+{% endif %}
+
 
 {% endblock content %}
