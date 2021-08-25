@@ -4,155 +4,128 @@
 {% load user_actions %}
 {% block head_title %}My Friends{% endblock %}
 {% block content  %}
+<br>
+<br>
+<div class="w-150 text-center" style="padding-left: 60px;padding-right: 60px;">
+   <form id="search-form" >
+      {% csrf_token %}
+      <input type="text" name="" id="search-input" class="p-2 w-50x search" placeholder="search "> 
+   </form>
+   <div id="results-box" class="results-card not-visable list-group" ></div>
+</div>
+<hr>
+<main id="explore" >
+   <ul class="explore__users">
+      {% csrf_token %}
+      <li class="explore__user">
+         <h6 class="mb-3 pl-5 h6" style="color: rgba(var(--i1d,38,38,38),1);font-weight: 600;">Suggestions For You</h6>
+      </li>
+      {% for friends in all_friends %}
+      <li class="explore__user">
+         <div class="explore__user-column" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+            <img src="{% thumbnail friends.profile_photo 50x50 crop %}" class="explore__avatar" alt="profile image" >
+            <div class="explore__info" style="font-size: 80%">
+               <a href="{{ friends.get_absolute_url }}" style="color:purple;display: block;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                   <span class="explore__username" style="">{{friends.user.username}} 
+                   {% if friends.user.is_genuine %}
+                   <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
+                   {% endif %}
+                   </span>
+               </a>
+               <span class="explore__full-name" >{{friends.user.get_full_name}}</span>
+             
 
-
-      <br>
-
-      <br>
-      <div class="w-150 text-center" style="padding-left: 60px;padding-right: 60px;">
-        <form id="search-form" >
-            {% csrf_token %}
-            <input type="text" name="" id="search-input" class="p-2 w-50x search" placeholder="search"> 
-            
-        </form>
-        <div id="results-box" class="results-card not-visable list-group" ></div>
-          
-      </div>
-      <hr>
-
-    <main id="explore" >
-        <ul class="explore__users">
-            {% csrf_token %}
-            <li class="explore__user">
-                <h6 class="mb-3 pl-5 h6" style="color: rgba(var(--i1d,38,38,38),1);font-weight: 600;">Suggestions For You</h6>
-            
-       </li>
-            {% for friends in all_friends %}
-
-            <li class="explore__user">
-                
-                <div class="explore__user-column" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"> 
-                    <img src="{% thumbnail friends.profile_photo 50x50 crop %}" class="explore__avatar" alt="profile image" >
-                    <div class="explore__info" style="font-size: 80%">
-                        <a href="{{ friends.get_absolute_url }}" style="color:purple;display: block;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
-                        <span class="explore__username" style="">{{friends.user.username}} 
-                            {% if friends.user.is_genuine %}
-                                <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
-                            {% endif %}
-
-
-                      </span></a>
-
-                        <span class="explore__full-name" >{{friends.user.get_full_name}}</span>
-                    </div>
-                </div>
-                <div class=" explore__user-column float-right" >
-
-                {% if friends.pk|check_follow_or_unfollow:user.get_social_user.pk  %}
-                        
-                    <button class='follow_unfollow_button' user_id='{{friends.pk}}' style="border: 2px solid;">Follow
-                    </button>   
-
-                {% else %}                 
-                    <button class='follow_unfollow_button unfollow_button' user_id='{{friends.pk}}' style="border: 2px solid;">Unfollow
-                    </button>   
-
-                    {% endif %}
-
-                    
-                </div>
-            </li>
-
-
-            {% endfor %}
-        </ul>
-
-    </main>
-    
+            </div>
+         </div>
+         <div class=" explore__user-column float-right" >
+            {% if friends.pk|check_follow_or_unfollow:user.get_social_user.pk  %}
+            <button class='follow_unfollow_button' user_id='{{friends.pk}}' style="border: 2px solid;">Follow
+            </button>   
+            {% else %}                 
+            <button class='follow_unfollow_button unfollow_button' user_id='{{friends.pk}}' style="border: 2px solid;">Unfollow
+            </button>   
+            {% endif %}
+         </div>
+      </li>
+      {% endfor %}
+   </ul>
+</main>
 <script type="text/javascript">
-    const sreachform=document.getElementById('search-form');
-    const sreachinput=document.getElementById('search-input');
-    let results_box=document.getElementById('results-box');
-    let csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-
-
-
-
-    function send_search_data (string_to_search) {
-        $j.ajax({
-          type: "POST",
-
-          url: window.location.origin + "/users/search-results/",
-
-          data: {
-            csrfmiddlewaretoken: csrftoken,
-            string_to_search: string_to_search,
-          },
-
-          success: function (response) {
-            results_box.innerHTML=''
-            results_box.classList.remove('not-visable');
-            console.log(response.data)
-            const data=response.data
-            if (data.length) {
-                data.forEach(user=>{
-                    results_box.innerHTML+=`
-                    <a href="${user.url}" class="item" style="text-decoration: none;font-size: 70%;">
-                        <div class="row mt-2 mb-2"> 
-                            <div class="col-2">
-                                <img src="${user.profile_image}" style="width: 50px;height: 50%;">
-                            </div>
-                            <div class="col-10">
-                                <h5>${user.username}</h5>
-                                <p class="text-muted">${user.full_name}</p>
-                                
-                            </div>
-
-                        </div>
-                    </a>
-           `
-                });
-                    
-            }else{
-                if (string_to_search.length) {
-                    results_box.innerHTML='<b>No Friends found</b>';
-                }
-            }
-           
-          },
-
-           error: function (error) {
-            console.log(error)
-
-          },
-
-        });
-    
-    };
-
-    sreachinput.addEventListener('keyup',event=>{
-        string_to_search=event.target.value;
-
-
-
-        if(string_to_search.trim().length){
-            send_search_data(string_to_search);
-        }else{
-            results_box.classList.add('not-visable');
-        }
-
-
-    })
-
-
+   const sreachform=document.getElementById('search-form');
+   const sreachinput=document.getElementById('search-input');
+   let results_box=document.getElementById('results-box');
+   let csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+   
+   
+   
+   
+   function send_search_data (string_to_search) {
+       $j.ajax({
+         type: "POST",
+   
+         url: window.location.origin + "/users/search-results/",
+   
+         data: {
+           csrfmiddlewaretoken: csrftoken,
+           string_to_search: string_to_search,
+         },
+   
+         success: function (response) {
+           results_box.innerHTML=''
+           results_box.classList.remove('not-visable');
+           console.log(response.data)
+           const data=response.data
+           if (data.length) {
+               data.forEach(user=>{
+                   results_box.innerHTML+=`
+                   <a href="${user.url}" class="item" style="text-decoration: none;font-size: 70%;">
+                       <div class="row mt-2 mb-2"> 
+                           <div class="col-2">
+                               <img src="${user.profile_image}" style="width: 50px;height: 50px;" class="explore__avatar" alt="profile image">
+                           </div>
+                           <div class="col-10">
+                               <h5>${user.username}</h5>
+                               <p class="text-muted">${user.full_name}</p>
+                               
+                           </div>
+   
+                       </div>
+                   </a>
+          `
+               });
+                   
+           }else{
+               if (string_to_search.length) {
+                   results_box.innerHTML='<b>No Friends found</b>';
+               }
+           }
+          
+         },
+   
+          error: function (error) {
+           console.log(error)
+   
+         },
+   
+       });
+   
+   };
+   
+   sreachinput.addEventListener('keyup',event=>{
+       string_to_search=event.target.value;
+   
+   
+   
+       if(string_to_search.trim().length){
+           send_search_data(string_to_search);
+       }else{
+           results_box.classList.add('not-visable');
+       }
+   
+   
+   })
+   
+   
 </script>
-
-
-
-
-
-<script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}">
-</script>
-
-
-    {% endblock content %}
+<script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}"></script>
+{% endblock content %}

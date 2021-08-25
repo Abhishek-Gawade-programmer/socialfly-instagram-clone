@@ -71,6 +71,20 @@
                   </div>
                </div>
             </a>
+            {% empty %}
+                             <div class="card ml-3 text-center">
+                      <div class="card-body">
+                        <h3 class="card-title">No Posts </h3>
+                        <p class="card-text" style="font-size: 120%;">
+                           {% if user_object.user == request.user %}
+                           You Haven't uploaded any posts
+                           {% else %}
+                           {{user_object.user.get_full_name}} Haven't uploaded any posts
+                           {% endif %}
+                         </p>
+               
+                      </div>
+                    </div>
             {% endfor %}
       </div>
 
@@ -127,11 +141,12 @@
                      <img src="{{user_follower.get_social_user.profile_photo.url}}" class="explore__avatar" height="45" width="30" style="border: 1px solid #555 !important;">
                      <div class="explore__info" style="font-size: 80%">
                         <a href="{{ user_follower.get_social_user.get_absolute_url }}" style="color:purple;display: block;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
-                        <span class="explore__username" style="">{{user_follower.username}} 
-                        {% if user_follower.is_genuine %}
-                        <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
-                        {% endif %}
-                        </span></a>
+                           <span class="explore__username" style="">{{user_follower.username}} 
+                           {% if user_follower.is_genuine %}
+                           <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
+                           {% endif %}
+                           </span>
+                        </a>
                         <span class="explore__full-name" >{{user_follower.get_full_name}}</span>
                      </div>
                   </div>

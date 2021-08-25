@@ -155,6 +155,15 @@ function comment_on_post(post_id) {
 
 }
 
+
+function copy_link_fuc(post_url) {
+   navigator.clipboard.writeText(window.location.origin+post_url);
+
+
+}
+
+
+
 function delete_post_function(post_id) {
   let delete_post = document.getElementById("delete_post");
   console.log(delete_post)

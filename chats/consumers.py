@@ -69,9 +69,10 @@ class ChatConsumer(WebsocketConsumer):
     def message_to_json(self, message):
         
         return {
+
             'author': message.user.username,
             'content': message.content,
-            'timestamp': str(message.timestamp.strftime( "%I %p|%d %b %y")),
+            'timestamp': str(message.timestamp.strftime( "%b.%d %Y %H:%M %P")),
             'room_name': message.room.str_id,
             'profile_photo':message.user.get_social_user.profile_photo.url
         }
@@ -123,10 +124,8 @@ class ChatConsumer(WebsocketConsumer):
             self.fetch_messages_of_room(data['room_id'])
         elif data['command']=='messages_of_that_room_scroll':
             self.fetch_messages_of_room(data['room_id'],data['page_no'])
-            print('DATA is',data)
         
         elif data['command'] == 'new_message':
-            print('new message from user ',data,self.scope["user"])
             self.new_message(data)
 
         
@@ -146,7 +145,6 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(message))
 
     def chat_message(self, event):
-        print('WELCOM TO CHART MESSAGE',event)
         message = event['message']
         self.send(text_data=json.dumps(message))
 

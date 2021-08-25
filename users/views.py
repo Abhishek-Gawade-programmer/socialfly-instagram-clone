@@ -48,13 +48,16 @@ def profile(request,socialflyuser=None):
     return render(request,'profile.html',{'user_object':user_object,
                                     'user_followers':user_followers,
                                     'user_followings':user_followings,
-
                                     })
 
 
 @login_required
 def home_page(request):
-    all_friends=SocialflyUser.objects.exclude( user = request.user)
+    all_friends=SocialflyUser.objects.filter(
+        ~Q(user__in=request.user.get_social_user.following.all())
+        ).exclude( user = request.user).order_by(
+        'is_private'
+        )
     return render(request,'user_home.html',{'all_friends':all_friends})
 
 @login_required
@@ -190,9 +193,6 @@ def search_results(request):
 
         data_of_search={'data':data}
         return JsonResponse(data_of_search,safe=False)
-
-# def get_salary(action):
-#     return action.
 
 @login_required
 def user_actions(request):
