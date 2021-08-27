@@ -42,6 +42,12 @@ class SocialflyUser(models.Model):
         from posts.models import Post
         return Post.objects.filter(user=self.user,posted=True)
 
+    def get_user_recomdation(self):
+        return SocialflyUser.objects.filter(user=self.user,posted=True)
+
+    def user_recomdation_by_socially(self):
+        return SocialflyUser.objects.filter(user=self.user,posted=True)
+
     def get_user_bookmark(self):
         from posts.models import Post
         return Post.objects.filter(bookmark_user__in=[self.user])

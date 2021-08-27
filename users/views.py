@@ -18,7 +18,12 @@ from posts.models import Post,PostActivity
 from chats.models import Room
 from itertools import chain
 
+#USER RECOMMANDATION
+from .user_ranking import UserRanking
+
 #USER AUTHENTICATION  
+
+
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
@@ -53,12 +58,15 @@ def profile(request,socialflyuser=None):
 
 @login_required
 def home_page(request):
-    all_friends=SocialflyUser.objects.filter(
-        ~Q(user__in=request.user.get_social_user.following.all())
-        ).exclude( user = request.user).order_by(
-        'is_private'
-        )
-    return render(request,'user_home.html',{'all_friends':all_friends})
+    all_friends=SocialflyUser.objects.exclude( user = request.user)
+# .filter(
+#         # ~Q(user__in=request.user.get_social_user.following.all())
+#         )
+    obj=UserRanking(request.user.get_social_user)
+    # print('mutual_connection  ',obj.mutual_connection())
+    print('all users  ',obj.arrange_the_users())
+    # print('social_recomendats ',obj.socially_recomendats())
+    return render(request,'user_home.html',{'all_friends':obj.arrange_the_users()})
 
 @login_required
 def profile_edit(request):
@@ -99,9 +107,7 @@ def wants_follow_unfollow(request):
         if who_receive_action.allow_to_follow(who_send_action.pk):
             who_receive_action.followers.add(who_send_action.user)
             #notification of user for following
-            who_receive_action._change_reason  ='started following you'
             who_send_action.following.add(who_receive_action.user)
-            who_send_action._change_reason  ='started following'
             try:
                 ua_obj=UserActivity.objects.get(
                     Q(reason__contains="started following you")|
@@ -126,9 +132,7 @@ def wants_follow_unfollow(request):
         else:
              #notification of user for following
             who_receive_action.followers.remove(who_send_action.user)
-            who_receive_action._change_reason  ='unfollow you'
             who_send_action.following.remove(who_receive_action.user)
-            who_send_action._change_reason  ='unfollowed'
             what_to_do['action']='Follow'
 
             try:
@@ -242,3 +246,4 @@ def user_activity_fuc(reason,user_target,changed_by):
         changed_by=changed_by)
     ua_obj.save()
     return 
+

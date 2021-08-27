@@ -20,6 +20,14 @@
       <li class="explore__user">
          <h6 class="mb-3 pl-5 h6" style="color: rgba(var(--i1d,38,38,38),1);font-weight: 600;">Suggestions For You</h6>
       </li>
+
+
+
+      <h1>
+        {{obj.mutual_connection}}
+     </h1>
+
+
       {% for friends in all_friends %}
       <li class="explore__user">
          <div class="explore__user-column" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
@@ -33,6 +41,8 @@
                    </span>
                </a>
                <span class="explore__full-name" >{{friends.user.get_full_name}}</span>
+               <br>
+               <span class="explore__full-name" >{{friends.recommend_reason}}</span>
              
 
             </div>
@@ -48,6 +58,14 @@
          </div>
       </li>
       {% endfor %}
+
+
+
+
+
+
+
+
    </ul>
 </main>
 <script type="text/javascript">
