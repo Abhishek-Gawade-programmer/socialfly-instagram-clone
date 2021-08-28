@@ -40,16 +40,15 @@ def delete_post(request):
 def submit_post(request):
 	if  request.method == 'POST':
 		form_data=request.POST
-
 		post = get_object_or_404(Post, pk = form_data.get('post_pk'))
 		post.caption=form_data.get('caption_text')
-		usernames_list=form_data.get('tag_usernames_list').split(',')
+		usernames_list=form_data.get('tag_usernames')
+		usernames_list=usernames_list.split(',')[:-1]
 		for username in usernames_list:
-			if username:
-				user_from_username=User.objects.get(username=username)
-				post.tagged_people.add()
-				post_activity_fuc(reason="tagged user",
-				changed_by=user_from_username,post=post)
+			user_from_username=User.objects.get(username=username)
+			post.tagged_people.add(user_from_username)
+			post_activity_fuc(reason="tagged user",
+			changed_by=user_from_username,post=post)
 		
 
 		post.posted=True
@@ -74,7 +73,7 @@ def explore(request):
 		).exclude(id__in=l)
 
 	page = request.GET.get('page', 1)
-	paginator = Paginator(recommend_posts, 1)
+	paginator = Paginator(recommend_posts, 2)
 	try:
 		numbers = paginator.page(page)
 	except PageNotAnInteger:

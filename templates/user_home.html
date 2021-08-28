@@ -21,8 +21,6 @@
          <h6 class="mb-3 pl-5 h6" style="color: rgba(var(--i1d,38,38,38),1);font-weight: 600;">Suggestions For You</h6>
       </li>
 
-
-
       <h1>
         {{obj.mutual_connection}}
      </h1>
@@ -60,14 +58,15 @@
       {% endfor %}
 
 
-
-
-
-
-
-
    </ul>
+
+<script type="text/javascript">
+    console.log(
+    $j("#mytagegedfrom").serialize()
+    )
+</script>
 </main>
+
 <script type="text/javascript">
    const sreachform=document.getElementById('search-form');
    const sreachinput=document.getElementById('search-input');
@@ -144,6 +143,7 @@
    })
    
    
+
 </script>
 <script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}"></script>
 {% endblock content %}

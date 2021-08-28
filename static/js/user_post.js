@@ -2,7 +2,6 @@ removetheimage = document.getElementById("removetheimage");
 uploadtheimage = document.getElementById("uploadtheimage");
 caption_for_image = document.getElementById("caption_for_image");
 
-
 $j(caption_for_image).hide();
 let csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 Dropzone.autoDiscover = false;
@@ -13,7 +12,7 @@ const md = new Dropzone("#my-dropzone", {
   maxFiles: 5,
   clickable: true,
   maxFilesize: 3,
-  acceptedFiles: ".jpg,.png,.jpeg,.gif",
+  acceptedFiles: ".jpg,.png,.jpeg",
   autoProcessQueue: false,
   uploadMultiple: true,
   success: function (file, response) {
@@ -28,43 +27,47 @@ $j("#uploadtheimage").click(function (e) {
   e.preventDefault();
   post_pk = removetheimage.getAttribute("post_pk");
   if (post_pk) {
-    caption_text = document.getElementById("caption_text").value.trim();
-    tag_usernames=document.getElementById('tag_friends').value+',';
-    console.warn(tag_usernames);
+    var caption_text = document.getElementById("caption_text").value.trim();
+    var form_data=$j("#mytagegedfrom").serializeArray();
+    var tag_user_str='';
+    
+     for (i in form_data) {
+        tag_user_str=tag_user_str+form_data[i].value+','
+      }
+    console.log('taged user',form_data);
 
-    if (caption_text) {
-        $j.ajax({
-          type: "POST",
+    if (caption_text.length) {
+      $j.ajax({
+        type: "POST",
 
-          url: window.location.origin + "/posts/post-submit/",
+        url: window.location.origin + "/posts/post-submit/",
 
-          data: {
-            csrfmiddlewaretoken: csrftoken,
-            post_pk: post_pk,
-            caption_text: caption_text,
-            tag_usernames_list:tag_usernames
-          },
+        data: {
+          csrfmiddlewaretoken: csrftoken,
+          post_pk: post_pk,
+          caption_text: caption_text,
+          tag_usernames: tag_user_str,
+        },
 
-          success: function (response) {
-            md.removeAllFiles();
-            removetheimage.removeAttribute("post_pk");
-            removetheimage.innerHTML =
-              '<i class="fas fa-ban"></i> Remove all Images';
-            uploadtheimage.innerHTML =
-              '<i class="fas fa-upload"></i> Upload All Images';
-            $j(caption_for_image).hide();
-            $('#exampleModalLong').modal('hide');
-            location.reload()
-            $('#postsucessmodel').modal('show');
-          },
-        });
-  };
-  
+        success: function (response) {
+          md.removeAllFiles();
+          removetheimage.removeAttribute("post_pk");
+          removetheimage.innerHTML =
+            '<i class="fas fa-ban"></i> Remove all Images';
+          uploadtheimage.innerHTML =
+            '<i class="fas fa-upload"></i> Upload All Images';
+          $j(caption_for_image).hide();
+          $("#exampleModalLong").modal("hide");
+          var url=window.location.origin + "/posts/explore/";
+          window.location.replace(url)
+          $("#postsucessmodel").modal("show");
+        },
+      });
+    }else{
+      document.getElementById("caption_text").focus();
+    }
 
-  } 
-
-
-  else {
+  } else {
     md.processQueue();
   }
 });
@@ -86,8 +89,7 @@ $j("#removetheimage").click(function (e) {
 
       success: function (response) {
         removetheimage.removeAttribute("post_pk");
-        removetheimage.innerHTML =
-          '<i class="fas fa-ban"></i> Remove  Images';
+        removetheimage.innerHTML = '<i class="fas fa-ban"></i> Remove  Images';
         uploadtheimage.innerHTML =
           '<i class="fas fa-upload"></i> Upload  Images';
         $j(caption_for_image).hide();

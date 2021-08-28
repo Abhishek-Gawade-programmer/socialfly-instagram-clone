@@ -3,13 +3,10 @@ from django.db.models import Q
 from django.db.models import CharField, Value,IntegerField
 from itertools import chain
 '''
-USER IS RANKED BY (10-Total)
+USER IS RANKED BY
 1)Mutual Connection (4)
 2)Recommend by Socially (3)
 3)Who are Following user (2)
-4)Other (1)
-
-
 '''
 class UserRanking:
 	"""Ranking for user"""

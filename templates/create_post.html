@@ -1,0 +1,154 @@
+{% load static %}
+{% load thumbnail %}
+<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css" />
+<script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
+{# sucesss model #}
+<div class="modal" id="postsucessmodel" tabindex="-1" role="dialog" aria-labelledby="postsucessmodelLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="postsucessmodelLabel">Post Successfully Sent !!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+      </div>
+   </div>
+</div>
+{# POST MODEL UPLOAD #}
+<div class="modal" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">New Post</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-footer">
+            <small id="postHelpInline" class="text-muted">
+            You can upload almost 5 image with each size max to 3MB
+            </small>
+            <button type="button" class="btn btn-sm btn-danger" id="removetheimage"><i class="fas fa-ban"></i> Remove Images</button>
+            <button type="button" id="uploadtheimage" class="btn btn-sm btn-primary"><i class="fas fa-upload"></i> Upload Images</button>
+         </div>
+         <div class="modal-body">
+            <div id="caption_for_image">
+               <div class="form-group">
+                  <label for="caption_text">Add Caption</label>
+                  <textarea class="form-control" id="caption_text" rows="3" placeholder="Add Caption To post"></textarea>
+               </div>
+               <div class="form-group pl-3 pr-3">
+                  <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#TagUser">
+                  <i class="far fa-user"></i>
+                  Click Tag Your Friends
+                  </button>
+                  <hr>
+                  <br>
+               </div>
+            </div>
+            <form action="{% url 'posts:post_image_upload' %}" method="POST" class="dropzone dz" id="my-dropzone" enctype="multipart/form-data">
+               {% csrf_token %}
+               <div class="fallback" id="form_area">
+                  <input name="file" type="file" multiple />
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- Report  Modal -->
+<div class="modal" id="reportpostmodel" tabindex="-1" role="dialog" aria-labelledby="reportpostmodelTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Report Post</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <div class="alert alert-info" role="alert">
+               Leave if you do not want to give discription your report will be send
+            </div>
+            <input class="form-control form-control" type="text" placeholder="Description for Report" id="description_box" value="" />
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" id="report_post_button">Report Post</button>
+         </div>
+      </div>
+   </div>
+</div>
+</div>
+<!-- Delete Post Modal -->
+<div class="modal" id="deletepostmodel" tabindex="-1" role="dialog" aria-labelledby="deletepostmodelTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Delete Post ??</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <div class="alert alert-danger" role="alert">
+               Deleting the post will delete all related
+               <ul style="list-style: initial; padding: 3px;">
+                  <li>Comments</li>
+                  <li>Likes</li>
+                  <li>History</li>
+                  <li>Shared link wouldn't work</li>
+               </ul>
+            </div>
+         </div>
+         <div class="modal-footer">
+            <div class="col">
+               <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+            </div>
+            <div class="col">
+               <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" id="delete_post">Delete Post</button>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="TagUser" tabindex="-1" role="dialog" aria-labelledby="TagUserLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Choose Users</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <div class="mb-3">
+               <form id='mytagegedfrom'>
+                  <label class="form-label">Choose the user image to tagg that user</label>
+                  <hr>
+                  <div class="row g-2">
+                     {% for my_following in request.user.get_social_user.following.all %}
+                     <div class="col-6 col-sm-3">
+                        <label class="username  mb-2">
+                        <input name="{{my_following.username}}" type="checkbox" value="{{my_following.username}}" class="form-imagecheck-input">
+                        <span class="form-imagecheck-figure">
+                        <span>{{my_following.username}}</span>
+                        <img src="{% thumbnail my_following.get_social_user.profile_photo 50x50 crop %}" class="rounded-circle form-imagecheck-image explore__avatar" alt="profile image" height="50"  width="50" >
+                        </span>
+                        </label>
+                     </div>
+                     {% empty %}
+                     {% endfor %}
+                  </div>
+               </form>
+            </div>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Tagg User</button>
+         </div>
+      </div>
+   </div>
+</div>
+<script type="text/javascript" src="{% static 'js/user_post.js' %}"></script>
