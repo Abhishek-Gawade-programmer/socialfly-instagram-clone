@@ -21,8 +21,9 @@ from itertools import chain
 #USER RECOMMANDATION
 from .user_ranking import UserRanking
 
-#USER AUTHENTICATION  
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+#USER AUTHENTICATION  
 
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -204,13 +205,32 @@ def user_actions(request):
         Q(post__user=request.user)& ~Q(changed_by=request.user)
         | Q(changed_by=request.user)&Q(reason='tagged user')
         )
-
     notifiy_on_user=UserActivity.objects.filter(user_target=request.user)
     following_post=Post.objects.filter(user__in=request.user.get_social_user.following.all())
     all_notifiactions=list(notifiy_on_post)+list(notifiy_on_user)+list(following_post)
     all_notifiactions.sort(
         key=lambda item: item.updated,
         reverse=True)
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(all_notifiactions, 5)
+    try:
+        numbers = paginator.page(page)
+    except PageNotAnInteger:
+        numbers = paginator.page(1)
+    except EmptyPage:
+        if request.is_ajax():
+            return HttpResponse('')
+        numbers = paginator.page(paginator.num_pages)
+
+    if request.is_ajax():
+        return render(request,'user_activity_notification.html',{'numbers': numbers})
+
+    context={'all_notifiactions':all_notifiactions,
+              'numbers': numbers}
+    return render(request,'user_activity.html',context)
+
+
     return render(request,'user_activity.html',{
         'notifiy_on_post':notifiy_on_post,
         'notifiy_on_user':notifiy_on_user,
@@ -231,8 +251,6 @@ def add_remove_people_chat(user1,user2,remove=False):
             if room.get_user_set()=={user1,user2}:
                 print('no need to create a room')
                 return
-
-          
         obj=Room.objects.create()
         obj.user_eligible.add(*[user1,user2])
         obj.save()

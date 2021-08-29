@@ -85,12 +85,10 @@ def explore(request):
 			return HttpResponse('')
 		# If page is out of range deliver last page of results
 		numbers = paginator.page(paginator.num_pages)
-
-
+	if request.is_ajax():
+		return render(request,'post_ajax.html',{'numbers': numbers})
 	context={'recommend_posts':recommend_posts,
 			  'numbers': numbers}
-	if request.is_ajax():
-		return render(request,'post_ajax.html',context)
 	return render(request,'explore.html',context)
 
 
@@ -156,7 +154,6 @@ def like_unlike_post(request):
 				changed_by=request.user,post=post,)
 	post.save()
 	return JsonResponse({'success':True,"action":action,'num_likes':post.get_number_like()},safe=False)
-
 
 @login_required
 def bookmark_post(request):
