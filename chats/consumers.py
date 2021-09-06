@@ -179,15 +179,12 @@ class  ChatConsumer(WebsocketConsumer):
 
         
         user=event.get('value').get('user')
-        print('Channel ussers -- >',user,self.scope["user"].username)
         try:
             new_post=event.get('value').get('title').startswith('New Post By')
         except:
             new_post=False
-        print("NEW_POST",new_post)
 
         if not(new_post) and self.scope["user"].username ==user:
-            print('i am SENDING ONLY TO USE ADMIN')
             self.send(text_data=json.dumps(event))
         elif new_post:
             request_user = get_object_or_404(

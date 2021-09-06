@@ -144,10 +144,7 @@ def wants_follow_unfollow(request):
             
 
             what_to_do['action']='Unfollow'
-            add_remove_people_chat(
-                user1=who_receive_action.user,
-                user2=who_send_action.user,
-                )
+       
             
         # unfollow the user
         else:
@@ -168,12 +165,12 @@ def wants_follow_unfollow(request):
                 user_activity_fuc("unfollow you",
                     who_receive_action.user,
                     who_send_action.user)
-            add_remove_people_chat(
-                user1=who_receive_action.user,
-                user2=who_send_action.user,
-                remove=True)
         who_send_action.save()
         who_receive_action.save()
+        add_remove_people_chat(
+                user1=who_receive_action.user,
+                user2=who_send_action.user,
+                )
 
         return JsonResponse(what_to_do,safe=False)
 
@@ -253,30 +250,20 @@ def user_actions(request):
     return render(request,'user_activity.html',context)
 
 
-    return render(request,'user_activity.html',{
-        'notifiy_on_post':notifiy_on_post,
-        'notifiy_on_user':notifiy_on_user,
-       'all_notifiactions':all_notifiactions
-        })
 
-
-
-
-def add_remove_people_chat(user1,user2,remove=False):
-    if remove:
+def add_remove_people_chat(user1,user2):
+    if (user2 in  user1.get_social_user.following.all()) and (user1 in user2.get_social_user.following.all()):
         for room in Room.objects.all():
-            if room.get_user_set()=={user1,user2}:
-                room.delete()
-                print('room is deleted')
+            if room.get_user_set()!={user1,user2}:
+                obj=Room.objects.create()
+                obj.user_eligible.add(*[user1,user2])
+                obj.save()
+                return 
     else:
         for room in Room.objects.all():
             if room.get_user_set()=={user1,user2}:
-                print('no need to create a room')
-                return
-        obj=Room.objects.create()
-        obj.user_eligible.add(*[user1,user2])
-        obj.save()
-        print('room is created')
+                room.delete()
+        return         
          
 
 def user_activity_fuc(reason,user_target,changed_by):
