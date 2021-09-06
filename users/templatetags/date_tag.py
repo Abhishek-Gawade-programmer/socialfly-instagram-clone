@@ -6,17 +6,12 @@ now = timezone.now()
 register = template.Library()
 
 @register.filter(name='date_str_output')
-def date_friendly_output(object_note):
+def date_friendly_output(date_time):
 	current_time=timezone.now()
-
-
-	if object_note.created == object_note.updated:
-		differnce_between_times=current_time -object_note.created
-	else:
-		differnce_between_times=current_time -object_note.updated
+	differnce_between_times=current_time-date_time
 
 	if int(differnce_between_times.seconds//60) < 2:
-		return ' JUST NOW'   
+		return 'NOW'   
 	elif int(differnce_between_times.seconds//60 )<59:
 		return   str(int(differnce_between_times.seconds//60 ))+' MINS AGO'
 

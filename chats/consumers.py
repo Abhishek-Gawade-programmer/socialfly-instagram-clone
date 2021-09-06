@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-class ChatConsumer(WebsocketConsumer):
+class  ChatConsumer(WebsocketConsumer):
 
     def fetch_messages_of_room(self, room_id,page_no=None):
         if not page_no:
@@ -83,14 +83,25 @@ class ChatConsumer(WebsocketConsumer):
             self.close()
         else:
             self.accept()
-            curent_user = get_object_or_404(User,
-                username=self.scope["user"].username)
-            user_groups=Room.objects.filter(user_eligible__in=[curent_user,])
-            for user_group in user_groups:
+            if self.scope["url_route"]["kwargs"]["room_name"] == 'global':
+                print('we are connected as a global')
+                self.room_name="global_notifcation"
+                self.room_group_name="global_notifcation_group"
                 async_to_sync(self.channel_layer.group_add)(
-                    user_group.str_id,
-                    self.channel_name,
-                )
+                        self.room_group_name,
+                        self.channel_name   ,
+                    )
+                self.send(text_data=json.dumps({'START GLOBAL':'we as a GOBAL'}))
+
+            else:
+                curent_user = get_object_or_404(User,
+                    username=self.scope["user"].username)
+                user_groups=Room.objects.filter(user_eligible__in=[curent_user,])
+                for user_group in user_groups:
+                    async_to_sync(self.channel_layer.group_add)(
+                        user_group.str_id,
+                        self.channel_name,
+                    )
 
 
         #user chat session start
@@ -112,6 +123,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
+        print('datat from cahr server',data)
         if data['command']=='messages_of_that_room':
             self.room_group_name=data['room_id']
             if data.get('previous_room'):
@@ -161,5 +173,32 @@ class ChatConsumer(WebsocketConsumer):
                 user=curent_user)
         user_room_info_obj.last_seen=timezone.now()
         user_room_info_obj.save()
+
+    def send_notification(self,event):
+
+
+        
+        user=event.get('value').get('user')
+        print('Channel ussers -- >',user,self.scope["user"].username)
+        try:
+            new_post=event.get('value').get('title').startswith('New Post By')
+        except:
+            new_post=False
+        print("NEW_POST",new_post)
+
+        if not(new_post) and self.scope["user"].username ==user:
+            print('i am SENDING ONLY TO USE ADMIN')
+            self.send(text_data=json.dumps(event))
+        elif new_post:
+            request_user = get_object_or_404(
+                User,username=self.scope["user"].username)
+            post_user = get_object_or_404(
+                User,username=user)
+            
+            if post_user in  request_user.get_social_user.following.all():
+                self.send(text_data=json.dumps(event))
+
+        
+
 
 

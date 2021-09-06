@@ -1,6 +1,7 @@
 {% extends '_base.html' %}
 {% load static %}
 {% load user_actions %} 
+{% load date_tag %}
 {% block head_title %}
 {{post.caption}}By{{post.user}}
 {% endblock %} 
@@ -22,7 +23,7 @@
             <a href="{{ post.user.get_social_user.get_absolute_url }}" style="color:purple;">
             <span class="photo__author">{{post.user.username}}</span>
             </a>
-            <span class="photo__location">{{post.user.get_full_name}}</span>
+            <span class="photo__location">{{post.user.get_full_name|truncatechars:15}}</span>
          </div>
       </header>
       <div class="col-2">
@@ -125,7 +126,7 @@
                                  <img src="{% static 'images/verify_account.png' %}" height="20" width="20">
                                  {% endif %}
                                  </span></a>
-                                 <span class="explore__full-name" >{{user_follower.get_full_name}}</span>
+                                 <span class="explore__full-name text-truncate" >{{user_follower.get_full_name|truncatechars:15}}</span>
                               </div>
                            </div>
                            {% if user_follower != request.user %}
@@ -159,7 +160,7 @@
                <a href="{{ post_comment.user.get_social_user.get_absolute_url }}" style="color:purple;">
                <span class="photo__comment-author">{{post_comment.user.username}}</span></a> :
                <span class="text-dark">{{post_comment.text}} </span>
-               <span class="text-muted">({{ post_comment.created|timesince }})</span>
+               <span class="text-muted">({{ post_comment.created|date_str_output }})</span>
             </li>
             <hr>
             {% endfor %}
@@ -176,8 +177,8 @@
 <div class="add_button" data-toggle="modal" data-target="#exampleModalLong">
    <i class="fas fa-plus-circle fa-3x"></i>
 </div>
-
 {% include "create_post.html" %}
+   <script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}"></script>
 <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
 <script src="{% static 'js/infinite_post.js' %}"></script>
 {% endblock content %}

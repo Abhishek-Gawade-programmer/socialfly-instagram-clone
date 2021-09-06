@@ -28,6 +28,21 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
+#NOTIFICATION
+from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.csrf import csrf_exempt
+from webpush import send_user_notification
+import json
+
+from django.conf import settings
+
+
+
+
+
+
+
+
 
 class UserSignUpView(CreateView):
     model = User
@@ -39,6 +54,12 @@ class UserSignUpView(CreateView):
         user = form.save()
         login(self.request, user,backend='allauth.account.auth_backends.AuthenticationBackend')
         return redirect('posts:explore')
+
+
+
+
+
+
 
 @login_required
 def profile(request,socialflyuser=None):
@@ -84,7 +105,6 @@ def profile_edit(request):
 
         user_object.user.save()
         edit_user_from.save()
-        user_activity_fuc("change in profile",request.user,None)
   
         messages.info(request, f"Your Profile has been Updated successfully !!")
         return redirect("users:profile")
@@ -172,7 +192,7 @@ def change_private_status(request):
     return JsonResponse({'success':'true'},safe=False)
 
 
-
+@login_required
 def search_results(request):
     if request.is_ajax():
         string_to_search=request.POST.get('string_to_search')
@@ -202,12 +222,14 @@ def search_results(request):
 @login_required
 def user_actions(request):
     notifiy_on_post=PostActivity.objects.filter(
-        Q(post__user=request.user)& ~Q(changed_by=request.user)
-        | Q(changed_by=request.user)&Q(reason='tagged user')
+        Q(post__user=request.user)& ~Q(reason="tagged user")
+         |Q(changed_by=request.user)&Q(reason='tagged user')
+        |Q(changed_by__in=request.user.get_social_user.following.all())
+            &Q(reason='created new post')
         )
     notifiy_on_user=UserActivity.objects.filter(user_target=request.user)
-    following_post=Post.objects.filter(user__in=request.user.get_social_user.following.all())
-    all_notifiactions=list(notifiy_on_post)+list(notifiy_on_user)+list(following_post)
+    # following_post=Post.objects.filter(user__in=request.user.get_social_user.following.all())
+    all_notifiactions=list(notifiy_on_post)+list(notifiy_on_user)#+list(following_post)
     all_notifiactions.sort(
         key=lambda item: item.updated,
         reverse=True)

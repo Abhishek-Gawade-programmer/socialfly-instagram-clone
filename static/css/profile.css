@@ -221,7 +221,7 @@ img {
 
 /* Media Query */
 
-@media screen and (max-width: 40rem) {
+@media screen and (min-width: 175px) and (max-width: 667px)  {
     .profile {
         display: flex;
         flex-wrap: wrap;

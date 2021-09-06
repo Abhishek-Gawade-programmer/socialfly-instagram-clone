@@ -10,7 +10,7 @@
          <div class="profile-image" >
             <img src="{% thumbnail user_object.profile_photo 152x150 crop %}" alt="profile image" class="explore__avatar" >
          </div>
-         <div class="profile-user-settings">
+         <div class="profile-user-settings pr-3">
             <h1 class="profile-user-name" style="display:inline-flex;">
                {{user_object.user.username}}
                {% if user_object.user.is_genuine %}
@@ -18,8 +18,8 @@
                {% endif %}
             </h1>
             {% if user_object.user == request.user %}
-            <a href="{% url 'users:profile_edit' %}"class="btn profile-edit-btn btn-outline-primary">Edit Profile</a>
-            <a href="{% url  'account_logout' %}"class="btn profile-edit-btn btn-outline-danger">Logout</a>
+            <a href="{% url 'users:profile_edit' %}"class="btn profile-edit-btn btn-outline-primary mr-2">Edit Profile</a>
+            <a href="{% url  'account_logout' %}"class="btn profile-edit-btn btn-outline-danger mr-2">Logout</a>
             <button class="btn profile-settings-btn" aria-label="profile settings" data-toggle="modal" data-target="#exampleModalCenter">
             <i class="fas fa-cog fa-lg" aria-hidden="true"></i>
             </button>
@@ -36,10 +36,10 @@
             <p><span class="profile-real-name">{{user_object.user.get_full_name}}</span>  {{user_object.bio}}</p>
          </div>
       </div>
-      <!-- End of profile section -->
    </div>
-   <!-- End of container -->
+
 </header>
+
 {% if user_object.user == request.user %}
   <div class="row">
     <div class="col" id="post_button">
@@ -51,25 +51,28 @@
   </div>
 <hr>
 {% endif %}
-<main>
+<main >
+
    <div class="container">
+<center>
       <div class="gallery" id="user_post">
             {% for post in user_object.get_user_post %}
-            <a href="{{ post.get_absolute_url}}">
-               <div class="gallery-item" tabindex="0">
-                  <img src="{% thumbnail post.get_post_images.0.image 400x400  crop %}" alt="user post" class="gallery-image">
-                  {% if post.get_post_images|length != 1 %}
-                  <div class="gallery-item-type">
-                     <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
-                  </div>
-                  {% endif %}
-                  <div class="gallery-item-info">
-                     <ul>
-                        <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> {{post.get_number_like}}</li>
-                        <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> {{post.get_number_comments}}</li>
-                     </ul>
-                  </div>
-               </div>
+
+                  <a href="{{ post.get_absolute_url}}">
+                     <div class="gallery-item" tabindex="0">
+                        <img src="{{post.get_post_images.0.image.url}}" alt="user post" class="gallery-image">
+                        {% if post.get_post_images|length != 1 %}
+                        <div class="gallery-item-type">
+                           <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
+                        </div>
+                        {% endif %}
+                        <div class="gallery-item-info">
+                           <ul>
+                              <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> {{post.get_number_like}}</li>
+                              <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> {{post.get_number_comments}}</li>
+                           </ul>
+                        </div>
+                     </div>
             </a>
             {% empty %}
                              <div class="card ml-3 text-center">
@@ -92,7 +95,7 @@
             {% for post in user_object.get_user_bookmark %}
                <a href="{{ post.get_absolute_url}}">
                   <div class="gallery-item" tabindex="0">
-                     <img src="{% thumbnail post.get_post_images.0.image 400x400  crop %}" alt="user post" class="gallery-image" height="400" width="400">
+                     <img src="{% thumbnail post.get_post_images.0.image 400x400  crop %}" alt="user post" class="gallery-image" height="200" width="200">
                      {% if post.get_post_images|length != 1 %}
                      <div class="gallery-item-type">
                         <span class="visually-hidden">Gallery</span>
@@ -119,8 +122,14 @@
                     </div>
             {% endfor %}
       </div>
+</center>
    </div>
 </main>
+
+
+
+
+
 <div class="modal" id="followersmodel" tabindex="-1" role="dialog" aria-labelledby="followersmodelTitle" aria-hidden="true">
    <div class="modal-dialog modal-dialog" role="document">
       <div class="modal-content">

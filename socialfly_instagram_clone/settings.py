@@ -1,20 +1,22 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY','something')
+SECRET_KEY =  os.getenv('SECRET_KEY','temp')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG',True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost',]
 
 
 # Application definition
@@ -30,6 +32,7 @@ INSTALLED_APPS = [
 
     #3rd party
      'channels',
+     'webpush',
     
     # Providers
     'allauth.socialaccount.providers.facebook',
@@ -60,6 +63,14 @@ AUTHENTICATION_BACKENDS = [
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend'
 ]
+
+WEBPUSH_SETTINGS = {
+   "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY','temp'),
+   "VAPID_PRIVATE_KEY": os.getenv('VAPID_PRIVATE_KEY','temp'),
+   "VAPID_ADMIN_EMAIL": os.getenv('VAPID_ADMIN_EMAIL','temp'),
+}
+
+
 
 SITE_ID = 2
 
@@ -202,7 +213,4 @@ CHANNEL_LAYERS = {
 }
 
 
-
-CELERY_BROKER_URL = "redis://:bho4IPFEczahprp1SlfOQTYaJUFip41y@redis-17575.c15.us-east-1-4.ec2.cloud.redislabs.com:17575/0"
-CELERY_RESULT_BACKEND = "redis://:bho4IPFEczahprp1SlfOQTYaJUFip41y@redis-17575.c15.us-east-1-4.ec2.cloud.redislabs.com:17575/0"
 

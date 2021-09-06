@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.shortcuts import render,get_object_or_404,redirect
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 GENDER_CHOICES = (
     ('M', 'Male'),
     ('F', 'Female'),
@@ -78,3 +80,33 @@ class UserActivity(models.Model):
 
     def __str__(self):
         return self.user_target.username +'-' +str(self.reason)+'-->'
+
+    def get_notification_verbose_title(self):
+        map_titles={
+        'started following you':'New Follower',
+        'unfollow you':'Un Followed',
+        }
+        return map_titles.get(self.reason)
+
+    def get_notification_verbose_desrip(self):
+        map_des={
+            'started following you':f'{self.changed_by.username} Started Following you say Hi to him',
+            'unfollow you':f'{self.changed_by.username} Just Un Follow You',
+        }
+        return map_des.get(self.reason)
+
+    def save(self,*args,**kwargs):
+        channel_layer=get_channel_layer()
+        data={
+            'title':self.get_notification_verbose_title(),
+            'description':self.get_notification_verbose_desrip(),
+            'user':self.user_target.username
+        }
+        async_to_sync(channel_layer.group_send)(
+                'global_notifcation_group',{
+                    'command':'new_notification',
+                    'type':'send_notification',
+                    'value':data
+                    }
+            )
+        super().save(*args,**kwargs)

@@ -73,10 +73,10 @@ $j("#uploadtheimage").click(function (e) {
 });
 
 $j("#removetheimage").click(function (e) {
-  post_pk = removetheimage.getAttribute("post_pk");
+  post_id = removetheimage.getAttribute("post_pk");
   e.preventDefault();
   md.removeAllFiles();
-  if (post_pk) {
+  if (post_id) {
     $j.ajax({
       type: "POST",
 
@@ -84,7 +84,7 @@ $j("#removetheimage").click(function (e) {
 
       data: {
         csrfmiddlewaretoken: csrftoken,
-        post_pk: post_pk,
+        post_id: post_id,
       },
 
       success: function (response) {

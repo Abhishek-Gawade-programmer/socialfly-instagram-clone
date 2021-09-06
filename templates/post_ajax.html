@@ -75,16 +75,10 @@
       <span class="photo__location">{{post.caption}}</span>
       <hr>
       <div class="photo__actions">
-         <span class="photo__action pl-3">
+         <span class="photo__action pl-3" type="button" post-id='{{post.id}}' onclick="" data-toggle="modal" data-target="#sharepostmodel" >
          <i class="far fa-paper-plane fa-lg"></i>
          </span>
-         <span class="photo__action pl-3" id='book_mark_post{{post.id}}' onclick="function bookmark_post(){bookmark_the_post({{post.id}})};bookmark_post()">
-         {% if user.id|check_bookmark_post:post.id %}
-         <i class="fas fa-bookmark fa-lg"></i>
-         {% else %}
-         <i class="far fa-bookmark fa-lg"></i>
-         {% endif %}
-         </span>
+
          <span class="photo__action pl-3 like_button" id="postlike_unlike{{post.id}}" onclick="function like_post(){like_unlike_the_post({{post.id}})};like_post()"> 
          </span>
          <script type="text/javascript">
@@ -109,6 +103,7 @@
          <span class="photo__action pl-3"  data-toggle="modal" data-target="#model{{post.id}}{{post.user.username}}taggedmodel">
          <i class="far fa-user fa-lg"></i>
          </span>
+
          <div class="modal" id="model{{post.id}}{{post.user.username}}taggedmodel" tabindex="-1" role="dialog" aria-labelledby="model{{post.id}}{{post.user.username}}taggedTtile" aria-hidden="true">
             <div class="modal-dialog modal-dialog" role="document">
                <div class="modal-content">
@@ -156,8 +151,15 @@
             </div>
          </div>
          {% endif %}
+         <span class="photo__action pl-3 float-right" id='book_mark_post{{post.id}}' onclick="function bookmark_post(){bookmark_the_post({{post.id}})};bookmark_post()">
+            {% if user.id|check_bookmark_post:post.id %}
+            <i class="fas fa-bookmark fa-lg"></i>
+            {% else %}
+            <i class="far fa-bookmark fa-lg"></i>
+            {% endif %}
+         </span>
       </div>
-      <span class="photo__time-ago mb-2">{{ post.created|timesince }}</span>
+      <span class="photo__time-ago mb-2">{{ post.created|date_str_output }}</span>
       <span class="photo__likes">
       <span id='post_like{{post.id}}'>{{post.get_number_like}}</span>
       like{{ post.get_number_like|pluralize }}</span>
@@ -169,7 +171,6 @@
             <span class="text-dark">{{post_comment.text}} </span>
             <span class="text-muted">({{ post_comment.created|timesince }})</span>
          </li>
-         <hr>
          {% endfor %}
       </ul>
       <p><a href="{{ post.get_absolute_url }}" class="text-primary" style="font-size:80%;color:purple !important;">View More</a></p>

@@ -1,128 +1,133 @@
+{% for notification in numbers %}
+   {% if  notification.reason  == 'like post' %}
+      <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-info list-group-item-action " aria-current="true">
+         <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Like your post
+               <span class="text-primary purple_links">
+               {{notification.post.caption}}
+               </span>
+            </h5>
+            <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
+            <i class="fas fa-heart f1-1x"></i></span>
+            </small>
+         </div>
+         <p class="mb-1">liked by <span class="text-primary purple_link">
+            {{notification.changed_by.username}}
+            </span>
+         </p>
+         <small>{{notification.updated}}</small>
+      </a>
 
-      {% for notification in numbers %}
+   {% elif  notification.reason  == 'comment added' %}
+      <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-secondary list-group-item-action " aria-current="true">
+         <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Commented On Your post
+               <span class="text-primary purple_links">
+               {{notification.post.caption}}
+               </span>
+            </h5>
+            <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
+            <i class="fas fa-comment fa-1x"></i>
+            </small>
+         </div>
+         <p class="mb-1"> 
+            <span class="text-primary purple_links">
+            {{notification.changed_by.username}}
+            </span> Just commented on your post have a look 
+         </p>
+         <small>{{notification.updated}}</small>
+      </a>
 
-    {% if  notification.reason  == 'like post' %}
-       <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-info list-group-item-action " aria-current="true">
-          <div class="d-flex w-100 justify-content-between">
-             <h5 class="mb-1">Like your post
-             <span class="text-capitalize text-primary purple_links">
-                   {{notification.post.caption}}
-                </span>
-             </h5>
-             <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-             <i class="fas fa-heart f1-1x"></i></span>
-             </small>
-          </div>
-          <p class="mb-1">liked by <span class="text-capitalize text-primary purple_link">
-                {{notification.changed_by.get_full_name}}
-             </span>
-          </p>
-          <small>{{notification.updated}}</small>
-       </a>
-    {% elif  notification.reason  == 'comment added' %}
-       <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-secondary list-group-item-action " aria-current="true">
-          <div class="d-flex w-100 justify-content-between">
-             <h5 class="mb-1">Commented On Your post
-              <span class="text-capitalize text-primary purple_links">
-                   {{notification.post.caption}}
-                </span>
-             </h5>
-             <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-             <i class="fas fa-comment fa-1x"></i>
-             </small>
-          </div>
-          <p class="mb-1"> 
-             <span class="text-capitalize text-primary purple_links">
-                {{notification.changed_by.get_full_name}}
-             </span> Just commented on your post have a look </p>
-          <small>{{notification.updated}}</small>
-       </a>
-    {% elif  notification.reason  == 'post report' %}
-       <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-danger list-group-item-action " aria-current="true">
-          <div class="d-flex w-100 justify-content-between">
-             <h5 class="mb-1">Reported Your post
-                <span class="text-capitalize text-primary purple_links">
-                   {{notification.post.caption}}
-                </span>
-             </h5>
-             <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-             <i class="fas fa-flag fa-1x"></i>
-             </small>
-          </div>
-          <p class="mb-1">Check your post or delete it or drop a message to user why he reported</p>
-          <small>{{notification.updated}}</small>
-       </a>
-    {% elif  notification.reason  == 'started following you' %}
-       <a href="{{notification.changed_by.get_social_user.get_absolute_url}}" class="list-group-item list-group-item-success list-group-item-action " aria-current="true">
-          <div class="d-flex w-100 justify-content-between z">
-             <h5 class="mb-1">New Follower</h5>
-                <small> <span class="badge bg-success rounded-pill" style="font-size: 200%;color: white;">
-                <i class="fas fa-laugh fa-1x"></i>
-                </small>
-          </div>
-          <p class="mb-1"> 
-             <span class="text-capitalize text-primary purple_links">
-                {{notification.changed_by.get_full_name}}
-             </span>
-             
-           Started Following you say Hi to him</p>
-          <small>{{notification.updated}}</small>
-       </a>
+   {% elif  notification.reason  == 'post report' %}
+      <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-danger list-group-item-action " aria-current="true">
+         <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Reported Your post
+               <span class="text-primary purple_links">
+               {{notification.post.caption}}
+               </span>
+            </h5>
+            <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
+            <i class="fas fa-flag fa-1x"></i>
+            </small>
+         </div>
+         <p class="mb-1">Check your post or delete it or drop a message to user why he reported</p>
+         <small>{{notification.updated}}</small>
+      </a>
 
-    {% elif  notification.reason  == 'unfollow you' %}
-       <a href="{{notification.history_object.get_absolute_url}}" class="list-group-item list-group-item-warning list-group-item-action " aria-current="true">
-          <div class="d-flex w-100 justify-content-between">
-             <h5 class="mb-1">Un Followed</h5>
-          <small>
-              <span class="badge bg-danger rounded-pill " style="font-size: 200%;color: white;">
-                <i class="fas fa-frown-open fa-1x"></i>
-             </span>
-          </small>
-          </div>
-          <p class="mb-1">  <span class="text-capitalize text-primary purple_links" >
-                {{notification.changed_by.get_full_name}}
-             </span> Just Un Follow You</p>
-          <small>{{notification.updated}}</small>
-       </a>
-    {% elif  notification.reason  == 'tagged user' %}
-       <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-warning list-group-item-action " aria-current="true">
-          <div class="d-flex w-100 justify-content-between">
-             <h5 class="mb-1">
-                <span class="text-capitalize text-primary purple_links" >
-                   {{notification.post.user.get_full_name}}
-                </span>
-             Tagged you in post</h5>
-             <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-             <i class="fas fa-hashtag fa-1x"></i>
-             </small>
-          </div>
-          <p class="mb-1"> Have a look at  <span class="text-capitalize text-primary purple_links" >
-                {{notification.post.caption}}
-             </span></p>
-          <small>{{notification.updated}}</small>
-       </a>
+   {% elif  notification.reason  == 'started following you' %}
+      <a href="{{notification.changed_by.get_social_user.get_absolute_url}}" class="list-group-item list-group-item-success list-group-item-action " aria-current="true">
+         <div class="d-flex w-100 justify-content-between z">
+            <h5 class="mb-1">New Follower</h5>
+            <small> <span class="badge bg-success rounded-pill" style="font-size: 200%;color: white;">
+            <i class="fas fa-laugh fa-1x"></i>
+            </small>
+         </div>
+         <p class="mb-1"> 
+            <span class="text-primary purple_links">
+            {{notification.changed_by.username}}
+            </span>
+            Started Following you say Hi to him
+         </p>
+         <small>{{notification.updated}}</small>
+      </a>
 
-    {% else %}
-       <a href="{{notification.get_absolute_url}}" class="list-group-item list-group-item-primary list-group-item-action " aria-current="true">
-          <div class="d-flex w-100 justify-content-between">
-             <h5 class="mb-1">New Post By 
-                <span class="text-capitalize text-primary purple_links" >
-                   {{notification.user.get_full_name}}
-                </span> 
-             </h5>
-             <small> <span class="badge bg-primary rounded-pill" style="font-size: 200%;color: white;">
-             <i class="fas fa-camera fa-1x"></i></span>
-             </small>
-          </div>
-          <p class="mb-1">Have a look at 
-                <span class="text-capitalize text-primary purple_links">
-                 {{notification.caption}}
-              </span>
-        </p>
-          <small>{{notification.updated}}</small>
- 
-    </a>
+   {% elif  notification.reason  == 'unfollow you' %}
+      <a href="{{notification.history_object.get_absolute_url}}" class="list-group-item list-group-item-warning list-group-item-action " aria-current="true">
+         <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Un Followed</h5>
+            <small>
+            <span class="badge bg-danger rounded-pill " style="font-size: 200%;color: white;">
+            <i class="fas fa-frown-open fa-1x"></i>
+            </span>
+            </small>
+         </div>
+         <p class="mb-1">  <span class="text-primary purple_links" >
+            {{notification.changed_by.username}}
+            </span> Just Un Follow You
+         </p>
+         <small>{{notification.updated}}</small>
+      </a>
 
-    {% endif %}
+   {% elif  notification.reason  == 'tagged user' %}
+      <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-warning list-group-item-action " aria-current="true">
+         <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">
+               <span class="text-primary purple_links" >
+               {{notification.post.user.username}}
+               </span>
+               Tagged you in post
+            </h5>
+            <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
+            <i class="fas fa-hashtag fa-1x"></i>
+            </small>
+         </div>
+         <p class="mb-1"> Have a look at  <span class="text-primary purple_links" >
+            {{notification.post.caption}}
+            </span>
+         </p>
+         <small>{{notification.updated}}</small>
+      </a>
+
+   {% elif  notification.reason  == 'created new post' %}
+   {# {{notification.reason  }} #}
+   <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-primary list-group-item-action " aria-current="true">
+      <div class="d-flex w-100 justify-content-between">
+         <h5 class="mb-1">New Post By 
+            <span class="text-primary purple_links" >
+            {{notification.post.user.username}}
+            </span> 
+         </h5>
+         <small> <span class="badge bg-primary rounded-pill" style="font-size: 200%;color: white;">
+         <i class="fas fa-camera fa-1x"></i></span>
+         </small>
+      </div>
+      <p class="mb-1">Have a look at 
+         <span class="text-primary purple_links">
+         {{notification.post.caption}}
+         </span>
+      </p>
+      <small>{{notification.updated}}</small>
+   </a>
+   {% endif %}
 {% empty %}
 {% endfor %}
