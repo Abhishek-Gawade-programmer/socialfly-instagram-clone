@@ -23,7 +23,6 @@ class  ChatConsumer(WebsocketConsumer):
             messages_all = Message.objects.filter(room__str_id=room_id)
             paginator = Paginator(messages_all, 10)
             try:
-                print('OKAY')
                 messages = paginator.page(page_no)
                 content = {
                     'command': 'room_message_add',
@@ -31,7 +30,6 @@ class  ChatConsumer(WebsocketConsumer):
                     'messages': self.messages_to_json(messages)
                 }
             except (PageNotAnInteger,PageNotAnInteger,EmptyPage):
-                print('ERROR')
                 content = {
                     'command': 'room_message_na',
                     'room_id':room_id,
@@ -50,6 +48,7 @@ class  ChatConsumer(WebsocketConsumer):
             content=data['message'],
             room=get_room,
             )
+        message.save()
 
         content = {
             'command': 'new_message_save_db',

@@ -20,6 +20,9 @@
          </button>
          <div class="dropdown-menu col-12">
             <ul class="p-0 mt-2" type="none">
+              {% comment "optional note" %}
+                  
+              
               {% for room in user_groups %}
                 {% if room.is_group %}
                 {% else %} 
@@ -55,7 +58,7 @@
                   {% endfor %}
                {% endif %}
               {% endfor %}
-
+{% endcomment %}
      
             </ul>
          </div>
@@ -66,40 +69,36 @@
          </div>
          <div class="card-body m-0 overflow-auto" style="height: 75vh;">
             <ul class="p-0 mt-2" type="none">
-              {% for room in user_groups %}
-                {% if room.is_group %}
-                {% else %} 
-                  {% for user_in_room in room.user_eligible.all %}
-                         {% if user_in_room != request.user %}
-                             <li class="inbox m-0 position-relative " room_id="{{room.str_id}}" id='person_chat' style="border-bottom:2px solid #dfdfdf;">
-                                <div class="media ">
-                                   <div class="media-left">
-                                      <img class="rounded-circle" id="inbox-pic" src="{% thumbnail user_in_room.get_social_user.profile_photo 200x200 crop %}" style="width: 56px;">
-                                   </div>
-                                   <div class="media-body ">
-                                      <p class="media-heading ">
-                                      </p>
-                                      <p class="m-0" style="font-size: 110%; font-weight: 500;"> {{user_in_room.username|slice:":15" }}
+              {% for room in request.user.get_social_user.get_user_rooms %}
+                       {% with other_user=user.id|get_other_username_tt:room.str_id %}
+                           <li class="inbox m-0 position-relative " room_id="{{room.str_id}}" id='person_chat' style="border-bottom:2px solid #dfdfdf;">
+                              <div class="media ">
+                                 <div class="media-left">
+                                    <img class="rounded-circle" id="inbox-pic" src="{% thumbnail other_user.get_social_user.profile_photo 200x200 crop %}" style="width: 56px;">
+                                 </div>
+                                 <div class="media-body ">
+                                    <p class="media-heading ">
+                                    </p>
+                                    <p class="m-0" style="font-size: 110%; font-weight: 500;"> {{other_user.username|slice:":15" }}
 
-                                      <span class="text-muted text-right "  style="font-size:50%" id='{{room.str_id}}chat_date'>{{room.last_message.timestamp}}</span>
-                                      </p>
-                                      <span class='text-muted' id='{{room.str_id}}last_message'>
-                                        {{room.last_message.content|truncatechars:10}}
-                                    </span>
-
-                                   </div>
-                                        {% if user.id|unread_counter:room.str_id %}
-                                  <span class="badge bg-info float-right" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
-                                    {{user.id|unread_counter:room.str_id}}
-                                  {% else %}
-                                    <span class="badge bg-info float-right not-visable" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
-                                  {% endif %}
+                                    <span class="text-muted text-right "  style="font-size:50%" id='{{room.str_id}}chat_date'>{{room.last_message.timestamp}}</span>
+                                    </p>
+                                    <span class='text-muted' id='{{room.str_id}}last_message'>
+                                      {{room.last_message.content|truncatechars:10}}
                                   </span>
-                                </div>
-                             </li>
-                          {% endif %}
-                  {% endfor %}
-               {% endif %}
+                                 </div>
+                                {% if user.id|unread_counter:room.str_id %}
+                                      <span class="badge bg-info float-right" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
+                                        {{user.id|unread_counter:room.str_id}}
+                                {% else %}
+                                  <span class="badge bg-info float-right not-visable" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
+                                {% endif %}
+                                </span>
+                              </div>
+                           </li>
+                      {% endwith %}
+                  
+               
               {% endfor %}
 
             </ul>
@@ -119,7 +118,7 @@
 <div class="input-group mb-3">
   {% csrf_token %}
   <input type="text" class="form-control"  placeholder="Message..." maxlength="250" minlength="1" id="chat-message-input">
-  <div class="input-group-append">
+  <div class="input-group-append " style="cursor:pointer">
     <span class="input-group-text" id="message_submit_button">send</span>
   </div>
 </div>

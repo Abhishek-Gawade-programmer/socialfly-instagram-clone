@@ -48,7 +48,8 @@ def unread_counter(user_id,room_str):
     return useroominfo.get_unseen_message()
 
 
-    # UserRoomInfo
-    # if user in post.like_people.all():
-    #     return True
-    # return False
+@register.filter
+def get_other_username_tt(user_id,room_str):
+    room = get_object_or_404(Room, str_id = room_str)
+    user = get_object_or_404(User, pk = user_id)
+    return room.get_other_username(user)

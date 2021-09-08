@@ -5,7 +5,7 @@ from django.views.generic import View
 from django.db.models import Q
 from django.conf import settings
 from .models import *
-
+from chats.models import Message,Room
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -57,9 +57,30 @@ def submit_post(request):
 		post_activity_fuc(reason="created new post",
 				changed_by=request.user,post=post)
 
+		return JsonResponse({'post_created':True})
 
- 	
-		return JsonResponse({'post':False})
+
+
+
+@login_required
+def share_post(request):
+	if  request.method == 'POST':
+		form_data=request.POST
+		message_room=form_data.get('message')
+		room_to_send_list=form_data.get('room_to_send')
+		room_to_send_list=room_to_send_list.split(',')[:-1]
+
+		for room_str in room_to_send_list:
+			get_room=get_object_or_404(Room,str_id=room_str)
+			message = Message.objects.create(
+				user=request.user, 
+				content=message_room,
+				room=get_room,
+			)
+			message.save()
+
+		return JsonResponse({'added':True})
+
 
 
 

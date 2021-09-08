@@ -111,7 +111,7 @@ class PostActivity(models.Model):
         elif self.reason=="tagged user":
             data['user']=self.changed_by.username
         elif self.reason =="created new post":
-            if self.post.user != changed_by.user:
+            if self.post.user != self.changed_by.user:
                 data['user']=self.post.user.username
 
         if data['user']:

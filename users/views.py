@@ -10,7 +10,6 @@ from django.db.models import Value as V
 from django.db.models.functions import Concat 
 
 
-
 from django.core.exceptions import ObjectDoesNotExist
 from .forms import *
 from .models import *
@@ -35,11 +34,6 @@ from webpush import send_user_notification
 import json
 
 from django.conf import settings
-
-
-
-
-
 
 
 

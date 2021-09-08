@@ -44,6 +44,10 @@ class SocialflyUser(models.Model):
         from posts.models import Post
         return Post.objects.filter(user=self.user,posted=True)
 
+    def get_user_rooms(self):
+        from chats.models import Room
+        return Room.objects.filter(user_eligible__in=[self.user,],is_group=False)
+
     def get_user_recomdation(self):
         return SocialflyUser.objects.filter(user=self.user,posted=True)
 

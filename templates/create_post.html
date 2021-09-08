@@ -1,4 +1,5 @@
 {% load static %}
+{% load user_actions %}
 {% load thumbnail %}
 <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css" />
 <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
@@ -69,7 +70,7 @@
          </div>
          <div class="modal-body">
             <div class="alert alert-info" role="alert">
-               Leave if you do not want to give discription your report will be send
+               Leave if you do not want to give description your report will be send
             </div>
             <input class="form-control form-control" type="text" placeholder="Description for Report" id="description_box" value="" />
          </div>
@@ -117,34 +118,42 @@
 
 <!-- Share  Post Modal -->
 <div class="modal" id="sharepostmodel" tabindex="-1" role="dialog" aria-labelledby="sharepostmodelTitle" aria-hidden="true">
-   <div class="modal-dialog modal-dialog-centered" role="document">
+   <div class="modal-dialog" role="document">
       <div class="modal-content">
          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Share Post ..</h5>
+            <button type="button" class="btn btn-primary btn btn-block ml-5 mr-5" id="share_post_button" >Share <i class="far fa-paper-plane"></i></button>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
          </div>
          <div class="modal-body">
-            <ul class="list-group">
-              <li class="list-group-item">Cras justo odio</li>
-              <li class="list-group-item">Dapibus ac facilisis in</li>
-              <li class="list-group-item">Morbi leo risus</li>
-              <li class="list-group-item">Porta ac consectetur ac</li>
-              <li class="list-group-item">Vestibulum at eros</li>
+               <div class="border-light">
+                    <div class="form-group">
+                        <label for="share_text">Message</label>
+                        <textarea class="form-control" id="share_text" rows="3"></textarea>
+                  </div>
+                  <hr>
+
+                  <form id='shareuser' class="text-center">
+                     {% for room in request.user.get_social_user.get_user_rooms %}
+                           {% with other_user=user.id|get_other_username_tt:room.str_id %}
+                              <label class="username  mb-3 mr-3">
+                              <input name="{{room.str_id}}" type="checkbox" value="{{room.str_id}}" class="form-imagecheck-input">
+                              <span class="form-imagecheck-figure">
+                              <span>{{other_user.username}}</span>
+                              <img src="{% thumbnail other_user.get_social_user.profile_photo 50x50 crop %}" class="rounded-circle form-imagecheck-image" alt="profile image" height="50"  width="50" >
+                              </span>
+                              </label>
+                           {% endwith %}
+                     {% endfor %}
+   
+                  </form>
+               </div>
             </ul>
          </div>
       </div>
    </div>
 </div>
-
-
-
-
-
-
-
-
 
 
 <!-- Modal -->
@@ -160,7 +169,7 @@
          <div class="modal-body">
             <div class="mb-3">
                <form id='mytagegedfrom'>
-                  <label class="form-label">Choose the user image to tagg that user</label>
+                  <label class="form-label">Choose the user image to tag that user</label>
                   <hr>
                   <div class="row g-2">
                      {% for my_following in request.user.get_social_user.following.all %}
@@ -180,7 +189,7 @@
             </div>
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Tagg User</button>
+            <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Tag User</button>
          </div>
       </div>
    </div>

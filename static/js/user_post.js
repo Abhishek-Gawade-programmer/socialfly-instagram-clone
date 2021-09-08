@@ -23,18 +23,25 @@ const md = new Dropzone("#my-dropzone", {
     $j(caption_for_image).show();
   },
 });
+function show_message(message) {
+  var postsucessmodelLabel = document.getElementById("postsucessmodelLabel");
+  postsucessmodelLabel.textContent = message;
+  $("#postsucessmodel").modal("show");
+}
+
+
 $j("#uploadtheimage").click(function (e) {
   e.preventDefault();
   post_pk = removetheimage.getAttribute("post_pk");
   if (post_pk) {
     var caption_text = document.getElementById("caption_text").value.trim();
-    var form_data=$j("#mytagegedfrom").serializeArray();
-    var tag_user_str='';
-    
-     for (i in form_data) {
-        tag_user_str=tag_user_str+form_data[i].value+','
-      }
-    console.log('taged user',form_data);
+    var form_data = $j("#mytagegedfrom").serializeArray();
+    var tag_user_str = "";
+
+    for (i in form_data) {
+      tag_user_str = tag_user_str + form_data[i].value + ",";
+    }
+    console.log("taged user", form_data);
 
     if (caption_text.length) {
       $j.ajax({
@@ -58,15 +65,14 @@ $j("#uploadtheimage").click(function (e) {
             '<i class="fas fa-upload"></i> Upload All Images';
           $j(caption_for_image).hide();
           $("#exampleModalLong").modal("hide");
-          var url=window.location.origin + "/posts/explore/";
-          window.location.replace(url)
+          var url = window.location.origin + "/posts/explore/";
+          window.location.replace(url);
           $("#postsucessmodel").modal("show");
         },
       });
-    }else{
+    } else {
       document.getElementById("caption_text").focus();
     }
-
   } else {
     md.processQueue();
   }
@@ -95,5 +101,49 @@ $j("#removetheimage").click(function (e) {
         $j(caption_for_image).hide();
       },
     });
+  }
+});
+
+$j("#share_post_button").click(function (e) {
+  e.preventDefault();
+  var form_data = $j("#shareuser").serializeArray();
+  var message_box = document.getElementById("share_text");
+  var message_box_text=message_box.value.trim();
+
+
+  if (form_data.length && message_box_text.length) {
+    console.log("sending the use post request");
+    var user_room_str = "";
+    for (i in form_data) {
+      user_room_str = user_room_str + form_data[i].value + ",";
+    }
+
+    $j.ajax({
+      type: "POST",
+
+      url: window.location.origin + "/posts/share-post/",
+
+      data: {
+        csrfmiddlewaretoken: csrftoken,
+        message: message_box_text,
+        room_to_send: user_room_str,
+      },
+      success: function (response) {
+        if (response.added === true) {
+           $j("#shareuser").trigger("reset");
+           $("#sharepostmodel").modal("hide");
+           show_message('Post has been successfully send ');
+
+
+        }else{
+          console.error("sth happen bad");
+        }
+      },
+      error: function (response) {
+        console.error("sth happen bad");
+      },
+    });
+  } else {
+    $j(form_data).focus();
   }
 });
