@@ -9,12 +9,10 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-     
-     path('accounts/signup/',UserSignUpView.as_view(), name='signup'),
-     path('accounts/', include('allauth.urls')),
+    path('accounts/signup/',UserSignUpView.as_view(), name='signup'),
+    path('accounts/', include('allauth.urls')),
     path('', TemplateView.as_view(template_name='landing_page.html')),
     path('', include('core.urls',namespace='core')),
-
     path('users/', include('users.urls',namespace='users')),
     path('posts/', include('posts.urls',namespace='posts')),
     path('chats/', include('chats.urls',namespace='chats')),

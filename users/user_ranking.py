@@ -7,6 +7,7 @@ USER IS RANKED BY
 1)Mutual Connection (4)
 2)Recommend by Socially (3)
 3)Who are Following user (2)
+3)Other users(1)
 '''
 class UserRanking:
 	"""Ranking for user"""
@@ -43,6 +44,14 @@ class UserRanking:
 		return all_user.distinct()
 
 
+	def other_users(self,main_list):
+		list_other_users=SocialflyUser.objects.none()
+		for user in  self.query:
+			if user not in main_list:
+				list_other_users=list_other_users|SocialflyUser.objects.filter(user=user)
+		return list(self.remove_unwanted_user(self.assgin_ranking(list_other_users,'you may know',1)))
+
+
 	def arrange_the_users(self):
 		mutual_connection=self.mutual_connection()
 		socially_recomendats=self.socially_recomendats()
@@ -57,10 +66,12 @@ class UserRanking:
 				try:
 					inx=distinct_users.index(user)
 					distinct_users[inx].ranking+=user.ranking
-				except ValueError:
+				except IndexError:
 					pass
+		
+		distinct_users=distinct_users+self.other_users(distinct_users)
 		distinct_users.sort(key=lambda user: user.ranking,reverse=True)
-		return distinct_users
+		return distinct_users[:12]
 
 	def assgin_ranking(self,query_set,reason,value):
 		return query_set.annotate(

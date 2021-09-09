@@ -27,14 +27,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
-#NOTIFICATION
-from django.views.decorators.http import require_GET, require_POST
-from django.views.decorators.csrf import csrf_exempt
-from webpush import send_user_notification
-import json
 
 from django.conf import settings
-
+from django.views.decorators.http import require_GET, require_POST
 
 
 
@@ -48,10 +43,6 @@ class UserSignUpView(CreateView):
         user = form.save()
         login(self.request, user,backend='allauth.account.auth_backends.AuthenticationBackend')
         return redirect('posts:explore')
-
-
-
-
 
 
 
@@ -72,17 +63,25 @@ def profile(request,socialflyuser=None):
                                     })
 
 
+
+
 @login_required
 def home_page(request):
     all_friends=SocialflyUser.objects.exclude( user = request.user)
-# .filter(
-#         # ~Q(user__in=request.user.get_social_user.following.all())
-#         )
     obj=UserRanking(request.user.get_social_user)
-    # print('mutual_connection  ',obj.mutual_connection())
-    print('all users  ',obj.arrange_the_users())
-    # print('social_recomendats ',obj.socially_recomendats())
     return render(request,'user_home.html',{'all_friends':obj.arrange_the_users()})
+
+@require_POST
+@login_required
+def upload_profile_picture(request):
+    user_object = get_object_or_404(SocialflyUser, user = request.user)
+    user_object.profile_photo=request.FILES.get('image')
+    user_object.save()
+    from easy_thumbnails.files import get_thumbnailer
+    options = {'size': (152, 150), 'crop': True}
+    thumb_url = get_thumbnailer(user_object.profile_photo).get_thumbnail(options).url
+
+    return JsonResponse({'uploaed':True,'image_url':thumb_url},safe=False)
 
 @login_required
 def profile_edit(request):
@@ -107,6 +106,19 @@ def profile_edit(request):
     return render(request, "edit-profile.html", {
                 'user_from':user_from,
                 })
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @login_required
 def wants_follow_unfollow(request):
@@ -212,12 +224,22 @@ def search_results(request):
 
 @login_required
 def user_actions(request):
+    x=PostActivity.objects.first()
+
+    print(request.user.date_joined,type(request.user.date_joined))
+    print(x.updated,type(x.updated))
+
     notifiy_on_post=PostActivity.objects.filter(
         Q(post__user=request.user)& ~Q(reason="tagged user")
          |Q(changed_by=request.user)&Q(reason='tagged user')
         |Q(changed_by__in=request.user.get_social_user.following.all())
             &Q(reason='created new post')
-        )
+        ).exclude(Q(changed_by=request.user),
+        Q(reason="comment added")|Q(reason="like post")|Q(reason="created new post"),
+        ).exclude(
+        Q(updated__lt=request.user.date_joined))
+
+
     notifiy_on_user=UserActivity.objects.filter(user_target=request.user)
     # following_post=Post.objects.filter(user__in=request.user.get_social_user.following.all())
     all_notifiactions=list(notifiy_on_post)+list(notifiy_on_user)#+list(following_post)

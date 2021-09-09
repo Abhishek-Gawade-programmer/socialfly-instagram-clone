@@ -95,7 +95,7 @@ class PostActivity(models.Model):
             'tagged user':f'{self.post.user.username}Tagged you in post',
             'created new post':f'Have a look at {self.post.caption}',  
             'post report':f'Your post is Reported by {self.changed_by.username}',
-            'like post':f'liked by {self.changed_by.username}',
+            'like post':f'Liked by {self.changed_by.username}',
             'comment added':f'Commented On Your post {self.post.caption}',
         }
         return map_des.get(self.reason)
@@ -106,13 +106,14 @@ class PostActivity(models.Model):
             'description':self.get_notification_verbose_desrip(),
             'user':False
             }
-        if self.reason in ['post report','like post','comment added']:
-            data['user']=self.post.user.username
-        elif self.reason=="tagged user":
-            data['user']=self.changed_by.username
-        elif self.reason =="created new post":
-            if self.post.user != self.changed_by.user:
+        if self.post.user != self.changed_by:
+            print('both user',self.post.user,self.changed_by)
+            if self.reason in ['post report','like post','comment added']:
                 data['user']=self.post.user.username
+            elif self.reason=="tagged user":
+                data['user']=self.changed_by.username
+            elif self.reason =="created new post":
+                    data['user']=self.post.user.username
 
         if data['user']:
             channel_layer=get_channel_layer()

@@ -12,6 +12,27 @@
 </style>
 <center>
   <br>
+{% if not request.user.get_social_user.get_user_rooms %}
+       <div class="card ml-3 text-center">
+         <div class="card-body">
+            <h5 class="card-title">Start Chatting with Your friends privately</h5>
+            <hr>
+            <p class="card-text">
+                If follow some user and user also follows you then only you can chat with each other
+            </p>
+            <hr>
+            <p class="text-center">
+               <a href="{% url 'users:home_page' %}">
+               <button type="button" class="btn btn-success">
+               <i class="fas fa-comment"></i>
+               Start Following</button>
+               </a>
+            </p>
+         </div>
+      </div>
+{% else %}
+
+      
   <h3 class=" text-center">Your DMs</h3>
    <div class="row col-12 col-md-9 p-0" style="max-width: 100%;">
       <div class="inbox-dropdown col-12 dropdown d-flex d-md-none mt-5 mb-2">
@@ -19,46 +40,37 @@
          Inbox
          </button>
          <div class="dropdown-menu col-12">
-            <ul class="p-0 mt-2" type="none">
-              {% comment "optional note" %}
-                  
-              
-              {% for room in user_groups %}
-                {% if room.is_group %}
-                {% else %} 
-                  {% for user_in_room in room.user_eligible.all %}
-                         {% if user_in_room != request.user %}
-                             <li class="inbox m-0 position-relative " room_id="{{room.str_id}}" id='person_chat' style="border-bottom:2px solid #dfdfdf;">
-                                <div class="media ">
-                                   <div class="media-left">
-                                      <img class="rounded-circle" id="inbox-pic" src="{% thumbnail user_in_room.get_social_user.profile_photo 200x200 crop %}" style="width: 56px;">
-                                   </div>
-                                   <div class="media-body ">
-                                      <p class="media-heading ">
-                                      </p>
-                                      <p class="m-0" style="font-size: 110%; font-weight: 500;"> {{user_in_room.username|slice:":15" }}
+            <ul class="p-0 mt-2" type="none" id='mobile_view'>
+              {% for room in request.user.get_social_user.get_user_rooms %}
+                       {% with other_user=user.id|get_other_username_tt:room.str_id %}
+                           <li class="inbox m-0 position-relative " room_id="{{room.str_id}}" id='person_chat' style="border-bottom:2px solid #dfdfdf;cursor: pointer;">
+                              <div class="media ">
+                                 <div class="media-left">
+                                    <img class="rounded-circle" id="inbox-pic" src="{% thumbnail other_user.get_social_user.profile_photo 200x200 crop %}" style="width: 56px;">
+                                 </div>
+                                 <div class="media-body ">
+                                    <p class="media-heading ">
+                                    </p>
+                                    <p class="m-0" style="font-size: 110%; font-weight: 500;"> {{other_user.username|slice:":15" }}
 
-                                      <span class="text-muted text-right "  style="font-size:50%" id='{{room.str_id}}chat_date'>{{room.last_message.timestamp}}</span>
-                                      </p>
-                                      <span class='text-muted' id='{{room.str_id}}last_message'>
-                                        {{room.last_message.content|truncatechars:10}}
-                                    </span>
-
-                                   </div>
-                                        {% if user.id|unread_counter:room.str_id %}
-                                  <span class="badge bg-info float-right" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
-                                    {{user.id|unread_counter:room.str_id}}
-                                  {% else %}
-                                    <span class="badge bg-info float-right not-visable" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
-                                  {% endif %}
+                                    <span class="text-muted text-right "  style="font-size:50%" id='{{room.str_id}}chat_date'>{{room.last_message.timestamp}}</span>
+                                    </p>
+                                    <span class='text-muted' id='{{room.str_id}}last_message'>
+                                      {{room.last_message.content|truncatechars:10}}
                                   </span>
-                                </div>
-                             </li>
-                          {% endif %}
-                  {% endfor %}
-               {% endif %}
+                                 </div>
+                                {% if user.id|unread_counter:room.str_id %}
+                                      <span class="badge bg-info float-right" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
+                                        {{user.id|unread_counter:room.str_id}}
+                                {% else %}
+                                  <span class="badge bg-info float-right not-visable" id='{{room.str_id}}message_counter' style="font-size:120%;color:white;">
+                                {% endif %}
+                                </span>
+                              </div>
+                           </li>
+                      {% endwith %}
+                  
               {% endfor %}
-{% endcomment %}
      
             </ul>
          </div>
@@ -68,7 +80,7 @@
             <b>{{request.user.username}}</b>
          </div>
          <div class="card-body m-0 overflow-auto" style="height: 75vh;">
-            <ul class="p-0 mt-2" type="none">
+            <ul class="p-0 mt-2" type="none" id='dexstop_view'>
               {% for room in request.user.get_social_user.get_user_rooms %}
                        {% with other_user=user.id|get_other_username_tt:room.str_id %}
                            <li class="inbox m-0 position-relative " room_id="{{room.str_id}}" id='person_chat' style="border-bottom:2px solid #dfdfdf;">
@@ -97,6 +109,7 @@
                               </div>
                            </li>
                       {% endwith %}
+              {% empty %}
                   
                
               {% endfor %}
@@ -107,8 +120,7 @@
       <div class="card col-12 col-md-7 p-0 rounded-0 justify-content-center " id="inbox-detail" style="height: 70hv;">
          <div class="card-header pb-0 rounded-0 border-bottom">
             <div style="margin-bottom: 1.08rem;">
-               <a href="/direct/inbox/" class="d-inline d-md-none"><i class="fa fa-arrow-left mr-2"></i></a>
-               <b> Massages </b>
+               <b> Massages  </b>
             </div>
          </div>
          <div class="card-body border-top-0 m-0 justify-content-end" style="margin-bottom:-4% !important;">
@@ -119,7 +131,8 @@
   {% csrf_token %}
   <input type="text" class="form-control"  placeholder="Message..." maxlength="250" minlength="1" id="chat-message-input">
   <div class="input-group-append " style="cursor:pointer">
-    <span class="input-group-text" id="message_submit_button">send</span>
+    <span class="input-group-text" id="message_submit_button">Send
+    </span>
   </div>
 </div>
 
@@ -129,12 +142,39 @@
    </div>
    </div>
 </center>
+
+{% endif %}
+
+
 {% endblock content %}
 
 {% block js_script  %}
-<script type="text/javascript" src="{% static 'js/reconnecting-websocket.js' %}">
-        </script>
-    <script>
+<script>
+
+  var mobile_view=document.querySelector('#mobile_view')
+  var dexstop_view=document.querySelector('#dexstop_view')
+    function changeUi(x) {
+      if (x.matches) { 
+
+         mobile_view.innerHTML=dexstop_view.innerHTML;
+         dexstop_view.innerHTML='';
+
+      } else {
+        //dexstop view
+
+          dexstop_view.innerHTML=mobile_view.innerHTML;
+         mobile_view.innerHTML='';
+
+      }
+    }
+    var x = window.matchMedia("(max-width: 768px)")
+    changeUi(x) 
+
+    x.addListener(changeUi) 
+
+
+
+
       function clear_active_class () {
         document.querySelectorAll('#person_chat').forEach((item) =>
            item.classList.remove('active_chat')
@@ -148,7 +188,7 @@
               console.log("Connected to chat socket");
               document.querySelectorAll('#person_chat').forEach((item) =>
                   item.addEventListener("click", (event) => {
-                    clear_active_class()
+                    clear_active_class();
                     item.classList.add('active_chat');
                       chatSocket.send(JSON.stringify({
                         'room_id': item.getAttribute('room_id'),
@@ -160,7 +200,7 @@
               );
               document.querySelector('#person_chat').click();
           };
-          var msg_history=document.querySelector('.msg_history')
+          var msg_history=document.querySelector('.msg_history');
           msg_history.addEventListener('scroll',(event)=>{
             if (msg_history.scrollTop ===0) {
               

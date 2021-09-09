@@ -21,9 +21,6 @@
          <h6 class="mb-3 pl-5 h6" style="color: rgba(var(--i1d,38,38,38),1);font-weight: 600;">Suggestions For You</h6>
       </li>
 
-      <h1>
-        {{obj.mutual_connection}}
-     </h1>
 
 
       {% for friends in all_friends %}
@@ -41,8 +38,6 @@
                <span class="explore__full-name" >{{friends.user.get_full_name}}</span>
                <br>
                <span class="explore__full-name" >{{friends.recommend_reason}}</span>
-             
-
             </div>
          </div>
          <div class=" explore__user-column float-right" >
@@ -55,6 +50,18 @@
             {% endif %}
          </div>
       </li>
+
+      {% empty %}                  
+        <div class="card ml-3 text-center">
+          <div class="card-body">
+            <h4 class="card-title">No Suggestion For A day</h4>
+            <p class="card-text">
+               Enjoy the chatting with friends or viewing the friends posts
+             </p>
+   
+          </div>
+        </div>
+
       {% endfor %}
 
 
@@ -72,9 +79,6 @@
    const sreachinput=document.getElementById('search-input');
    let results_box=document.getElementById('results-box');
    let csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-   
-   
-   
    
    function send_search_data (string_to_search) {
        $j.ajax({

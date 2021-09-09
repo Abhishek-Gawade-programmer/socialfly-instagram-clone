@@ -1,6 +1,7 @@
 {% extends '_base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load thumbnail %}
 {% block head_title %}Log in{% endblock %}
 {% block content  %}
 
@@ -9,17 +10,18 @@
         <div class="edit-profile__container">
             
             <form action="" method="POST" class="edit-profile__form" enctype="multipart/form-data">
-            <header class="edit-profile__header ml-5">
-
-             <img src="{{request.user.get_social_user.profile_photo.url}}" height="150" width="150" style="border-radius: 50%;border: 2px solid #555 !important;">
-                    <!-- <img src="{{request.user.get_social_user.profile_photo.url}}" class="img-thumbnail" height="100" width="100"> -->
-                    <br>
-               <div class="form-group ml-3">
-                {{user_from.profile_photo|as_crispy_field}} 
-              </div>
-
-            </header>
                 {% csrf_token %}
+             <center>
+
+                 <img src="{% thumbnail user.get_social_user.profile_photo 152x150 crop %}" id='user_profile_image' style="border-radius: 50%;border: 2px solid #555 !important;">
+                        <br>
+                    <input type="file" name="profile_photo" accept="image/*" class=" text-center form-control-file ml-5 mr-5" id="id_profile_photo">
+
+            </center>
+                        <hr>
+                        <h3 class="text-center">Your Information</h3>
+                        <hr>
+
 
                   <div class="form__row">
                     <label for="user-name" class="form__label">Username:</label>
@@ -81,6 +83,58 @@
     document.getElementById('first-name').value='{{request.user.first_name}}';
     document.getElementById('last-name').value='{{request.user.last_name}}';
     document.getElementById('email').value='{{request.user.email}}';
+
+    var input_box=document.getElementById('id_profile_photo');
+
+
+
+    input_box.addEventListener('change', ()=>{
+          const image_data = input_box.files[0];
+          const url = URL.createObjectURL(image_data);
+
+           let csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+           
+            console.log(image_data,url,csrftoken)
+
+            const fd = new FormData();
+            fd.append('csrfmiddlewaretoken',csrftoken);
+            fd.append('image', image_data);
+
+         $j.ajax({
+            type:'POST',
+            url: window.location.origin + "/users/upload-profile-picture/",
+            enctype: 'multipart/form-data',
+            data:  fd,
+            success: function(response){
+                let user_profile_image = document.querySelector("#user_profile_image");
+                user_profile_image.src=window.location.origin+response.image_url
+
+            },
+            error: function(error){
+                alert('Ups... something went wrong while uploading');
+          
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        })
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+    console.log('>>>>>>>',input_box)
+
     
 
 </script>

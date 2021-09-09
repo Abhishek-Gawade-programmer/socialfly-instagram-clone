@@ -6,9 +6,9 @@
 <br>
 <main id="feed">
    {% if not recommend_posts %}
-   <h5 class="display-4 text-center" style="font-family: 'Klee One', cursive;">Welcome To Socialfly</h5>
-   <hr>
-   <div class="card-group">
+      <h5 class="display-4 text-center" style="font-family: 'Klee One', cursive;">Welcome To Socialfly</h5>
+      <hr>
+      <div class="card-group">
       <div class="card ml-3 text-center">
          <img src="https://onlypult.com/blog_uploads/0b8fe63e991d74aba6cc1172e1e2378e.png" class="card-img-top" alt="...">
          <div class="card-body">
@@ -54,7 +54,7 @@
          </div>
       </div>
    </div>
-   {% endif %}
+   {% else %}
    <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <defs>
          <symbol id="icon-heart" viewBox="0 0 32 32">
@@ -63,19 +63,20 @@
       </defs>
    </svg>
    {% include "post_ajax.html" %}
-   <div id='spiner_box' style="display:none;">
-   </div>
+    <div id='spiner_box'>
+      <div class="spinner-border text-primary" role="status" >
+    </div>
+
    <script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}"></script>
 </main>
-<div class="add_button" data-toggle="modal" data-target="#exampleModalLong">
-   <i class="fas fa-plus-circle fa-3x"></i>  
-</div>
-{% include "create_post.html" %}
 <script src="{% static 'js/infinite_post.js' %}"></script> 
+
+
 <script type="text/javascript">
    var page = 1;
    var empty_page = false;
    var block_request = false;
+   var spiner_box = document.getElementById("spiner_box");
    $j(window).scroll(function () {
    var margin = $j(document).height() - $j(window).height() - 200;
    if (
@@ -83,6 +84,7 @@
      empty_page == false &&
      block_request == false
    ) {
+      spiner_box.style.removeProperty("display");
      block_request = true;
      page += 1;
      $j.get("?page=" + page, function (data) {
@@ -91,10 +93,17 @@
        } else {
          block_request = false;
          $j("#feed").append(data);
+          spiner_box.style.display = "none";
    
        }
      });
    }
    });
+
+   {% endif %}
 </script>
+<div class="add_button" data-toggle="modal" data-target="#exampleModalLong">
+   <i class="fas fa-plus-circle fa-3x"></i>  
+</div>
+{% include "create_post.html" %}
 {% endblock content %}

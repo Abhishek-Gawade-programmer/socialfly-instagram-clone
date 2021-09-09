@@ -132,7 +132,7 @@ $j("#share_post_button").click(function (e) {
         if (response.added === true) {
            $j("#shareuser").trigger("reset");
            $("#sharepostmodel").modal("hide");
-           show_message('Post has been successfully send ');
+           show_message('Post has been successfully Shared ');
 
 
         }else{
