@@ -4,38 +4,68 @@
 {% load user_actions %}
 {% block head_title %}My Friends{% endblock %}
 {% block content  %}
+
+
+
+
+  {% if all_notifiactions %}
    <br>
          <h1 class="text-center">Notifications</h1>
          <hr>
    <br>
-   <div class="list-group" id='all_notifiactions'>
-      {% include "user_activity_notification.html" %}
-    </div>
+       <div class="list-group" id='all_notifiactions'>
+          {% include "user_activity_notification.html" %}
+        </div>
 
 
-<script type="text/javascript">
-   var page = 1;
-   var empty_page = false;
-   var block_request = false;
-   $j(window).scroll(function () {
-   var margin = $j(document).height() - $j(window).height() - 200;
-   if (
-     $j(window).scrollTop() > margin &&
-     empty_page == false &&
-     block_request == false
-   ) {
-     block_request = true;
-     page += 1;
-     $j.get("?page=" + page, function (data) {
-       if (data == "") {
-         empty_page = true;
-       } else {
-         block_request = false;
-         $j("#all_notifiactions").append(data);
-   
+    <script type="text/javascript">
+       var page = 1;
+       var empty_page = false;
+       var block_request = false;
+       $j(window).scroll(function () {
+       var margin = $j(document).height() - $j(window).height() - 200;
+       if (
+         $j(window).scrollTop() > margin &&
+         empty_page == false &&
+         block_request == false
+       ) {
+         block_request = true;
+         page += 1;
+         $j.get("?page=" + page, function (data) {
+           if (data == "") {
+             empty_page = true;
+           } else {
+             block_request = false;
+             $j("#all_notifiactions").append(data);
+       
+           }
+         });
        }
-     });
-   }
-   });
-</script>
+       });
+    </script>
+
+  {% else %}
+       
+
+    <div class="card-group">
+      <div class="card ml-3 text-center">
+        <br>
+        <br>
+        <br>
+         <i class="far fa-bell-slash fa-10x"></i>
+         <div class="card-body">
+            <h5 class="card-title">No Notification For now </h5>
+            <p class="card-text">You are notified  when some notification occurs you can follow some only to see their posts start exploring </p>
+            <p class="text-center">
+               <a href="{% url 'users:home_page' %}">
+               <button type="button" class="btn btn-primary">
+               <i class="fa fa-compass fa-lg"></i>
+               Start Explore</button>
+               </a>
+            </p>
+         </div>
+      </div>
+    </div>
+   
+   {% endif %}
 {% endblock content %}

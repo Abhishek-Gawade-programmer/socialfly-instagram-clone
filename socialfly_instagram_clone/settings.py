@@ -16,7 +16,7 @@ SECRET_KEY =  os.getenv('SECRET_KEY','temp')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG',True)
 
-ALLOWED_HOSTS = ['localhost',]
+ALLOWED_HOSTS = ['localhost','3262-106-193-111-12.ngrok.io']
 
 
 # Application definition

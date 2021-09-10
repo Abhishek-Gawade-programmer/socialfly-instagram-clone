@@ -11,7 +11,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/signup/',UserSignUpView.as_view(), name='signup'),
     path('accounts/', include('allauth.urls')),
-    path('', TemplateView.as_view(template_name='landing_page.html')),
+    path('', TemplateView.as_view(template_name='landing_page.html'),name='landing_page'),
     path('', include('core.urls',namespace='core')),
     path('users/', include('users.urls',namespace='users')),
     path('posts/', include('posts.urls',namespace='posts')),

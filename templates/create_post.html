@@ -105,10 +105,10 @@
          </div>
          <div class="modal-footer">
             <div class="col">
-               <button type="button" class="btn btn-success btn-block" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-success btn-block pb-2" data-dismiss="modal">Close</button>
             </div>
             <div class="col">
-               <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" id="delete_post">Delete Post</button>
+               <button type="button" class="btn btn-danger btn-block pb-2" data-dismiss="modal" id="delete_post">Delete Post</button>
             </div>
          </div>
       </div>
@@ -127,6 +127,8 @@
             </button>
          </div>
          <div class="modal-body">
+            {% if  request.user.get_social_user.get_user_rooms %}
+          
                <div class="border-light">
                     <div class="form-group">
                         <label for="share_text">Message</label>
@@ -149,14 +151,36 @@
    
                   </form>
                </div>
-            </ul>
+            {% else %}
+                   <div class="card ml-3 text-center">
+               <div class="card-body">
+                  <h5 class="card-title">Start Chatting with Your friends privately</h5>
+                  <hr>
+                  <p class="card-text">
+                      If follow some user and user also follows you then only you can chat with each other
+                  </p>
+                  <hr>
+                  <p class="text-center">
+                     <a href="{% url 'users:home_page' %}">
+                     <button type="button" class="btn btn-success">
+                     <i class="fas fa-comment"></i>
+                     Start Following</button>
+                     </a>
+                  </p>
+               </div>
+            </div>
+
+
+
+            {% endif %}
+
          </div>
       </div>
    </div>
 </div>
 
 
-<!-- Modal -->
+<!-- Tagged Modal -->
 <div class="modal fade" id="TagUser" tabindex="-1" role="dialog" aria-labelledby="TagUserLabel" aria-hidden="true">
    <div class="modal-dialog" role="document">
       <div class="modal-content">

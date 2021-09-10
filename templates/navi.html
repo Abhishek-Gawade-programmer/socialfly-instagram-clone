@@ -1,5 +1,10 @@
 {% load static %}
 <nav class="navigation sticky-top">
+
+
+  
+        {% if request.user.is_authenticated %}
+
         <div class="navigation__column">
             <a href="{% url 'posts:explore' %}">
                 <!-- Master branch comment -->
@@ -7,8 +12,6 @@
             </a>
         </div>
 
-  
-        {% if request.user.is_authenticated %}
             <div class="navigation__column">
                 <ul class="navigations__links">
                     <li class="navigation__list-item">
@@ -46,6 +49,13 @@
                 </ul>
             </div>
         {% else %}
+                <div class="navigation__column">
+            <a href="{% url 'landing_page' %}">
+                <!-- Master branch comment -->
+                <img src="{% static 'logo_.jpg' %}" />
+            </a>
+        </div>
+
                   <div class="navigation__column">
                 <ul class="navigations__links mt-2">
                     <li class="navigation__list-item">

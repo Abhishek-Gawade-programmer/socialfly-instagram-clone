@@ -4,101 +4,117 @@
 {% block head_title %}Explore{% endblock %}
 {% block content  %}
 <br>
-<main id="feed">
+
    {% if not recommend_posts %}
-      <h5 class="display-4 text-center" style="font-family: 'Klee One', cursive;">Welcome To Socialfly</h5>
-      <hr>
-      <div class="card-group">
-      <div class="card ml-3 text-center">
-         <img src="https://onlypult.com/blog_uploads/0b8fe63e991d74aba6cc1172e1e2378e.png" class="card-img-top" alt="...">
-         <div class="card-body">
-            <h5 class="card-title">Start Exploring </h5>
-            <p class="card-text">Follow the your Friends and See Their Post hit likes comments and explore </p>
-            <p class="text-center">
-               <a href="{% url 'users:home_page' %}">
-               <button type="button" class="btn btn-primary">
-               <i class="fa fa-compass fa-lg"></i>
-               Start Explore</button>
-               </a>
-            </p>
+         <h5 class="display-4 text-center" style="font-family: 'Klee One', cursive;">Welcome To Socialfly</h5>
+         <hr>
+         <div class="card-group">
+         <div class="card ml-3 text-center">
+            <img src="https://onlypult.com/blog_uploads/0b8fe63e991d74aba6cc1172e1e2378e.png" class="card-img-top" alt="...">
+            <div class="card-body">
+               <h5 class="card-title">Start Exploring </h5>
+               <p class="card-text">Follow the your Friends and See Their Post hit likes comments and explore </p>
+               <p class="text-center">
+                  <a href="{% url 'users:home_page' %}">
+                  <button type="button" class="btn btn-primary">
+                  <i class="fa fa-compass fa-lg"></i>
+                  Start Explore</button>
+                  </a>
+               </p>
+            </div>
+         </div>
+         <div class="card ml-3 text-center">
+            <img src="https://about.fb.com/wp-content/uploads/2019/11/FB-Pay-Privacy.jpg" class="card-img-top" alt="...">
+            <div class="card-body">
+               <h5 class="card-title">Update your Profile</h5>
+               <p class="card-text">Update Name Username and bio and  change your privacy settings </p>
+               <p class="text-center">
+                  <a href="{% url 'users:profile' %}">
+                  <button type="button" class="btn btn-warning">
+                  <i class="fas fa-user-edit"></i>
+                  Go To Profile</button>
+                  </a>
+               </p>
+            </div>
+         </div>
+         <div class="card ml-3 text-center">
+            <img src="https://global-uploads.webflow.com/5c049f1efc73fb9007f7d7b6/5c1995fc6edb84bc2ecf4ed7_article-image-01.png" class="card-img-top mb-3" alt="...">
+            <div class="card-body">
+               <h5 class="card-title">Start Chatting with Your friends privately</h5>
+               <p class="card-text">
+                  Click the message icon in the navigation bar and start Chatting
+               </p>
+               <p class="text-center">
+                  <a href="{% url 'chats:index' %}">
+                  <button type="button" class="btn btn-success">
+                  <i class="fas fa-comment"></i>
+                  Start Chatting</button>
+                  </a>
+               </p>
+            </div>
          </div>
       </div>
-      <div class="card ml-3 text-center">
-         <img src="https://about.fb.com/wp-content/uploads/2019/11/FB-Pay-Privacy.jpg" class="card-img-top" alt="...">
-         <div class="card-body">
-            <h5 class="card-title">Update your Profile</h5>
-            <p class="card-text">Update Name Username and bio and  change your privacy settings </p>
-            <p class="text-center">
-               <a href="{% url 'users:profile' %}">
-               <button type="button" class="btn btn-warning">
-               <i class="fas fa-user-edit"></i>
-               Go To Profile</button>
-               </a>
-            </p>
-         </div>
-      </div>
-      <div class="card ml-3 text-center">
-         <img src="https://global-uploads.webflow.com/5c049f1efc73fb9007f7d7b6/5c1995fc6edb84bc2ecf4ed7_article-image-01.png" class="card-img-top mb-3" alt="...">
-         <div class="card-body">
-            <h5 class="card-title">Start Chatting with Your friends privately</h5>
-            <p class="card-text">
-               Click the message icon in the navigation bar and start Chatting
-            </p>
-            <p class="text-center">
-               <a href="{% url 'chats:index' %}">
-               <button type="button" class="btn btn-success">
-               <i class="fas fa-comment"></i>
-               Start Chatting</button>
-               </a>
-            </p>
-         </div>
-      </div>
-   </div>
    {% else %}
-   <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <defs>
-         <symbol id="icon-heart" viewBox="0 0 32 32">
-            <path d="M23.6 2c-3.363 0-6.258 2.736-7.599 5.594-1.342-2.858-4.237-5.594-7.601-5.594-4.637 0-8.4 3.764-8.4 8.401 0 9.433 9.516 11.906 16.001 21.232 6.13-9.268 15.999-12.1 15.999-21.232 0-4.637-3.763-8.401-8.4-8.401z"></path>
-         </symbol>
-      </defs>
-   </svg>
-   {% include "post_ajax.html" %}
-    <div id='spiner_box'>
-      <div class="spinner-border text-primary" role="status" >
-    </div>
+   <main id="feed">
+            <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+               <defs>
+                  <symbol id="icon-heart" viewBox="0 0 32 32">
+                     <path d="M23.6 2c-3.363 0-6.258 2.736-7.599 5.594-1.342-2.858-4.237-5.594-7.601-5.594-4.637 0-8.4 3.764-8.4 8.401 0 9.433 9.516 11.906 16.001 21.232 6.13-9.268 15.999-12.1 15.999-21.232 0-4.637-3.763-8.401-8.4-8.401z"></path>
+                  </symbol>
+               </defs>
+            </svg>
+            {% include "post_ajax.html" %}
 
-   <script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}"></script>
-</main>
-<script src="{% static 'js/infinite_post.js' %}"></script> 
+         </main>
+             <div id='spiner_box' class="text-center" style="display:none;">
+               <div class="spinner-border text-primary" role="status" >
+             </div>
+            <script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}"></script>
+         <script src="{% static 'js/infinite_post.js' %}"></script> 
 
 
-<script type="text/javascript">
-   var page = 1;
-   var empty_page = false;
-   var block_request = false;
-   var spiner_box = document.getElementById("spiner_box");
-   $j(window).scroll(function () {
-   var margin = $j(document).height() - $j(window).height() - 200;
-   if (
-     $j(window).scrollTop() > margin &&
-     empty_page == false &&
-     block_request == false
-   ) {
-      spiner_box.style.removeProperty("display");
-     block_request = true;
-     page += 1;
-     $j.get("?page=" + page, function (data) {
-       if (data == "") {
-         empty_page = true;
-       } else {
-         block_request = false;
-         $j("#feed").append(data);
-          spiner_box.style.display = "none";
-   
-       }
-     });
-   }
-   });
+         <script type="text/javascript">
+            var page = 1;
+            var empty_page = false;
+            var block_request = false;
+            var spiner_box = document.getElementById("spiner_box");
+            spiner_box.style.display = "none";
+            $j(window).scroll(function () {
+            var margin = $j(document).height() - $j(window).height() - 200;
+            if (
+                 $j(window).scrollTop() > margin &&
+                 empty_page == false &&
+                 block_request == false
+               )
+                  {
+                    block_request = true;
+                    page += 1;
+
+                    var page_get=$j.get("?page=" + page, function (data) {
+                     spiner_box.style.removeProperty("display");
+
+                      if (data == "") {
+                         
+                        empty_page = true;
+                      } else {
+                        block_request = false;
+                        $j("#feed").append(data);
+                  
+                      }
+                    });
+                       page_get.done(function() {
+                        spiner_box.style.removeProperty("display");
+                         console.log( "second success" );
+                       })
+                     page_get.fail(function() {
+                        spiner_box.style.removeProperty("display");
+                         console.log( "failed to connect" );
+                       })
+        
+                 }
+            }
+
+            );
 
    {% endif %}
 </script>

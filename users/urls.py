@@ -4,9 +4,8 @@ from .views import *
 app_name='users'
 urlpatterns = [
 		path('home-page/', home_page, name='home_page'),
-		path('your-actions/', user_actions, name='user_actions'),
-		
-
+		path('your-notification/', user_actions, name='user_actions'),
+		path('delete-user/', delete_user, name='delete_user'),
 		path('profile/', profile, name='profile'),
 		path('profile/<int:socialflyuser>/', profile, name='profile'),
 		path('profile-edit/', profile_edit, name='profile_edit'),

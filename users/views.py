@@ -24,7 +24,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 #USER AUTHENTICATION  
 
-from django.contrib.auth import login
+from django.contrib.auth import login,logout
 from django.contrib.auth.decorators import login_required
 
 
@@ -82,6 +82,19 @@ def upload_profile_picture(request):
     thumb_url = get_thumbnailer(user_object.profile_photo).get_thumbnail(options).url
 
     return JsonResponse({'uploaed':True,'image_url':thumb_url},safe=False)
+
+@require_POST
+@login_required
+def delete_user(request):
+    print('user will delete')
+    request.user.delete()
+    logout(request)
+    messages.info(request, 'Account successfully Deleted !!')
+    return JsonResponse({'delete':True},safe=False)
+
+
+
+
 
 @login_required
 def profile_edit(request):
