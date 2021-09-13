@@ -12,11 +12,10 @@ load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY =  os.getenv('SECRET_KEY','temp')
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG',True)
 
-ALLOWED_HOSTS = ['localhost','3262-106-193-111-12.ngrok.io']
+ALLOWED_HOSTS = ['localhost','7c4b-2401-4900-1b36-8a0-cd31-2117-1d63-3b42.ngrok.io']
 
 
 # Application definition
@@ -32,11 +31,12 @@ INSTALLED_APPS = [
 
     #3rd party
      'channels',
+
      'webpush',
     
     # Providers
-    'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
 
 
     'crispy_forms',
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'posts',
     'chats',
+   'pwa',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -72,6 +73,97 @@ WEBPUSH_SETTINGS = {
 
 
 
+
+
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook':
+           {'METHOD': 'oauth2',
+            'SCOPE': ['email','public_profile', 'user_friends'],
+            'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+            'FIELDS': [
+                'id',
+                'email',
+                'name',
+                'first_name',
+                'last_name',
+                'verified',
+                'locale',
+                'timezone',
+                'link',
+                'gender',
+                'updated_time'],
+            'EXCHANGE_TOKEN': True,
+            'LOCALE_FUNC': lambda request: 'kr_KR',
+            'VERIFIED_EMAIL': False,
+            'VERSION': 'v2.4'}
+        }
+
+
+
+
+#facebook
+SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('SOCIAL_AUTH_FACEBOOK_KEY')  # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET =os.getenv('SOCIAL_AUTH_FACEBOOK_SECRET') #app key
+
+#PWD SETINGS
+# PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js')
+
+PWA_APP_NAME = "Socialfly"
+PWA_APP_DESCRIPTION = "Socialfly Web App"
+PWA_APP_THEME_COLOR = "#000000"
+PWA_APP_BACKGROUND_COLOR = "#ffffff"
+PWA_APP_DISPLAY = "standalone"
+PWA_APP_SCOPE = "/"
+PWA_APP_ORIENTATION = "any"
+PWA_APP_START_URL = "/"
+PWA_APP_STATUS_BAR_COLOR = "default"
+
+
+
+PWA_APP_ICONS = [
+    {
+        "src": "static/logo.jpg",
+        "sizes": "160x160"
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        "src": "static/logo.jpg",
+        "sizes": "160x160"
+    }
+]
+PWA_APP_SPLASH_SCREEN = [
+    {
+        "src": "static/icon.png",
+        "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+    }
+]
+PWA_APP_DIR = "ltr"
+PWA_APP_LANG = "en-US"
+
+
+
+
+#DJANGO ALLAUTH SETTING
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'SCOPE': [
+#             'profile',
+#             'email',
+#         ],
+#         'AUTH_PARAMS': {
+#             'access_type': 'online',
+#         }
+#     }
+# }
+
+
+
+
+
+
 SITE_ID = 2
 
 ACCOUNT_EMAIL_REQUIRED=True
@@ -81,7 +173,7 @@ ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_SESSION_REMEMBER=True
 
 LOGIN_REDIRECT_URL="posts:explore"
-ACCOUNT_SIGNUP_REDIRECT_URL="user:profile_edit"
+ACCOUNT_SIGNUP_REDIRECT_URL="users:profile_edit"
 ACCOUNT_LOGOUT_REDIRECT_URL="account_login"
 
 # SOCIALACCOUNT_QUERY_EMAIL = True
@@ -154,6 +246,23 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+#EMAIL SETTINGS
+
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY') 
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey' # Exactly that. 
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_PORT = 587 # 25 or 587 (for unencrypted/TLS connections).
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+
+
+
+
+
+
 
 
 
@@ -197,9 +306,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#HISTORY SETINGS 
-# SIMPLE_HISTORY_REVERT_DISABLED=True
-# SIMPLE_HISTORY_HISTORY_ID_USE_UUID = True
+
 
 #REDIS
 CHANNEL_LAYERS = {

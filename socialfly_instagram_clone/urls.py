@@ -13,6 +13,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', TemplateView.as_view(template_name='landing_page.html'),name='landing_page'),
     path('', include('core.urls',namespace='core')),
+    path('', include('pwa.urls')),
     path('users/', include('users.urls',namespace='users')),
     path('posts/', include('posts.urls',namespace='posts')),
     path('chats/', include('chats.urls',namespace='chats')),

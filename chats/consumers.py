@@ -105,19 +105,27 @@ class  ChatConsumer(WebsocketConsumer):
 
         #user chat session start
         self.send(text_data=json.dumps({'START session':'we are connected'}))
-
+#do withgeybh 
 
     def disconnect(self, close_code):
-        curent_user = get_object_or_404(User,
-                username=self.scope["user"].username)
-        user_groups=Room.objects.filter(user_eligible__in=[curent_user,])
-        for user_group in user_groups:
+        if self.scope["url_route"]["kwargs"]["room_name"] == 'global':
+            self.room_name="global_notifcation"
+            self.room_group_name="global_notifcation_group"
             async_to_sync(self.channel_layer.group_discard)(
-                user_group.str_id,
-                self.channel_name,
-            )
-        
-        self.send(text_data=json.dumps({'END session':'we are disconnected'}))
+                        self.room_group_name,
+                        self.channel_name   ,
+                    )
+
+        else:
+            curent_user = get_object_or_404(User,
+                    username=self.scope["user"].username)
+            user_groups=Room.objects.filter(user_eligible__in=[curent_user,])
+            for user_group in user_groups:
+                async_to_sync(self.channel_layer.group_discard)(
+                    user_group.str_id,
+                    self.channel_name,
+                )
+            
         #user chat session send
 
     def receive(self, text_data):

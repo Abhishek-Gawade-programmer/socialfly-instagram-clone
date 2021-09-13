@@ -9,7 +9,7 @@ class Room(models.Model):
                     db_index=True,max_length=8)
 
 	str_id= models.CharField(max_length=50,blank=True,null=True)
-	user_eligible = models.ManyToManyField(User,)
+	user_eligible = models.ManyToManyField(User)
 	is_group=models.BooleanField(default=False)
 
 	def last_message(self):

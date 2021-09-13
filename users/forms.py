@@ -42,7 +42,6 @@ class UserSignUpForm(UserCreationForm):
 
     @transaction.atomic
     def save(self):  
-        print(self.cleaned_data)
         user = super().save(commit=False)
         user.first_name=self.cleaned_data.get('first_name')
         user.last_name=self.cleaned_data.get('last_name')

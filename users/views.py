@@ -86,7 +86,10 @@ def upload_profile_picture(request):
 @require_POST
 @login_required
 def delete_user(request):
-    print('user will delete')
+    print('delting user')
+    for _ in request.user.get_social_user.get_user_rooms():
+        _.delete()
+    
     request.user.delete()
     logout(request)
     messages.info(request, 'Account successfully Deleted !!')

@@ -24,7 +24,7 @@
             <p class="text-center">
                <a href="{% url 'users:home_page' %}">
                <button type="button" class="btn btn-success">
-               <i class="fas fa-comment"></i>
+               <i class="fas fa-house-damage"></i>
                Start Following</button>
                </a>
             </p>
@@ -244,6 +244,35 @@
               }
             }
           }
+          else if (data.command === 'new_notification') {
+               async function start(head,body,id) {
+                    var csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+                    const res = await fetch(window.location.origin +"/send_push/",
+                    {
+                     method: 'POST',
+                     body: JSON.stringify({head, body, id,}),
+                     headers: {
+                         'content-type': 'application/json',
+                         'X-CSRFToken':csrftoken
+                     }
+                 });
+                 if (res.status === 200) {
+                   console.log('notification sended')
+               
+                 } else {
+                   console.error('sth when wrong with notification')
+                     
+                 }
+               };
+           var head=data.value.title;
+           var body=data.value.description ;
+           var id='{{user.id}}' ;
+           start(head,body,id);
+            
+          }
+
+
+
         };
 
         document.querySelector('#message_submit_button').onclick = function(e) {

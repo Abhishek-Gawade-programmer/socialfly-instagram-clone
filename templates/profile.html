@@ -11,8 +11,8 @@
             <img src="{% thumbnail user_object.profile_photo 152x150 crop %}" alt="profile image" class="explore__avatar" >
          </div>
          <div class="profile-user-settings pr-3">
-            <h1 class="profile-user-name" style="display:inline-flex;">
-               {{user_object.user.username}}
+            <h1 class="profile-user-name" style="display:inline-flex;font-size: 300%;">
+               {{user_object.user.username|truncatechars:7}}
                {% if user_object.user.is_genuine %}
                <img src="{% static 'images/verify_account.png' %}"  height="20" width="20">
                {% endif %}
@@ -27,6 +27,7 @@
                </a>
             {% else %}
             {% if user_object.pk|check_follow_or_unfollow:request.user.get_social_user.pk  %}
+            {% csrf_token %}
                      <button user_id='{{user_object.pk}}'  class="follow_unfollow_button btn btn-primary  profile-edit-btn mr-2">Follow</button>
                {% else %} 
                    <button   user_id='{{user_object.pk}}'  class="follow_unfollow_button btn profile-edit-btn btn-outline-primary mr-2">Unfollow</button>
