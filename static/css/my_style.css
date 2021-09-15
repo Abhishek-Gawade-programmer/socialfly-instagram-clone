@@ -14,13 +14,6 @@
 }
     
 
-.post_js {
-  margin: auto;
-  display: inline-flex;
-  flex-direction: column;
-
-}
-
  .icon {
 
   z-index: 1000;
@@ -78,7 +71,7 @@
   display: none;
 }
 .results-card{
-  width: 80%;
+  width: auto;
   /*z-index: 2;*/
   /*position: absolute;*/
   /*max-height: 200px;*/

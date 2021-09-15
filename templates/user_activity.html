@@ -4,232 +4,68 @@
 {% load user_actions %}
 {% block head_title %}My Friends{% endblock %}
 {% block content  %}
-<br>
-      <h1 class="text-center">Notifications</h1>
-      <hr>
-<br>
-<div class="list-group">
-{% for notification in all_notifiactions %}
-
-      {% if  notification.reason  == 'like post' %}
-         <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-info list-group-item-action " aria-current="true">
-            <div class="d-flex w-100 justify-content-between">
-               <h5 class="mb-1">Like your post
-               <span class="text-capitalize text-primary purple_links">
-                     {{notification.post.caption}}
-                  </span>
-               </h5>
-               <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-               <i class="fas fa-heart f1-1x"></i></span>
-               </small>
-            </div>
-            <p class="mb-1">liked by <span class="text-capitalize text-primary purple_link">
-                  {{notification.changed_by.get_full_name}}
-               </span>
-            </p>
-            <small>{{notification.updated}}</small>
-         </a>
-      {% elif  notification.reason  == 'comment added' %}
-         <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-secondary list-group-item-action " aria-current="true">
-            <div class="d-flex w-100 justify-content-between">
-               <h5 class="mb-1">Commented On Your post
-                <span class="text-capitalize text-primary purple_links">
-                     {{notification.post.caption}}
-                  </span>
-               </h5>
-               <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-               <i class="fas fa-comment fa-1x"></i>
-               </small>
-            </div>
-            <p class="mb-1"> 
-               <span class="text-capitalize text-primary purple_links">
-                  {{notification.changed_by.get_full_name}}
-               </span> Just commented on your post have a look </p>
-            <small>{{notification.updated}}</small>
-      </a>
-      {% elif  notification.reason  == 'post report' %}
-         <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-danger list-group-item-action " aria-current="true">
-            <div class="d-flex w-100 justify-content-between">
-               <h5 class="mb-1">Reported Your post
-                  <span class="text-capitalize text-primary purple_links">
-                     {{notification.post.caption}}
-                  </span>
-               </h5>
-               <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-               <i class="fas fa-flag fa-1x"></i>
-               </small>
-            </div>
-            <p class="mb-1">Check your post or delete it or drop a message to user why he reported</p>
-            <small>{{notification.updated}}</small>
-      </a>
-      {% elif  notification.reason  == 'started following you' %}
-         <a href="{{notification.changed_by.get_social_user.get_absolute_url}}" class="list-group-item list-group-item-success list-group-item-action " aria-current="true">
-            <div class="d-flex w-100 justify-content-between z">
-               <h5 class="mb-1">New Follower</h5>
-                  <small> <span class="badge bg-success rounded-pill" style="font-size: 200%;color: white;">
-                  <i class="fas fa-laugh fa-1x"></i>
-                  </small>
-            </div>
-            <p class="mb-1"> 
-               <span class="text-capitalize text-primary purple_links">
-                  {{notification.changed_by.get_full_name}}
-               </span>
-               
-             Started Following you say Hi to him</p>
-            <small>{{notification.updated}}</small>
-      </a>
-
-      {% elif  notification.reason  == 'unfollow you' %}
-         <a href="{{notification.history_object.get_absolute_url}}" class="list-group-item list-group-item-warning list-group-item-action " aria-current="true">
-            <div class="d-flex w-100 justify-content-between">
-               <h5 class="mb-1">Un Followed</h5>
-         <small> <span class="badge bg-danger rounded-pill " style="font-size: 200%;color: white;">
-         <i class="fas fa-frown-open fa-1x"></i></span>
-         </small>
-            </div>
-            <p class="mb-1">  <span class="text-capitalize text-primary purple_links" >
-                  {{notification.changed_by.get_full_name}}
-               </span> Just Un Follow You</p>
-            <small>{{notification.updated}}</small>
-      </a>
-      {% elif  notification.reason  == 'tagged user' %}
-         <a href="{{notification.post.get_absolute_url}}" class="list-group-item list-group-item-warning list-group-item-action " aria-current="true">
-            <div class="d-flex w-100 justify-content-between">
-               <h5 class="mb-1">
-                  <span class="text-capitalize text-primary purple_links" >
-                     {{notification.post.user.get_full_name}}
-                  </span>
-               Tagged you in post</h5>
-               <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-               <i class="fas fa-hashtag fa-1x"></i>
-               </small>
-            </div>
-            <p class="mb-1"> Have a look at  <span class="text-capitalize text-primary purple_links" >
-                  {{notification.post.caption}}
-               </span></p>
-            <small>{{notification.updated}}</small>
-      </a>
-
-      {% else %}
-         <a href="{{notification.get_absolute_url}}" class="list-group-item list-group-item-primary list-group-item-action " aria-current="true">
-            <div class="d-flex w-100 justify-content-between">
-               <h5 class="mb-1">New Post By 
-                  <span class="text-capitalize text-primary purple_links" >
-                     {{notification.user.get_full_name}}
-                  </span> 
-               </h5>
-               <small> <span class="badge bg-primary rounded-pill" style="font-size: 200%;color: white;">
-               <i class="fas fa-camera fa-1x"></i></span>
-               </small>
-            </div>
-            <p class="mb-1">Have a look at 
-                  <span class="text-capitalize text-primary purple_links">
-                   {{notification.caption}}
-                </span>
-          </p>
-            <small>{{notification.updated}}</small>
-    
-      </a>
 
 
 
 
-      {% endif %}
-      {# notification.history_change_reason--->  {{notification.history_change_reason}} #}
-      {# {{notification.user}}--{{notification.history_change_reason}}-->{{notification.history_user}} #}
+  {% if all_notifiactions %}
+   <br>
+         <h1 class="text-center">Notifications</h1>
+         <hr>
+   <br>
+       <div class="list-group" id='all_notifiactions'>
+          {% include "user_activity_notification.html" %}
+        </div>
+
+
+    <script type="text/javascript">
+       var page = 1;
+       var empty_page = false;
+       var block_request = false;
+       $j(window).scroll(function () {
+       var margin = $j(document).height() - $j(window).height() - 200;
+       if (
+         $j(window).scrollTop() > margin &&
+         empty_page == false &&
+         block_request == false
+       ) {
+         block_request = true;
+         page += 1;
+         $j.get("?page=" + page, function (data) {
+           if (data == "") {
+             empty_page = true;
+           } else {
+             block_request = false;
+             $j("#all_notifiactions").append(data);
        
+           }
+         });
+       }
+       });
+    </script>
+
+  {% else %}
+       
+
+    <div class="card-group">
+      <div class="card ml-3 text-center">
+        <br>
+        <br>
+        <br>
+         <i class="far fa-bell-slash fa-10x"></i>
+         <div class="card-body">
+            <h5 class="card-title">No Notification For now </h5>
+            <p class="card-text">You are notified  when some notification occurs you can follow some only to see their posts start exploring </p>
+            <p class="text-center">
+               <a href="{% url 'users:home_page' %}">
+               <button type="button" class="btn btn-primary">
+               <i class="fa fa-compass fa-lg"></i>
+               Start Explore</button>
+               </a>
+            </p>
+         </div>
+      </div>
+    </div>
    
-    
-{% empty %}
-    
-{% endfor %}
-{% comment "optional note" %}
-
-
-   <a href="#" class="list-group-item list-group-item-primary list-group-item-action " aria-current="true">
-      <div class="d-flex w-100 justify-content-between">
-         <h5 class="mb-1">List group item heading</h5>
-         <small> <span class="badge bg-primary rounded-pill" style="font-size: 200%;color: white;">
-         <i class="fas fa-camera fa-1x"></i></span>
-         </small>
-      </div>
-      <p class="mb-1">Some placeholder content in a paragraph.</p>
-      <small>dates</small>
-   </a>
-
-
-
-
-
-
-
-
-   <a href="#" class="list-group-item list-group-item-warning list-group-item-action " aria-current="true">
-      <div class="d-flex w-100 justify-content-between">
-         <h5 class="mb-1">List group item heading</h5>
-         <small> <span class="badge bg-success rounded-pill" style="font-size: 200%;color: white;">
-         <i class="fas fa-laugh fa-1x"></i>
-         </small>
-      </div>
-      <p class="mb-1">Some placeholder content in a paragraph.</p>
-      <small>dates</small>
-   </a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   <a href="#" class="list-group-item list-group-item-info list-group-item-action " aria-current="true">
-      <div class="d-flex w-100 justify-content-between">
-         <h5 class="mb-1">List group item heasdfding</h5>
-         <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-         <i class="fas fa-hashtag fa-1x"></i>
-         </small>
-      </div>
-      <p class="mb-1">Some placeholder content in a paragraph.</p>
-      <small>dates</small>
-   </a>
-
-
-
-      <a href="#" class="list-group-item list-group-item-info list-group-item-action " aria-current="true">
-      <div class="d-flex w-100 justify-content-between">
-         <h5 class="mb-1">List group item heasdfding</h5>
-         <small> <span class="badge bg-danger rounded-pill" style="font-size: 200%;color: white;">
-            <i class="fas fa-plus-circle fa-1x"></i>
-         </small>
-      </div>
-      <p class="mb-1">Some placeholder content in a paragraph.</p>
-      <small>dates</small>
-   </a>
-
-
-</div>
-{% endcomment %}
-<script type="text/javascript" src="{% static 'js/follow_unfollow.js' %}"></script>
-
-    {% endblock content %}
+   {% endif %}
+{% endblock content %}

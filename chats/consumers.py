@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-class ChatConsumer(WebsocketConsumer):
+class  ChatConsumer(WebsocketConsumer):
 
     def fetch_messages_of_room(self, room_id,page_no=None):
         if not page_no:
@@ -23,7 +23,6 @@ class ChatConsumer(WebsocketConsumer):
             messages_all = Message.objects.filter(room__str_id=room_id)
             paginator = Paginator(messages_all, 10)
             try:
-                print('OKAY')
                 messages = paginator.page(page_no)
                 content = {
                     'command': 'room_message_add',
@@ -31,7 +30,6 @@ class ChatConsumer(WebsocketConsumer):
                     'messages': self.messages_to_json(messages)
                 }
             except (PageNotAnInteger,PageNotAnInteger,EmptyPage):
-                print('ERROR')
                 content = {
                     'command': 'room_message_na',
                     'room_id':room_id,
@@ -50,6 +48,7 @@ class ChatConsumer(WebsocketConsumer):
             content=data['message'],
             room=get_room,
             )
+        message.save()
 
         content = {
             'command': 'new_message_save_db',
@@ -69,9 +68,10 @@ class ChatConsumer(WebsocketConsumer):
     def message_to_json(self, message):
         
         return {
+
             'author': message.user.username,
             'content': message.content,
-            'timestamp': str(message.timestamp.strftime( "%I %p|%d %b %y")),
+            'timestamp': str(message.timestamp.strftime( "%b.%d %Y %H:%M %P")),
             'room_name': message.room.str_id,
             'profile_photo':message.user.get_social_user.profile_photo.url
         }
@@ -82,14 +82,25 @@ class ChatConsumer(WebsocketConsumer):
             self.close()
         else:
             self.accept()
-            curent_user = get_object_or_404(User,
-                username=self.scope["user"].username)
-            user_groups=Room.objects.filter(user_eligible__in=[curent_user,])
-            for user_group in user_groups:
+            if self.scope["url_route"]["kwargs"]["room_name"] == 'global':
+                print('we are connected as a global')
+                self.room_name="global_notifcation"
+                self.room_group_name="global_notifcation_group"
                 async_to_sync(self.channel_layer.group_add)(
-                    user_group.str_id,
-                    self.channel_name,
-                )
+                        self.room_group_name,
+                        self.channel_name   ,
+                    )
+                self.send(text_data=json.dumps({'START GLOBAL':'we as a GOBAL'}))
+
+            else:
+                curent_user = get_object_or_404(User,
+                    username=self.scope["user"].username)
+                user_groups=Room.objects.filter(user_eligible__in=[curent_user,])
+                for user_group in user_groups:
+                    async_to_sync(self.channel_layer.group_add)(
+                        user_group.str_id,
+                        self.channel_name,
+                    )
 
 
         #user chat session start
@@ -111,6 +122,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
+        print('datat from cahr server',data)
         if data['command']=='messages_of_that_room':
             self.room_group_name=data['room_id']
             if data.get('previous_room'):
@@ -123,10 +135,8 @@ class ChatConsumer(WebsocketConsumer):
             self.fetch_messages_of_room(data['room_id'])
         elif data['command']=='messages_of_that_room_scroll':
             self.fetch_messages_of_room(data['room_id'],data['page_no'])
-            print('DATA is',data)
         
         elif data['command'] == 'new_message':
-            print('new message from user ',data,self.scope["user"])
             self.new_message(data)
 
         
@@ -146,7 +156,6 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(message))
 
     def chat_message(self, event):
-        print('WELCOM TO CHART MESSAGE',event)
         message = event['message']
         self.send(text_data=json.dumps(message))
 
@@ -163,5 +172,29 @@ class ChatConsumer(WebsocketConsumer):
                 user=curent_user)
         user_room_info_obj.last_seen=timezone.now()
         user_room_info_obj.save()
+
+    def send_notification(self,event):
+
+
+        
+        user=event.get('value').get('user')
+        try:
+            new_post=event.get('value').get('title').startswith('New Post By')
+        except:
+            new_post=False
+
+        if not(new_post) and self.scope["user"].username ==user:
+            self.send(text_data=json.dumps(event))
+        elif new_post:
+            request_user = get_object_or_404(
+                User,username=self.scope["user"].username)
+            post_user = get_object_or_404(
+                User,username=user)
+            
+            if post_user in  request_user.get_social_user.following.all():
+                self.send(text_data=json.dumps(event))
+
+        
+
 
 

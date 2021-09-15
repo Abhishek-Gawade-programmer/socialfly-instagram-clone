@@ -7,6 +7,7 @@ class Room(models.Model):
                     default=uuid.uuid4,
                     editable=False,
                     db_index=True,max_length=8)
+
 	str_id= models.CharField(max_length=50,blank=True,null=True)
 	user_eligible = models.ManyToManyField(User,)
 	is_group=models.BooleanField(default=False)
@@ -15,7 +16,14 @@ class Room(models.Model):
 		if Message.objects.filter(room=self).exists():
 			return Message.objects.filter(room=self).order_by('-timestamp')[0]
 		else:
-			return 'Start Chating'
+			return 'Start Chatting'
+
+	def get_other_username(self,user):
+		if not self.is_group:
+			for group_member in self.get_user_set():
+				if group_member !=user:
+					return group_member
+
 	def get_user_set(self):
 		return set(self.user_eligible.all())
 

@@ -3,3 +3,4 @@ media_root/
 .env
 db.sqlite3
 db.sqlite3-journal
+.env

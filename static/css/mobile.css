@@ -1,4 +1,3 @@
-
 @media screen and (min-width: 175px) and (max-width: 667px) {
   .navigation {
     padding: 0 10px;
@@ -106,8 +105,9 @@
   .edit-profile__header .edit-profile__avatar-container {
     width: 0;
   }
-    .removeimage {
+  .removeimage {
+    display: none !important;
+  }
 
-        display: none !important;
-    }
+
 }

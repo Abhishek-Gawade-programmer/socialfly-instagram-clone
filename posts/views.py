@@ -5,7 +5,7 @@ from django.views.generic import View
 from django.db.models import Q
 from django.conf import settings
 from .models import *
-
+from chats.models import Message,Room
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -40,16 +40,15 @@ def delete_post(request):
 def submit_post(request):
 	if  request.method == 'POST':
 		form_data=request.POST
-
 		post = get_object_or_404(Post, pk = form_data.get('post_pk'))
 		post.caption=form_data.get('caption_text')
-		usernames_list=form_data.get('tag_usernames_list').split(',')
+		usernames_list=form_data.get('tag_usernames')
+		usernames_list=usernames_list.split(',')[:-1]
 		for username in usernames_list:
 			user_from_username=User.objects.get(username=username)
-			if username:
-				post.tagged_people.add()
-				post_activity_fuc(reason="tagged user",
-				changed_by=user_from_username,post=post)
+			post.tagged_people.add(user_from_username)
+			post_activity_fuc(reason="tagged user",
+			changed_by=user_from_username,post=post)
 		
 
 		post.posted=True
@@ -58,20 +57,44 @@ def submit_post(request):
 		post_activity_fuc(reason="created new post",
 				changed_by=request.user,post=post)
 
+		return JsonResponse({'post_created':True})
 
- 	
-		pa_obj.save()
-		return JsonResponse({'post':False})
+
+
+
+@login_required
+def share_post(request):
+	if  request.method == 'POST':
+		form_data=request.POST
+		message_room=form_data.get('message')
+		room_to_send_list=form_data.get('room_to_send')
+		room_to_send_list=room_to_send_list.split(',')[:-1]
+
+		for room_str in room_to_send_list:
+			get_room=get_object_or_404(Room,str_id=room_str)
+			message = Message.objects.create(
+				user=request.user, 
+				content=message_room,
+				room=get_room,
+			)
+			message.save()
+
+		return JsonResponse({'added':True})
+
 
 
 
 @login_required
 def explore(request):
 	l=[report_post.post.id for report_post in ReportPost.objects.filter(user=request.user)]
-	recommend_posts=Post.objects.filter(posted=True).exclude(id__in=l)
+	recommend_posts=Post.objects.filter(
+		Q(posted=True),
+		Q(user__in=request.user.get_social_user.following.all())|
+		Q(user=request.user)
+		).exclude(id__in=l)
 
 	page = request.GET.get('page', 1)
-	paginator = Paginator(recommend_posts, 1)
+	paginator = Paginator(recommend_posts, 2)
 	try:
 		numbers = paginator.page(page)
 	except PageNotAnInteger:
@@ -83,12 +106,10 @@ def explore(request):
 			return HttpResponse('')
 		# If page is out of range deliver last page of results
 		numbers = paginator.page(paginator.num_pages)
-
-
+	if request.is_ajax():
+		return render(request,'post_ajax.html',{'numbers': numbers})
 	context={'recommend_posts':recommend_posts,
 			  'numbers': numbers}
-	if request.is_ajax():
-		return render(request,'post_ajax.html',context)
 	return render(request,'explore.html',context)
 
 
@@ -154,6 +175,19 @@ def like_unlike_post(request):
 				changed_by=request.user,post=post,)
 	post.save()
 	return JsonResponse({'success':True,"action":action,'num_likes':post.get_number_like()},safe=False)
+
+@login_required
+def bookmark_post(request):
+	post_id=request.POST.get('post_id')
+	post = get_object_or_404(Post, pk = post_id)
+	if request.user in  post.bookmark_user.all():
+		post.bookmark_user.remove(request.user)
+		action=True
+	else:
+		post.bookmark_user.add(request.user)
+		action=False
+	post.save()
+	return JsonResponse({'success':True,"action":action},safe=False)
 
 
 @login_required
