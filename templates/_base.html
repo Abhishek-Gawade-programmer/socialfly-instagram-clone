@@ -7,6 +7,9 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
+       {% block meta_tages  %}
+
+      {% endblock meta_tages %}
       <link rel="stylesheet" href="{% static 'css/styles.css' %}">
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -22,21 +25,20 @@
    <body>
         <div class="loader1">
          <svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="2644.000000pt" height="2644.000000pt" viewBox="0 0 2644.000000 2644.000000" preserveAspectRatio="xMidYMid meet">
-
-<g transform="translate(0.000000,2644.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
-</g>
-</svg>      
+            <g transform="translate(0.000000,2644.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+            </g>
+        </svg>      
       </div>
-      {% if messages %}
-      {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-         {{ message }}
-         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-         <span aria-hidden="true">&times;</span>
-         </button>
-      </div>
-      {% endfor %}
-      {% endif %}
+          {% if messages %}
+              {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                     {{ message }}
+                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                     </button>
+                  </div>
+              {% endfor %}
+          {% endif %}
       <div class="container">
          {% block content  %}
          {% endblock content %}
@@ -58,9 +60,7 @@
             chatSocket.onmessage = function(e) {
               var data=JSON.parse(e.data);
               if (data.command === "new_notification") {
-                console.log('new_notification')
                 async function start(head,body,id) {
-                    alert(head,body,id);
                        var csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
                        const res = await fetch(window.location.origin +"/send_push/",
                        {
@@ -94,10 +94,8 @@
       <script>
          const loader1 = document.querySelector(".loader1");
          window.onload = function(){
-           setTimeout(function(){
              loader1.style.opacity = "0";
              loader1.style.display = "none";
-           },250);
            $j('.loader1').attr('style', 'z-index: -10000 !important');
          }
            

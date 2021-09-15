@@ -10,6 +10,7 @@ admin.site.register(Post)
 admin.site.register(PostImage)
 admin.site.register(User)
 admin.site.register(SocialflyUser)
+admin.site.register(GenuineUser)
 
 
 

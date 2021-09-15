@@ -48,6 +48,10 @@ class UserSignUpView(CreateView):
 
 @login_required
 def profile(request,socialflyuser=None):
+    from io import BytesIO
+
+
+
     if socialflyuser:
         user_object = get_object_or_404(SocialflyUser, pk = socialflyuser)
 
@@ -82,6 +86,30 @@ def upload_profile_picture(request):
     thumb_url = get_thumbnailer(user_object.profile_photo).get_thumbnail(options).url
 
     return JsonResponse({'uploaed':True,'image_url':thumb_url},safe=False)
+
+
+
+
+
+@require_POST
+@login_required
+def user_genuine_info(request):
+    try:
+        genuine_user=GenuineUser.objects.get(user=request.user)
+        genuine_user.description=request.POST.get('genuine_description')
+        genuine_user.save()
+    except ObjectDoesNotExist:
+        obj=GenuineUser.objects.create(
+            user=request.user,
+            description=request.POST.get('genuine_description'),
+            )
+        obj.save()    
+
+    messages.info(request, 'Account Genuine  request has been successfully Deleted !!')
+    return JsonResponse({'form_saved':True},safe=False)
+
+
+
 
 @require_POST
 @login_required

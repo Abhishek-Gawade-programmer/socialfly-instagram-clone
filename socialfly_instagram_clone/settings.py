@@ -15,7 +15,7 @@ SECRET_KEY =  os.getenv('SECRET_KEY','temp')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG',True)
 
-ALLOWED_HOSTS = ['localhost','7c4b-2401-4900-1b36-8a0-cd31-2117-1d63-3b42.ngrok.io']
+ALLOWED_HOSTS = ['localhost',]
 
 
 # Application definition
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     # Providers
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.discord',
 
 
     'crispy_forms',
@@ -55,15 +57,7 @@ INSTALLED_APPS = [
    'pwa',
 ]
 
-AUTH_USER_MODEL = 'users.User'
 
-AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend'
-]
 
 WEBPUSH_SETTINGS = {
    "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY','temp'),
@@ -77,39 +71,8 @@ WEBPUSH_SETTINGS = {
 
 
 
-SOCIALACCOUNT_PROVIDERS = {
-    'facebook':
-           {'METHOD': 'oauth2',
-            'SCOPE': ['email','public_profile', 'user_friends'],
-            'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-            'FIELDS': [
-                'id',
-                'email',
-                'name',
-                'first_name',
-                'last_name',
-                'verified',
-                'locale',
-                'timezone',
-                'link',
-                'gender',
-                'updated_time'],
-            'EXCHANGE_TOKEN': True,
-            'LOCALE_FUNC': lambda request: 'kr_KR',
-            'VERIFIED_EMAIL': False,
-            'VERSION': 'v2.4'}
-        }
-
-
-
-
-#facebook
-SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('SOCIAL_AUTH_FACEBOOK_KEY')  # App ID
-SOCIAL_AUTH_FACEBOOK_SECRET =os.getenv('SOCIAL_AUTH_FACEBOOK_SECRET') #app key
 
 #PWD SETINGS
-# PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js')
-
 PWA_APP_NAME = "Socialfly"
 PWA_APP_DESCRIPTION = "Socialfly Web App"
 PWA_APP_THEME_COLOR = "#000000"
@@ -146,40 +109,41 @@ PWA_APP_LANG = "en-US"
 
 
 
-#DJANGO ALLAUTH SETTING
-# SOCIALACCOUNT_PROVIDERS = {
-#     'google': {
-#         'SCOPE': [
-#             'profile',
-#             'email',
-#         ],
-#         'AUTH_PARAMS': {
-#             'access_type': 'online',
-#         }
-#     }
-# }
+# DJANGO ALLAUTH SETTING
+AUTH_USER_MODEL = 'users.User'
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend'
+]
 
 
 
-
-
+#FACEBOOK SETINGS 
+SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('SOCIAL_AUTH_FACEBOOK_KEY')  # App ID
+SOCIAL_AUTH_FACEBOOK_SECRET =os.getenv('SOCIAL_AUTH_FACEBOOK_SECRET') #app key
 
 SITE_ID = 2
 
 ACCOUNT_EMAIL_REQUIRED=True
-ACCOUNT_EMAIL_VERIFICATION="none"
+ACCOUNT_EMAIL_VERIFICATION="mandatory"
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_LOGOUT_ON_GET = True 
-ACCOUNT_SESSION_REMEMBER=True
 
+ACCOUNT_SESSION_REMEMBER=True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS=1
 LOGIN_REDIRECT_URL="posts:explore"
 ACCOUNT_SIGNUP_REDIRECT_URL="users:profile_edit"
 ACCOUNT_LOGOUT_REDIRECT_URL="account_login"
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_LOGOUT_ON_GET= True
 
-# SOCIALACCOUNT_QUERY_EMAIL = True
-# ACCOUNT_LOGOUT_ON_GET= True
-# ACCOUNT_UNIQUE_EMAIL = True
-# ACCOUNT_EMAIL_REQUIRED = True
+
+
+
+
 #CHAT SETTINGS
 ASGI_APPLICATION = 'socialfly_instagram_clone.asgi.application'
 
@@ -314,7 +278,6 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [("127.0.0.1", 6379)],
-            # "hosts": [('redis://:bho4IPFEczahprp1SlfOQTYaJUFip41y@redis-17575.c15.us-east-1-4.ec2.cloud.redislabs.com:17575/0')],
         },
     },
 }

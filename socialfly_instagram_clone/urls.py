@@ -5,7 +5,7 @@ from django.contrib.auth import views
 from users.views import UserSignUpView
 from django.conf import settings
 from django.views.generic import TemplateView
-
+from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),

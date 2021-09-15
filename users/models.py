@@ -17,6 +17,20 @@ class User(AbstractUser):
     def get_social_user(self):
         return  SocialflyUser.objects.get(user=self)
 
+    def allow_for_genuine_user(self):
+        if self.is_genuine:
+            return False
+        else:
+            from django.core.exceptions import ObjectDoesNotExist
+            try:
+                genuine_user=GenuineUser.objects.get(user=self)
+                if genuine_user.reject:
+                    return False
+                return True
+            except ObjectDoesNotExist:
+                return True
+
+
 
 class SocialflyUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
@@ -114,3 +128,23 @@ class UserActivity(models.Model):
                     }
             )
         super().save(*args,**kwargs)
+
+class GenuineUser(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    description=models.TextField(max_length=300,)
+    reject=models.BooleanField(default=False,help_text='if reject is true then user can\'not send addition requests')
+    created =models.DateTimeField(auto_now_add=True)
+    updated=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.username +'----' +str(self.description)[:10]
+    
+
+    def save(self, *args, **kwargs):
+        if self.user.is_genuine:
+            #send email
+            pass
+
+
+        super().save(*args, **kwargs)
+

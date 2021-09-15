@@ -6,14 +6,12 @@ from .models import SocialflyUser
 from allauth.account.signals import user_signed_up
 
 
-
 @receiver(user_signed_up)
 def populate_profile(sociallogin, user, **kwargs):
-    extra_data=user.socialaccount_set.filter(provider='google')[0].extra_data
-    resp = requests.get(extra_data['picture'])
-    fp = BytesIO()
-    fp.write(resp.content)
-    file_name = extra_data['picture'].split("/")[-1]
+    url=f'https://ui-avatars.com/api/?name={user.first_name}+{user.last_name}&size=256&bold=true&background=random'
+    response = requests.get(url)
+    fp = BytesIO()  
+    fp.write(response.content)
     socialflyuser = SocialflyUser.objects.create(user=user)
     socialflyuser.profile_photo.save(user.username+'.png', files.File(fp))
     socialflyuser.save()

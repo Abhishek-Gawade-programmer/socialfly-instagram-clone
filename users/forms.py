@@ -2,9 +2,17 @@ from django import forms
 
 from .models import *
 
-from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
+
+
+import requests
+from django.core import files
+from io import BytesIO
+
+
+
+
 
 class UserSignUpForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
@@ -36,9 +44,27 @@ class UserSignUpForm(UserCreationForm):
             )
         return password2
 
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get("phone_number")
+        g=SocialflyUser.objects.filter(phone_number=phone_number)
+        if g.exists():
+            raise forms.ValidationError('Phone number already registered')
+        return phone_number
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        # if email
+        g=User.objects.filter(email=email)
+        if g.exists():
+            raise forms.ValidationError('Email already registered')
+        return email
+
+
     class Meta(UserCreationForm.Meta):
         model = User
         exclude = ['password2',]
+
 
     @transaction.atomic
     def save(self):  
@@ -49,6 +75,14 @@ class UserSignUpForm(UserCreationForm):
         user.save()
         socialflyuser = SocialflyUser.objects.create(user=user)
         socialflyuser.phone_number=self.cleaned_data.get('phone_number')
+        try:
+            url=f'https://ui-avatars.com/api/?name={user.first_name}+{user.last_name}&size=256&bold=true&background=random'
+            response = requests.get(url)
+            fp = BytesIO()  
+            fp.write(response.content)
+            socialflyuser.profile_photo.save(user.username+'.png', files.File(fp))
+        except :
+            pass
         socialflyuser.save()
         return user
 
@@ -69,7 +103,7 @@ class UserEditFrom(forms.ModelForm):
         if self.instance:
             qs=qs.exclude(pk=self.instance.pk)
         if qs.exists() :
-            raise forms.ValidationError(f'({username}) username is alraedy taken try another one')
+            raise forms.ValidationError(f'({username}) username is already taken try another one')
         return username
 
     class Meta:
