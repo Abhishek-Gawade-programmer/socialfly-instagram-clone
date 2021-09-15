@@ -82,8 +82,7 @@ class SocialflyUser(models.Model):
         return self.user.username +'----' +str(self.profile_photo)
     
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+
 
 class UserActivity(models.Model):
     reason=models.CharField(max_length=100)
@@ -141,10 +140,23 @@ class GenuineUser(models.Model):
     
 
     def save(self, *args, **kwargs):
-        if self.user.is_genuine:
-            #send email
-            pass
+        from django.conf import settings 
+        from django.core.mail import send_mail
+        if self.reject:
+            self.user.is_genuine=False
+            self.user.save()
+            subject= f"[Socialfly ] you account has been Not been verified "
+            plain_message = f"According to your description {self.user.get_full_name()} ({self.user.username}) we are not allowing you to become verified user "
+            to = [self.user.email,]
+            from_email = settings.DEFAULT_FROM_EMAIL
+            send_mail(subject, plain_message, from_email,to,)
 
+        if self.user.is_genuine:
+            subject= f"[Socialfly ] you account has been successfully verified "
+            plain_message = f"Congratulations {self.user.get_full_name()} ({self.user.username}) You account as been mark as GENUINE USER "
+            to = [self.user.email,]
+            from_email = settings.DEFAULT_FROM_EMAIL
+            send_mail(subject, plain_message, from_email,to,)
 
         super().save(*args, **kwargs)
 

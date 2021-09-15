@@ -106,14 +106,32 @@ class UserEditFrom(forms.ModelForm):
             raise forms.ValidationError(f'({username}) username is already taken try another one')
         return username
 
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get("phone_number")
+
+        qs=SocialflyUser.objects.filter(phone_number=phone_number)
+        if self.instance:
+            qs=qs.exclude(pk=self.instance.pk)
+        if qs.exists() :
+            raise forms.ValidationError('Phone number already registered')
+        return phone_number
+
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        qs=User.objects.filter(email=email)
+        if self.instance:
+            qs=qs.exclude(pk=self.instance.pk)
+        if qs.exists() :
+            raise forms.ValidationError('Email already registered')
+        return email
+
+
+
     class Meta:
         model=SocialflyUser
 
         exclude=('followers','following','user')
 
-        widgets = {
-
-     
-
-        }
-
+    

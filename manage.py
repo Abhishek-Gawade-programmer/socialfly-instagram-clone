@@ -22,15 +22,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-'''
-virtualenv env && source env/bin/activate && python manage.py runserver
-
-.\env\Scripts\activate
-python manage.py makemigrations
-python manage.py migrate
-python manage.py makemigrations;python manage.py migrate
-python manage.py runserver
-python manage.py shell
-
-
-'''

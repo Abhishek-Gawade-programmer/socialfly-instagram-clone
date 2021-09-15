@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR /'.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -13,9 +13,17 @@ load_dotenv(BASE_DIR / '.env')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY =  os.getenv('SECRET_KEY','temp')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG',True)
+
+
+
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost',]
+
+#PRODUCTION SETTINGS
+# CSRF_COOKIE_SECURE=True
+# SESSION_COOKIE_SECURE=True
+
 
 
 # Application definition
@@ -36,7 +44,6 @@ INSTALLED_APPS = [
     
     # Providers
     'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.discord',
 
@@ -48,6 +55,9 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+
+    #FOR AWS S3 BUCKET STORAGE ONLY 
+    # 'storages', 
 
     #my apps
     'core',
@@ -121,10 +131,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-
-#FACEBOOK SETINGS 
-SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('SOCIAL_AUTH_FACEBOOK_KEY')  # App ID
-SOCIAL_AUTH_FACEBOOK_SECRET =os.getenv('SOCIAL_AUTH_FACEBOOK_SECRET') #app key
+#DAJNGO ALLUTH SEETINGS 
 
 SITE_ID = 2
 
@@ -213,7 +220,6 @@ AUTH_PASSWORD_VALIDATORS = [
 #EMAIL SETTINGS
 
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY') 
-
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey' # Exactly that. 
@@ -221,14 +227,6 @@ EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
 EMAIL_PORT = 587 # 25 or 587 (for unencrypted/TLS connections).
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
-
-
-
-
-
-
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -271,8 +269,19 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+##  AWS  FILE STORAGE FOR S3 BUCKET
 
-#REDIS
+# AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+# AWS_S3_FILE_OVERWRITE = False
+# AWS_DEFAULT_ACL = None
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+
+#REDIS SETUP FOR DAJNGO CHANNELS
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
