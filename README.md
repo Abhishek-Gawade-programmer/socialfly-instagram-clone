@@ -1,7 +1,7 @@
 # Socialfly Instagram Clone
 Socialfly is a Instagram Clone made by Django Web Framework and channel
 
-LINK : https://techkynewz.com/
+LINK : https://techkynewz.com
  ***
 ## Features 
  - Most of all instagram features are their
