@@ -31,12 +31,13 @@
                     <div  class=" mt-3">
 
 
-                         <a href="{% provider_login_url 'facebook' method='oauth2' %}" class=""> 
-                            <button type="button" class="btn btn-primary btn-lg btn-floating ml-2" >
-                                    <i class="fab fa-facebook fa-lg"></i></button>
+                         <a href="{% provider_login_url 'discord'  %}" class=""> 
+                            <button type="button" class="btn btn-primary btn-lg btn-floating ml-2" style="background:purple;border: purple;" >
+                                <i class="fab fa-discord fa-lg"></i>
+                                </button>
                             </a>
-                            <a href="#" class=""><button type="button" class="btn btn-secondary btn-lg btn-floating ml-2" style="background: purple;">
-                                    <i class="fab fa-instagram fa-lg"></i>
+                            <a href="{% provider_login_url 'github' %}" class=""><button type="button" class="btn btn-dark btn-lg btn-floating ml-2" style="background: black;">
+                                  <i class="fab fa-github fa-lg"></i>
                             </button></a>
                             <a href="{% provider_login_url 'google' %}" class=""><button type="button" class="btn btn-danger btn-lg btn-floating ml-2">
                                     <i class="fab fa-google fa-lg"></i>

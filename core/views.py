@@ -2,7 +2,6 @@ from django.http.response import JsonResponse, HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import render,get_object_or_404,redirect
 from users.models import User
-from django.views.decorators.csrf import csrf_exempt
 from webpush import send_user_notification
 import json
 from django.conf import settings
@@ -16,7 +15,6 @@ def home(request):
 
 
 @require_POST
-@csrf_exempt
 def send_push(request):
     try:
         body = request.body

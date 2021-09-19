@@ -48,6 +48,7 @@ class UserSignUpView(CreateView):
 
 @login_required
 def profile(request,socialflyuser=None):
+
     if socialflyuser:
         user_object = get_object_or_404(SocialflyUser, pk = socialflyuser)
 
@@ -83,10 +84,36 @@ def upload_profile_picture(request):
 
     return JsonResponse({'uploaed':True,'image_url':thumb_url},safe=False)
 
+
+
+
+
+@require_POST
+@login_required
+def user_genuine_info(request):
+    try:
+        genuine_user=GenuineUser.objects.get(user=request.user)
+        genuine_user.description=request.POST.get('genuine_description')
+        genuine_user.save()
+    except ObjectDoesNotExist:
+        obj=GenuineUser.objects.create(
+            user=request.user,
+            description=request.POST.get('genuine_description'),
+            )
+        obj.save()    
+
+    messages.info(request, 'Account Genuine  request has been successfully Deleted !!')
+    return JsonResponse({'form_saved':True},safe=False)
+
+
+
+
 @require_POST
 @login_required
 def delete_user(request):
-    print('user will delete')
+    for _ in request.user.get_social_user.get_user_rooms():
+        _.delete()
+    
     request.user.delete()
     logout(request)
     messages.info(request, 'Account successfully Deleted !!')
@@ -140,58 +167,58 @@ def wants_follow_unfollow(request):
     who_send_action = request.user.get_social_user
     what_to_do={'action':False,'success':'true'}
 
-    if who_receive_action.is_private:
-        pass
+    # if who_receive_action.is_private:
+    #     pass
+    # else:
+    #     # follow the user
+    if who_receive_action.allow_to_follow(who_send_action.pk):
+        who_receive_action.followers.add(who_send_action.user)
+        #notification of user for following
+        who_send_action.following.add(who_receive_action.user)
+        try:
+            ua_obj=UserActivity.objects.get(
+                Q(reason__contains="started following you")|
+                Q(reason__contains="unfollow you"),
+                changed_by=who_send_action.user,
+                user_target=who_receive_action.user,)
+            ua_obj.reason='started following you'
+            ua_obj.save()
+        except ObjectDoesNotExist:
+            user_activity_fuc("started following you",
+                who_receive_action.user,
+                who_send_action.user)
+        
+
+        what_to_do['action']='Unfollow'
+   
+        
+    # unfollow the user
     else:
-        # follow the user
-        if who_receive_action.allow_to_follow(who_send_action.pk):
-            who_receive_action.followers.add(who_send_action.user)
-            #notification of user for following
-            who_send_action.following.add(who_receive_action.user)
-            try:
-                ua_obj=UserActivity.objects.get(
-                    Q(reason__contains="started following you")|
-                    Q(reason__contains="unfollow you"),
-                    changed_by=who_send_action.user,
-                    user_target=who_receive_action.user,)
-                ua_obj.reason='started following you'
-                ua_obj.save()
-            except ObjectDoesNotExist:
-                user_activity_fuc("started following you",
-                    who_receive_action.user,
-                    who_send_action.user)
-            
+         #notification of user for following
+        who_receive_action.followers.remove(who_send_action.user)
+        who_send_action.following.remove(who_receive_action.user)
+        what_to_do['action']='Follow'
 
-            what_to_do['action']='Unfollow'
-       
-            
-        # unfollow the user
-        else:
-             #notification of user for following
-            who_receive_action.followers.remove(who_send_action.user)
-            who_send_action.following.remove(who_receive_action.user)
-            what_to_do['action']='Follow'
+        try:
+            ua_obj=UserActivity.objects.get(
+                Q(reason__contains="started following you")|
+                Q(reason__contains="unfollow you"),
+                changed_by=who_send_action.user,
+                user_target=who_receive_action.user,)
+            ua_obj.reason='unfollow you'
+            ua_obj.save()
+        except ObjectDoesNotExist:
+            user_activity_fuc("unfollow you",
+                who_receive_action.user,
+                who_send_action.user)
+    who_send_action.save()
+    who_receive_action.save()
+    add_remove_people_chat(
+            user1=who_receive_action.user,
+            user2=who_send_action.user,
+            )
 
-            try:
-                ua_obj=UserActivity.objects.get(
-                    Q(reason__contains="started following you")|
-                    Q(reason__contains="unfollow you"),
-                    changed_by=who_send_action.user,
-                    user_target=who_receive_action.user,)
-                ua_obj.reason='unfollow you'
-                ua_obj.save()
-            except ObjectDoesNotExist:
-                user_activity_fuc("unfollow you",
-                    who_receive_action.user,
-                    who_send_action.user)
-        who_send_action.save()
-        who_receive_action.save()
-        add_remove_people_chat(
-                user1=who_receive_action.user,
-                user2=who_send_action.user,
-                )
-
-        return JsonResponse(what_to_do,safe=False)
+    return JsonResponse(what_to_do,safe=False)
 
 
 
@@ -237,11 +264,6 @@ def search_results(request):
 
 @login_required
 def user_actions(request):
-    x=PostActivity.objects.first()
-
-    print(request.user.date_joined,type(request.user.date_joined))
-    print(x.updated,type(x.updated))
-
     notifiy_on_post=PostActivity.objects.filter(
         Q(post__user=request.user)& ~Q(reason="tagged user")
          |Q(changed_by=request.user)&Q(reason='tagged user')
@@ -254,12 +276,10 @@ def user_actions(request):
 
 
     notifiy_on_user=UserActivity.objects.filter(user_target=request.user)
-    # following_post=Post.objects.filter(user__in=request.user.get_social_user.following.all())
-    all_notifiactions=list(notifiy_on_post)+list(notifiy_on_user)#+list(following_post)
+    all_notifiactions=list(notifiy_on_post)+list(notifiy_on_user)
     all_notifiactions.sort(
         key=lambda item: item.updated,
         reverse=True)
-
     page = request.GET.get('page', 1)
     paginator = Paginator(all_notifiactions, 5)
     try:

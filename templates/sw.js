@@ -10,7 +10,9 @@ self.addEventListener('push', function (event) {
          event.waitUntil(
             self.registration.showNotification(head, {
                 body: body,
+                // ICON LOCATION
                 icon: 'http://localhost:8000'+'/static/logo_.jpg'
+                url: 'http://localhost:8000/users/your-notification/'
             })
         );       
     }

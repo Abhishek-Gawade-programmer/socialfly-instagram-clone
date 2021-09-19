@@ -145,7 +145,6 @@ function copy_link_fuc(post_url) {
 
 function delete_post_function(post_id) {
   let delete_post = document.getElementById("delete_post");
-  let postsucessmodelLabel = document.getElementById("postsucessmodelLabel");
   delete_post.addEventListener("click", (event) => {
     $j.ajax({
       type: "POST",
@@ -157,12 +156,18 @@ function delete_post_function(post_id) {
         post_id: post_id,
       },
       success: function (response) {
-        postsucessmodelLabel.textContent = "Your post is deleted !!";
+        console.log('uisdjfsdnjnjn')
+        if (window.location.href.includes('post-detail')) 
+        {
+          console.log('uisdjfsdnjnjn')
+            window.location.replace(window.location.origin+'/posts/explore/');
+        }
+
         $j("#post_id" + post_id).fadeOut(300, function () {
           $j("#post_id" + post_id).remove();
           show_message("your post is deleted");
         });
-        $("#postsucessmodel").modal("show");
+
       },
       error: function (response) {
         console.error("sth happen bad");

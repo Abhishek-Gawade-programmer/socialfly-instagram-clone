@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR /'.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -12,11 +12,18 @@ load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY =  os.getenv('SECRET_KEY','temp')
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG',True)
 
-ALLOWED_HOSTS = ['localhost','3262-106-193-111-12.ngrok.io']
+
+
+DEBUG = True
+
+ALLOWED_HOSTS = ['localhost',]
+
+#PRODUCTION SETTINGS
+# CSRF_COOKIE_SECURE=True
+# SESSION_COOKIE_SECURE=True
+
 
 
 # Application definition
@@ -32,11 +39,13 @@ INSTALLED_APPS = [
 
     #3rd party
      'channels',
+
      'webpush',
     
     # Providers
-    'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.discord',
 
 
     'crispy_forms',
@@ -47,13 +56,70 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
 
+    #FOR AWS S3 BUCKET STORAGE ONLY 
+    # 'storages', 
+
     #my apps
     'core',
     'users.apps.UsersConfig',
     'posts',
     'chats',
+   'pwa',
 ]
 
+
+
+WEBPUSH_SETTINGS = {
+   "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY','temp'),
+   "VAPID_PRIVATE_KEY": os.getenv('VAPID_PRIVATE_KEY','temp'),
+   "VAPID_ADMIN_EMAIL": os.getenv('VAPID_ADMIN_EMAIL','temp'),
+}
+
+
+
+
+
+
+
+
+#PWD SETINGS
+PWA_APP_NAME = "Socialfly"
+PWA_APP_DESCRIPTION = "Socialfly Web App"
+PWA_APP_THEME_COLOR = "#000000"
+PWA_APP_BACKGROUND_COLOR = "#ffffff"
+PWA_APP_DISPLAY = "standalone"
+PWA_APP_SCOPE = "/"
+PWA_APP_ORIENTATION = "any"
+PWA_APP_START_URL = "/"
+PWA_APP_STATUS_BAR_COLOR = "default"
+
+
+
+PWA_APP_ICONS = [
+    {
+        "src": "static/logo.jpg",
+        "sizes": "160x160"
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        "src": "static/logo.jpg",
+        "sizes": "160x160"
+    }
+]
+PWA_APP_SPLASH_SCREEN = [
+    {
+        "src": "static/icon.png",
+        "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+    }
+]
+PWA_APP_DIR = "ltr"
+PWA_APP_LANG = "en-US"
+
+
+
+
+# DJANGO ALLAUTH SETTING
 AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = [
@@ -64,30 +130,27 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend'
 ]
 
-WEBPUSH_SETTINGS = {
-   "VAPID_PUBLIC_KEY": os.getenv('VAPID_PUBLIC_KEY','temp'),
-   "VAPID_PRIVATE_KEY": os.getenv('VAPID_PRIVATE_KEY','temp'),
-   "VAPID_ADMIN_EMAIL": os.getenv('VAPID_ADMIN_EMAIL','temp'),
-}
 
-
+#DAJNGO ALLUTH SEETINGS 
 
 SITE_ID = 2
 
 ACCOUNT_EMAIL_REQUIRED=True
-ACCOUNT_EMAIL_VERIFICATION="none"
+ACCOUNT_EMAIL_VERIFICATION="mandatory"
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_LOGOUT_ON_GET = True 
+
 ACCOUNT_SESSION_REMEMBER=True
-
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS=1
 LOGIN_REDIRECT_URL="posts:explore"
-ACCOUNT_SIGNUP_REDIRECT_URL="user:profile_edit"
+ACCOUNT_SIGNUP_REDIRECT_URL="users:profile_edit"
 ACCOUNT_LOGOUT_REDIRECT_URL="account_login"
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_LOGOUT_ON_GET= True
 
-# SOCIALACCOUNT_QUERY_EMAIL = True
-# ACCOUNT_LOGOUT_ON_GET= True
-# ACCOUNT_UNIQUE_EMAIL = True
-# ACCOUNT_EMAIL_REQUIRED = True
+
+
+
+
 #CHAT SETTINGS
 ASGI_APPLICATION = 'socialfly_instagram_clone.asgi.application'
 
@@ -154,8 +217,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+#EMAIL SETTINGS
 
-
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY') 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey' # Exactly that. 
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_PORT = 587 # 25 or 587 (for unencrypted/TLS connections).
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -197,17 +268,25 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#HISTORY SETINGS 
-# SIMPLE_HISTORY_REVERT_DISABLED=True
-# SIMPLE_HISTORY_HISTORY_ID_USE_UUID = True
 
-#REDIS
+##  AWS  FILE STORAGE FOR S3 BUCKET
+
+# AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+# AWS_S3_FILE_OVERWRITE = False
+# AWS_DEFAULT_ACL = None
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+
+#REDIS SETUP FOR DAJNGO CHANNELS
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [("127.0.0.1", 6379)],
-            # "hosts": [('redis://:bho4IPFEczahprp1SlfOQTYaJUFip41y@redis-17575.c15.us-east-1-4.ec2.cloud.redislabs.com:17575/0')],
         },
     },
 }

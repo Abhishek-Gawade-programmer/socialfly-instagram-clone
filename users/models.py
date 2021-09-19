@@ -17,6 +17,20 @@ class User(AbstractUser):
     def get_social_user(self):
         return  SocialflyUser.objects.get(user=self)
 
+    def allow_for_genuine_user(self):
+        if self.is_genuine:
+            return False
+        else:
+            from django.core.exceptions import ObjectDoesNotExist
+            try:
+                genuine_user=GenuineUser.objects.get(user=self)
+                if genuine_user.reject:
+                    return False
+                return True
+            except ObjectDoesNotExist:
+                return True
+
+
 
 class SocialflyUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
@@ -68,8 +82,7 @@ class SocialflyUser(models.Model):
         return self.user.username +'----' +str(self.profile_photo)
     
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+
 
 class UserActivity(models.Model):
     reason=models.CharField(max_length=100)
@@ -114,3 +127,36 @@ class UserActivity(models.Model):
                     }
             )
         super().save(*args,**kwargs)
+
+class GenuineUser(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    description=models.TextField(max_length=300,)
+    reject=models.BooleanField(default=False,help_text='if reject is true then user can\'not send addition requests')
+    created =models.DateTimeField(auto_now_add=True)
+    updated=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.username +'----' +str(self.description)[:10]
+    
+
+    def save(self, *args, **kwargs):
+        from django.conf import settings 
+        from django.core.mail import send_mail
+        if self.reject:
+            self.user.is_genuine=False
+            self.user.save()
+            subject= f"[Socialfly ] you account has been Not been verified "
+            plain_message = f"According to your description {self.user.get_full_name()} ({self.user.username}) we are not allowing you to become verified user "
+            to = [self.user.email,]
+            from_email = settings.DEFAULT_FROM_EMAIL
+            send_mail(subject, plain_message, from_email,to,)
+
+        if self.user.is_genuine:
+            subject= f"[Socialfly ] you account has been successfully verified "
+            plain_message = f"Congratulations {self.user.get_full_name()} ({self.user.username}) You account as been mark as GENUINE USER "
+            to = [self.user.email,]
+            from_email = settings.DEFAULT_FROM_EMAIL
+            send_mail(subject, plain_message, from_email,to,)
+
+        super().save(*args, **kwargs)
+
