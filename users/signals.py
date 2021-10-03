@@ -16,11 +16,13 @@ def when_super_user_created(sender, instance, created, **kwargs):
 
 post_save.connect(when_super_user_created, sender=User)
 
+@receiver(user_signed_up)
 def populate_profile(sociallogin, user, **kwargs):
     url=f'https://ui-avatars.com/api/?name={user.first_name}+{user.last_name}&size=256&bold=true&background=random'
     response = requests.get(url)
-    fp = BytesIO()  
+    fp = BytesIO()
     fp.write(response.content)
     socialflyuser = SocialflyUser.objects.create(user=user)
     socialflyuser.profile_photo.save(user.username+'.png', files.File(fp))
     socialflyuser.save()
+
